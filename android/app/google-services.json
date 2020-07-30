@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1055821587164",
+    "firebase_url": "https://push-freightapp.firebaseio.com",
+    "project_id": "push-freightapp",
+    "storage_bucket": "push-freightapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055821587164:android:c62b92d1a6185c18b2ca19",
+        "android_client_info": {
+          "package_name": "com.freightapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055821587164-s97ccutg88spd02f1bjal617ud9e4kvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMNtYcpQozsqgm6GbgyodcNWTJmYupCzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055821587164-s97ccutg88spd02f1bjal617ud9e4kvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

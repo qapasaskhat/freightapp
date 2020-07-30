@@ -1,0 +1,10 @@
+export const logo_0 = require('../assets/icons/logo.png')
+export const logo_1 = require('../assets/icons/logo_1.png')
+export const trash = require('../assets/icons/trash.png')
+export const drop = require('../assets/icons/next.png')
+export const right = require('../assets/icons/next_r.png')
+export const menu = require('../assets/icons/menu.png')
+export const support = require('../assets/icons/chat.png')
+
+export const img = require('../assets/img/img.png')
+export const img_bg = require('../assets/img/img_bg.png')

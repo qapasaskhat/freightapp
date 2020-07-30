@@ -1,0 +1,5 @@
+export const Gilroy_Bold = 'Gilroy-Bold'
+export const Gilroy_Light = 'Gilroy-Light'
+export const Gilroy_Medium = 'Gilroy-Medium'
+export const Gilroy_Regular = 'Gilroy-Regular'
+export const Gilroy_Thin = 'Gilroy-Thin'
