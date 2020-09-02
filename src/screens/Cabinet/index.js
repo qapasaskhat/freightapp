@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   SafeAreaView,
@@ -10,21 +9,23 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  FlatList
+  FlatList,
 } from 'react-native';
 import styles from './styles';
 import List from '../../components/List';
 import Item from '../../components/Item';
-import {img_bg,drop} from '../../const/images';
+import {img_bg, drop} from '../../const/images';
 import Button from '../../components/Button';
 import Modal from 'react-native-modal';
 import isEmpty from '../../components/Empty';
-import axios from 'axios'
-import moment from 'moment'
-import { connect } from 'react-redux'
-import { fetchCity } from '../../api/city/actions'
-import { Gilroy_Bold } from '../../const/fonts';
-import Toast from 'react-native-simple-toast'
+import axios from 'axios';
+import moment from 'moment';
+import {connect} from 'react-redux';
+import {fetchCity} from '../../api/city/actions';
+import {fetchAnnouncements} from '../../api/Announcements/actions';
+
+import {Gilroy_Bold} from '../../const/fonts';
+import Toast from 'react-native-simple-toast';
 
 class Main extends React.Component {
   state = {
@@ -32,14 +33,14 @@ class Main extends React.Component {
     cityName: 'Алматы',
     visibleModal: false,
     refreshing: false,
-    items:[],
+    items: [],
     loading: false,
-    error: null
+    error: null,
   };
-  componentDidMount=()=>{
-    this.getAnnouncements()
-    this.props.dispatch(fetchCity())
-  }
+  componentDidMount = () => {
+    //this.getAnnouncements()
+    this.props.dispatch(fetchCity());
+  };
   onChange = () => {
     this.setState({
       isEnabled: !this.state.isEnabled,
@@ -51,58 +52,57 @@ class Main extends React.Component {
         onpressDelete={() => this.arhived(item)}
         name={'Вы'}
         trash={false}
-        onpressOrder={() => this.props.navigation.navigate('OpenOrder',{param: item})}
+        onpressOrder={() =>
+          this.props.navigation.navigate('OpenOrder', {param: item})
+        }
         body={item.body}
         phone_number={item.phone}
-        from ={item.from}
+        from={item.from}
         date={moment(item.created_at).format('L')}
         to={item.to}
         line
       />
     );
   };
-  arhived =(idAnnouncements)=>{
+  arhived = idAnnouncements => {
     Alert.alert(
-      "Удалить",
-      "Действительно ли вы хотите удалить?",
+      'Удалить',
+      'Действительно ли вы хотите удалить?',
       [
-        { text: "Удалить", onPress: () => {
-         // alert(idAnnouncements)
-            this.setState(state=>{
-              const items = state.items.filter(i=>
-                {
-                  return i.id !== idAnnouncements.id
-                }
-              )
-              return {items}
-            })
-            Toast.show('arhived')
-        } },
         {
-          text: "Отмена",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        }
+          text: 'Удалить',
+          onPress: () => {
+            // alert(idAnnouncements)
+            // this.setState(state=>{
+            //   const items = state.items.filter(i=>
+            //     {
+            //       return i.id !== idAnnouncements.id
+            //     }
+            //   )
+            //   return {items}
+            // })
+
+            Toast.show('arhived');
+          },
+        },
+        {
+          text: 'Отмена',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
-  }
-  putAnnouncements = ()=>{
-    const api = ''
-  }
+  };
+  putAnnouncements = () => {
+    const api = '';
+  };
   headerComp = () => {
     return (
-      <View
-        style={{backgroundColor: '#fff'}}>
-        <Text
-          style={styles.cabinet}>
-          Личный Кабинет
-        </Text>
+      <View style={{backgroundColor: '#fff'}}>
+        <Text style={styles.cabinet}>Личный Кабинет</Text>
         <View>
-          <Text
-            style={styles.city}>
-            Ваш город
-          </Text>
+          <Text style={styles.city}>Ваш город</Text>
           <TouchableOpacity
             style={{
               flexDirection: 'row',
@@ -114,19 +114,19 @@ class Main extends React.Component {
                 visibleModal: true,
               });
             }}>
-            <Text
-              style={styles.cityName}>
-              {this.state.cityName}
-            </Text>
+            <Text style={styles.cityName}>{this.state.cityName}</Text>
             <Image
               source={drop}
               style={{marginLeft: 6, width: 12, resizeMode: 'contain'}}
             />
           </TouchableOpacity>
         </View>
-        <Item onpress={()=>this.props.navigation.navigate('EditProfileClient')} name="Иван Андреев" phone_number="+7 (900) 231-10-00" />
-        <View
-          style={styles.orders}>
+        <Item
+          onpress={() => this.props.navigation.navigate('EditProfileClient')}
+          name="Иван Андреев"
+          phone_number="+7 (900) 231-10-00"
+        />
+        <View style={styles.orders}>
           <Text
             style={{
               fontSize: 12,
@@ -139,65 +139,65 @@ class Main extends React.Component {
           </Text>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Order')}>
-            <Text
-              style={styles.arhived}>
-              Перейти в архив
-            </Text>
+            <Text style={styles.arhived}>Перейти в архив</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   };
-  getAnnouncements = ()=>{
-    const api = 'http://gruz.sport-market.kz/api/announcements/'
+  // getAnnouncements = ()=>{
+  //   const api = 'http://gruz.sport-market.kz/api/announcements/'
+  //   this.setState({
+  //     loading: true
+  //   })
+  //   axios.get(api).then(response=>{
+  //     console.log(response.data)
+  //     this.setState({
+  //       items: response.data.data,
+  //       loading: false
+  //     })
+  //   }).catch(err=>{
+  //     this.setState({
+  //       error: err,
+  //       loading: false
+  //     })
+  //   })
+  // }
+  onRefresh = () => {
     this.setState({
-      loading: true
-    })
-    axios.get(api).then(response=>{
-      console.log(response.data)
-      this.setState({
-        items: response.data.data,
-        loading: false
-      })
-    }).catch(err=>{
-      this.setState({
-        error: err,
-        loading: false
-      })
-    })
-  }
-  onRefresh = ()=>{
+      refreshing: true,
+    });
+    //this.getAnnouncements()
+    this.props.dispatch(fetchAnnouncements());
     this.setState({
-      refreshing: true
-    })
-    this.getAnnouncements()
-    this.setState({
-      refreshing: false
-    })
-  }
-  
+      refreshing: false,
+    });
+  };
+
   render() {
-    const { loading, error, items } = this.state
-    const { cities, cityLoad } = this.props
+    const {loading, error, items} = this.state;
+    const {cities, cityLoad, announcements} = this.props;
     return (
       <>
         <StatusBar />
         <SafeAreaView style={styles.container}>
-          <ImageBackground
-            source={img_bg}
-            style={styles.img_bg}>
-           { loading?<View>
-             <ActivityIndicator />
-           </View> :<FlatList
-              data={items}
-              refreshing={this.state.refreshing}
-              onRefresh={()=>this.onRefresh()}
-              ListEmptyComponent={isEmpty('Вы не добавили обьявление')}
-              renderItem={item => this.renderItem(item)}
-              ListHeaderComponent={this.headerComp()}
-              keyExtractor={(item, index) => index.toString()}
-              style={{marginBottom: 64}}
-            />}
+          <ImageBackground source={img_bg} style={styles.img_bg}>
+            {loading ? (
+              <View>
+                <ActivityIndicator />
+              </View>
+            ) : (
+              <FlatList
+                data={announcements.data}
+                refreshing={this.state.refreshing}
+                onRefresh={() => this.onRefresh()}
+                ListEmptyComponent={isEmpty('Вы не добавили обьявление')}
+                renderItem={item => this.renderItem(item)}
+                ListHeaderComponent={this.headerComp()}
+                keyExtractor={(item, index) => index.toString()}
+                style={{marginBottom: 64}}
+              />
+            )}
             <Modal
               isVisible={this.state.visibleModal}
               style={styles.modal}
@@ -214,30 +214,36 @@ class Main extends React.Component {
                   backgroundColor: '#fff',
                   height: '100%',
                   alignItems: 'center',
-                  paddingTop: 60
+                  paddingTop: 60,
                 }}>
-                  <Text style={{
-                    fontSize: 18,
-                    fontFamily: Gilroy_Bold
-                  }} >Выберите город</Text>
-                  {
-                    cityLoad?
-                    <ActivityIndicator />:
-                  cities && cities.data && cities.data.map(i=>{
-                return (
-                  <TouchableOpacity 
-                    style={{
-                      paddingHorizontal: 20, 
-                      paddingVertical: 10,                      
-                      }}>
-                    <Text>{i.name}</Text>
-                  </TouchableOpacity>
-                )
-                  })}
-                <TouchableOpacity 
+                <Text
                   style={{
-                    paddingHorizontal:20,
-                    paddingVertical:5,
+                    fontSize: 18,
+                    fontFamily: Gilroy_Bold,
+                  }}>
+                  Выберите город
+                </Text>
+                {cityLoad ? (
+                  <ActivityIndicator />
+                ) : (
+                  cities &&
+                  cities.data &&
+                  cities.data.map(i => {
+                    return (
+                      <TouchableOpacity
+                        style={{
+                          paddingHorizontal: 20,
+                          paddingVertical: 10,
+                        }}>
+                        <Text>{i.name}</Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                )}
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
                     backgroundColor: '#ececec',
                     borderRadius: 10,
                   }}
@@ -270,7 +276,9 @@ class Main extends React.Component {
   }
 }
 const mapStateToProps = state => ({
+  //user: state.user.dataUser,
   cities: state.cities.cityData,
-  cityLoad: state.cities.loading
-})
-export default connect(mapStateToProps) (Main);
+  cityLoad: state.cities.loading,
+  announcements: state.announcements.dataAnnouncements,
+});
+export default connect(mapStateToProps)(Main);

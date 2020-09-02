@@ -1,53 +1,53 @@
 import {
-  FETCH_BEGIN_CITY,
-  FETCH_SUCCESS_CITY,
-  FETCH_ERROR_CITY,
-  POST_BEGIN_CITY,
-  POST_SUCCESS_CITY,
-  POST_ERROR_CITY,
+  FETCH_BEGIN_CODES,
+  FETCH_SUCCESS_CODES,
+  FETCH_ERROR_CODES,
+  POST_BEGIN_CODES,
+  POST_SUCCESS_CODES,
+  POST_ERROR_CODES,
 } from './actions';
 
 const initianState = {
-  cityData: {},
+  dataCodes: {},
   loading: false,
-  error: null,
   loadingPost: false,
+  error: null,
   errorPost: null,
 };
 
-export default function reducerCity(state = initianState, action) {
+export default function reducerCodes(state = initianState, action) {
   switch (action.type) {
-    case FETCH_BEGIN_CITY:
+    case FETCH_BEGIN_CODES:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case FETCH_SUCCESS_CITY:
+    case FETCH_SUCCESS_CODES:
       return {
         ...state,
         loading: false,
-        cityData: action.payload.data,
+        dataCodes: action.payload.data,
       };
-    case FETCH_ERROR_CITY:
+    case FETCH_ERROR_CODES:
       return {
         ...state,
         loading: false,
-        cityData: {},
+        dataCodes: {},
         error: action.payload.error,
       };
-    case POST_BEGIN_CITY:
+    case POST_BEGIN_CODES:
       return {
         ...state,
         loadingPost: true,
         errorPost: null,
       };
-    case POST_SUCCESS_CITY:
+    case POST_SUCCESS_CODES:
       return {
         ...state,
         loadingPost: false,
       };
-    case POST_ERROR_CITY:
+    case POST_ERROR_CODES:
       return {
         ...state,
         loadingPost: false,

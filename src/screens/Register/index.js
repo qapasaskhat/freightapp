@@ -1,5 +1,12 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar,Image,Dimensions} from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  StatusBar,
+  Image,
+  Dimensions,
+} from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -8,17 +15,19 @@ import {Gilroy_Medium} from '../../const/fonts';
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import Logo from '../../components/Logo';
 import CheckBox from '../../components/CheckBox';
-import { drop } from '../../const/images'
-const {height,width} = Dimensions.get('screen')
-import { connect } from 'react-redux'
-import { fetchCity } from '../../api/city/actions'
+import {drop} from '../../const/images';
+const {height, width} = Dimensions.get('screen');
+import {connect} from 'react-redux';
+import {fetchCity} from '../../api/city/actions';
+import {postRegister} from '../../api/register/actions';
 
 const InputView = ({data}) => {
   return (
     <View style={styles.view}>
-      {data.map(item => {
+      {data.map((item, index) => {
         return (
           <Input
+            key={index.toString()}
             text={item.text}
             placeholder={item.placeholder}
             onchange={item.change}
@@ -28,7 +37,7 @@ const InputView = ({data}) => {
       })}
     </View>
   );
-}
+};
 
 const Login = ({onperss}) => {
   return (
@@ -53,26 +62,26 @@ class Register extends React.Component {
     password: '',
     toggleCheckBox: false,
     cityValue: false,
-    cityName: 'Almaty'
+    cityName: 'Almaty',
   };
   componentDidMount() {
-    this.props.dispatch(fetchCity())
+    this.props.dispatch(fetchCity());
   }
   _changeChek = () => {
     this.setState({
       toggleCheckBox: !this.state.toggleCheckBox,
     });
   };
-  getCity=(id,name)=>{
-    const { cities } = this.props
+  getCity = (id, name) => {
+    const {cities} = this.props;
     this.setState({
       cityName: name,
-      cityValue: false
-    })
-  }
+      cityValue: false,
+    });
+  };
   render() {
-    const {toggleCheckBox,cityValue} = this.state;
-    const { cities } = this.props
+    const {toggleCheckBox, cityValue} = this.state;
+    const {cities} = this.props;
     this.list = [
       {
         text: 'Введите ваше имя',
@@ -114,74 +123,98 @@ class Register extends React.Component {
           <ScrollView>
             <Logo little />
             <Txt text={'Регистрация'} />
-            <View style={{
-              paddingVertical:5,
-              backgroundColor: '#fff',
-            }}>
-              <Text style={{
-                fontSize: 14,
-                fontFamily: Gilroy_Medium,
-                color: '#0B0B2A',
-                paddingLeft: 50
-              }}>Выберите город</Text>
-              <TouchableOpacity style={styles.touch} onPress={()=>{this.setState({cityValue: true})}}>
-                <Text style={{
-                  fontSize: 16,
+            <View
+              style={{
+                paddingVertical: 5,
+                backgroundColor: '#fff',
+              }}>
+              <Text
+                style={{
+                  fontSize: 14,
                   fontFamily: Gilroy_Medium,
-                  lineHeight: 14,
-                  color: '#0B0B2A'
-                }}>{this.state.cityName}</Text>
-                <Image source={drop} style={{
-                  width:16,
-                  height: 16,
-                  resizeMode: 'contain'
-                }} />
-              </TouchableOpacity>
-             { cityValue && 
-             <View style={{
-                marginHorizontal: 38,
-                backgroundColor: '#fff', 
-                position: 'absolute',
-                bottom: -10,
-                width: width-2*38,
-                height: '130%',
-                borderRadius: 12,
-                shadowColor: 'rgba(170, 178, 190, 0.25)',
-                shadowOffset: {
-                  width: 1,
-                  height: 2,
-                },
-                shadowOpacity: 1,
-                shadowRadius: 4,
-                elevation: 5,
+                  color: '#0B0B2A',
+                  paddingLeft: 50,
                 }}>
+                Выберите город
+              </Text>
+              <TouchableOpacity
+                style={styles.touch}
+                onPress={() => {
+                  this.setState({cityValue: true});
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: Gilroy_Medium,
+                    lineHeight: 14,
+                    color: '#0B0B2A',
+                  }}>
+                  {this.state.cityName}
+                </Text>
+                <Image
+                  source={drop}
+                  style={{
+                    width: 16,
+                    height: 16,
+                    resizeMode: 'contain',
+                  }}
+                />
+              </TouchableOpacity>
+              {cityValue && (
+                <View
+                  style={{
+                    marginHorizontal: 38,
+                    backgroundColor: '#fff',
+                    position: 'absolute',
+                    bottom: -10,
+                    width: width - 2 * 38,
+                    height: '130%',
+                    borderRadius: 12,
+                    shadowColor: 'rgba(170, 178, 190, 0.25)',
+                    shadowOffset: {
+                      width: 1,
+                      height: 2,
+                    },
+                    shadowOpacity: 1,
+                    shadowRadius: 4,
+                    elevation: 5,
+                  }}>
                   <ScrollView>
-                <Text style={{
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  fontFamily: Gilroy_Medium
-                  }}>Выберите город</Text>
-                {
-                  cities.data.map(item=>{
-                    return(
-                      <TouchableOpacity onPress={()=>{this.getCity(item.id, item.name)}} style={{
-                        borderWidth: 1,
-                        margin: 3,
-                        borderColor: '#eee',
-                        paddingHorizontal: 12,
-                        flexDirection: 'row'
-                      }}>
-                        <Text>{item.id}. </Text>
-                      <Text style={{
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        fontWeight: 'bold',
                         fontFamily: Gilroy_Medium,
-                        fontSize: 14,
-                      }}>{item.name}</Text>
-                      </TouchableOpacity>
-                    )
-                  })
-                }
-                </ScrollView>
-              </View>}
+                      }}>
+                      Выберите город
+                    </Text>
+                    {cities.data.map(item => {
+                      return (
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.getCity(item.id, item.name);
+                          }}
+                          style={{
+                            borderWidth: 1,
+                            margin: 3,
+                            borderColor: '#eee',
+                            paddingHorizontal: 12,
+                            flexDirection: 'row',
+                          }}>
+                          <Text>{item.id}. </Text>
+                          <Text
+                            style={{
+                              fontFamily: Gilroy_Medium,
+                              fontSize: 14,
+                            }}>
+                            {item.name}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                </View>
+              )}
             </View>
             <InputView data={this.list} />
             <View style={styles.viewCheckBox}>
@@ -189,17 +222,21 @@ class Register extends React.Component {
                 toggleCheckBox={toggleCheckBox}
                 onChange={() => this._changeChek()}
               />
-              <TouchableOpacity onPress={()=>this._changeChek()}>
-              <Text style={[styles.text]}>
-                Я согласен с условиями {'\n'}пользовательского соглашения
-              </Text>
+              <TouchableOpacity onPress={() => this._changeChek()}>
+                <Text style={[styles.text]}>
+                  Я согласен с условиями {'\n'}пользовательского соглашения
+                </Text>
               </TouchableOpacity>
             </View>
             <Button
               active={toggleCheckBox}
               text="Далее"
-              onpress={() => toggleCheckBox? this.props.navigation.navigate('CodeInput'):{}}
-            /> 
+              onpress={() =>
+                toggleCheckBox
+                  ? this.props.navigation.navigate('CodeInput')
+                  : {}
+              }
+            />
             <Login onperss={() => this.props.navigation.navigate('Login')} />
           </ScrollView>
         </SafeAreaView>
@@ -209,6 +246,6 @@ class Register extends React.Component {
 }
 const mapStateToProps = state => ({
   cities: state.cities.cityData,
-  cityLoad: state.cities.loading
-})
+  cityLoad: state.cities.loading,
+});
 export default connect(mapStateToProps)(Register);

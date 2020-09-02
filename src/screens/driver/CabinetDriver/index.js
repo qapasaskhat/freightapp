@@ -7,25 +7,25 @@ import {
   ImageBackground,
   Image,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import styles from './styles';
 import List from '../../../components/List';
-import { FlatList } from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import Item from '../../../components/Item';
-import { img_bg } from '../../../const/images';
-import { drop } from '../../../const/images';
+import {img_bg} from '../../../const/images';
+import {drop} from '../../../const/images';
 import Button from '../../../components/Button';
-import Push from '../../../components/Push'
-import Modal from 'react-native-modal'
-import axios from 'axios'
-import moment from 'moment'
+import Push from '../../../components/Push';
+import Modal from 'react-native-modal';
+import axios from 'axios';
+import moment from 'moment';
 
-import { connect } from 'react-redux'
-import { fetchAnnouncements } from '../../../api/Announcements/actions'
-import { fetchCity } from '../../../api/city/actions'
-import { Gilroy_Bold } from '../../../const/fonts';
-import isEmpty from '../../../components/Empty'
+import {connect} from 'react-redux';
+import {fetchAnnouncements} from '../../../api/Announcements/actions';
+import {fetchCity} from '../../../api/city/actions';
+import {Gilroy_Bold} from '../../../const/fonts';
+import isEmpty from '../../../components/Empty';
 
 class Main extends React.Component {
   state = {
@@ -33,12 +33,12 @@ class Main extends React.Component {
     visibleModal: false,
     cityName: 'Алматы',
     userName: '',
-    refreshing: false
+    refreshing: false,
   };
-  componentDidMount=()=>{
-    this.props.dispatch(fetchAnnouncements())
-    this.props.dispatch(fetchCity())
-  }
+  componentDidMount = () => {
+    this.props.dispatch(fetchAnnouncements());
+    this.props.dispatch(fetchCity());
+  };
   onChange = () => {
     this.setState({
       isEnabled: !this.state.isEnabled,
@@ -46,38 +46,43 @@ class Main extends React.Component {
   };
   renderItem = ({item}) => {
     return (
-      <List 
+      <List
         body={item.body}
-        date={moment(item.created_at).format('L').replace('/','.').replace('/','.')} 
+        date={moment(item.created_at)
+          .format('L')
+          .replace('/', '.')
+          .replace('/', '.')}
         phone_number={item.phone}
         from={item.from}
         to={item.to}
-        del 
+        del
         line
-        name={this.getUser(item.id)} 
-        onpressOrder={()=>this.onPressList(item)}/>)
+        name={this.getUser(item.id)}
+        onpressOrder={() => this.onPressList(item)}
+      />
+    );
   };
-  onPressList=(item)=>{
-   // alert(id)
-    this.props.navigation.navigate('OrderDriver',{param: item})
-  }
-  city = () =>{
-    this.props.dispatch(fetchCity())
+  onPressList = item => {
+    // alert(id)
+    this.props.navigation.navigate('OrderDriver', {param: item});
+  };
+  city = () => {
+    this.props.dispatch(fetchCity());
     this.setState({
-      visibleModal: true
-    })
-  }
-  getUser = (id) => {
-    const api = `http://gruz.sport-market.kz/api/announcements/${id}/`
-    var name = ''
-    axios.get(api).then((response)=>{
-          console.log('action fetchAnnouncements')
-          //console.log(response.data)
-          //name = response.data.data.user.name
-          //console.log(name);
-      })
-    return name
-  }
+      visibleModal: true,
+    });
+  };
+  getUser = id => {
+    const api = `http://gruz.sport-market.kz/api/announcements/${id}/`;
+    var name = '';
+    axios.get(api).then(response => {
+      console.log('action fetchAnnouncements');
+      //console.log(response.data)
+      //name = response.data.data.user.name
+      //console.log(name);
+    });
+    return name;
+  };
 
   headerComp = () => {
     return (
@@ -110,7 +115,8 @@ class Main extends React.Component {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-            }} onPress={()=>this.city()}>
+            }}
+            onPress={() => this.city()}>
             <Text
               style={{
                 color: '#007BED',
@@ -127,23 +133,30 @@ class Main extends React.Component {
             />
           </TouchableOpacity>
         </View>
-        <Item onpress={()=>this.props.navigation.navigate('EditProfileDriver')} name={'Андрей Зотов'} phone_number={'+7 (906) 521-26-10'} />
-        <Push isEnabled={this.state.isEnabled} onChange={()=>this.onChange()}/>
+        <Item
+          onpress={() => this.props.navigation.navigate('EditProfileDriver')}
+          name={'Андрей Зотов'}
+          phone_number={'+7 (906) 521-26-10'}
+        />
+        <Push
+          isEnabled={this.state.isEnabled}
+          onChange={() => this.onChange()}
+        />
       </View>
     );
   };
-  
-  onRefresh=()=>{
+
+  onRefresh = () => {
     this.setState({
       refreshing: true,
-    })
-    this.props.dispatch(fetchAnnouncements())
+    });
+    this.props.dispatch(fetchAnnouncements());
     this.setState({
       refreshing: false,
-    })
-  }
+    });
+  };
   render() {
-    const { loading, data, cities, cityLoad, } = this.props
+    const {loading, data, cities, cityLoad} = this.props;
     return (
       <>
         <StatusBar />
@@ -155,22 +168,25 @@ class Main extends React.Component {
               height: '100%',
               resizeMode: 'center',
             }}>
-            {
-              loading?
+            {loading ? (
               <ActivityIndicator />
-              :<FlatList
+            ) : (
+              <FlatList
                 data={data.data}
                 refreshing={this.state.refreshing}
-                onRefresh={()=>this.onRefresh()}
+                onRefresh={() => this.onRefresh()}
                 ListEmptyComponent={isEmpty('Нет обьялении')}
-                renderItem={(item) => this.renderItem(item)}
+                renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
-                keyExtractor={item => item.id}
-                style={{
-                // marginBottom: 64,
-                }}
-              />}
-            <Modal 
+                keyExtractor={item => item.id.toString()}
+                style={
+                  {
+                    // marginBottom: 64,
+                  }
+                }
+              />
+            )}
+            <Modal
               style={styles.modal}
               isVisible={this.state.visibleModal}
               backdropColor="#B4B3DB"
@@ -180,40 +196,48 @@ class Main extends React.Component {
               animationInTiming={600}
               animationOutTiming={600}
               backdropTransitionInTiming={600}
-              backdropTransitionOutTiming={600}
-              >
+              backdropTransitionOutTiming={600}>
               <View
                 style={{
                   backgroundColor: '#fff',
                   height: '100%',
                   alignItems: 'center',
-                  paddingTop: 60
+                  paddingTop: 60,
                 }}>
-                  <Text style={{
-                    fontSize: 18,
-                    fontFamily: Gilroy_Bold
-                  }} >Выберите город</Text>
-                  { cityLoad?
-                  <ActivityIndicator />
-                   :cities && cities.data && cities.data.map(i=>{
-                return (
-                  <TouchableOpacity 
-                  
-                    style={{
-                      paddingHorizontal: 20, 
-                      paddingVertical: 12,                      
-                      }}
-                      onPress={()=>this.setState({
-                        cityName: i.name, visibleModal: false})}
-                      >
-                    <Text>{i.name}</Text>
-                  </TouchableOpacity>
-                )
-                  })}
-                <TouchableOpacity 
+                <Text
                   style={{
-                    paddingHorizontal:36,
-                    paddingVertical:10,
+                    fontSize: 18,
+                    fontFamily: Gilroy_Bold,
+                  }}>
+                  Выберите город
+                </Text>
+                {cityLoad ? (
+                  <ActivityIndicator />
+                ) : (
+                  cities &&
+                  cities.data &&
+                  cities.data.map(i => {
+                    return (
+                      <TouchableOpacity
+                        style={{
+                          paddingHorizontal: 20,
+                          paddingVertical: 12,
+                        }}
+                        onPress={() =>
+                          this.setState({
+                            cityName: i.name,
+                            visibleModal: false,
+                          })
+                        }>
+                        <Text>{i.name}</Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                )}
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 36,
+                    paddingVertical: 10,
                     backgroundColor: '#ececec',
                     borderRadius: 10,
                   }}
@@ -238,6 +262,6 @@ const mapStateToProps = state => ({
   loading: state.announcements.loading,
   error: state.announcements.error,
   cities: state.cities.cityData,
-  cityLoad: state.cities.loading
-})
+  cityLoad: state.cities.loading,
+});
 export default connect(mapStateToProps)(Main);

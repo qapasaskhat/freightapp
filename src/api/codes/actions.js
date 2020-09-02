@@ -1,41 +1,41 @@
-const api = 'http://gruz.sport-market.kz/api/cities';
+const api = 'http://gruz.sport-market.kz/api/codes';
 
 import axios from 'axios';
 
-export const FETCH_BEGIN_CITY = 'FETCH_BEGIN_CITY';
-export const FETCH_SUCCESS_CITY = 'FETCH_SUCCESS_CITY';
-export const FETCH_ERROR_CITY = 'FETCH_ERROR_CITY';
-export const POST_BEGIN_CITY = 'FETCH_BEGIN_CITY';
-export const POST_SUCCESS_CITY = 'FETCH_SUCCESS_CITY';
-export const POST_ERROR_CITY = 'FETCH_ERROR_CITY';
+export const FETCH_BEGIN_CODES = 'FETCH_BEGIN_CODES';
+export const FETCH_SUCCESS_CODES = 'FETCH_SUCCESS_CODES';
+export const FETCH_ERROR_CODES = 'FETCH_ERROR_CODES';
+export const POST_BEGIN_CODES = 'POST_BEGIN_CODES';
+export const POST_SUCCESS_CODES = 'POST_SUCCESS_CODES';
+export const POST_ERROR_CODES = 'POST_ERROR_CODES';
 
-export const fetch_begin_city = () => ({
-  type: FETCH_BEGIN_CITY,
+export const fetch_begin_codes = () => ({
+  type: FETCH_BEGIN_CODES,
 });
-export const fetch_success_city = data => ({
-  type: FETCH_SUCCESS_CITY,
+export const fetch_success_codes = data => ({
+  type: FETCH_SUCCESS_CODES,
   payload: {data},
 });
-export const fetch_error_city = error => ({
-  type: FETCH_ERROR_CITY,
+export const fetch_error_codes = error => ({
+  type: FETCH_ERROR_CODES,
   payload: {error},
 });
 
-export const post_begin_city = () => ({
-  type: POST_BEGIN_CITY,
+export const post_begin_codes = () => ({
+  type: POST_BEGIN_CODES,
 });
-export const post_success_city = data => ({
-  type: POST_SUCCESS_CITY,
+export const post_success_codes = data => ({
+  type: POST_SUCCESS_CODES,
   //payload: {data}
 });
-export const post_error_city = error => ({
-  type: POST_ERROR_CITY,
+export const post_error_codes = error => ({
+  type: POST_ERROR_CODES,
   payload: {error},
 });
 
-export function fetchCity() {
+export function fetchCodes() {
   return dispatch => {
-    dispatch(fetch_begin_city());
+    dispatch(fetch_begin_codes());
     const request = axios({
       method: 'GET',
       url: api,
@@ -45,18 +45,18 @@ export function fetchCity() {
       .then(function(response) {
         console.log('action fetchAnnouncements');
         console.log(response.data);
-        dispatch(fetch_success_city(response.data));
+        dispatch(fetch_success_codes(response.data));
       })
       .catch(function(error) {
-        console.log('fetchCity ', error.message);
-        dispatch(fetch_error_city(error));
+        console.log(error);
+        dispatch(fetch_error_codes(error));
       });
   };
 }
 
-export function postCity(data) {
+export function postCodes(data) {
   return dispatch => {
-    dispatch(post_begin_city());
+    dispatch(post_begin_codes());
     const request = axios({
       method: 'POST',
       url: api,
@@ -67,7 +67,7 @@ export function postCity(data) {
       .then(function(response) {
         console.log('action postAnnouncements');
         console.log(response.data);
-        dispatch(post_success_city(response.data));
+        dispatch(post_success_codes(response.data));
       })
       .catch(function(error) {
         if (error.response) {
@@ -86,7 +86,7 @@ export function postCity(data) {
           console.log('Error', error.message);
         }
         console.log(error.config);
-        dispatch(post_error_city(error));
+        dispatch(post_error_codes(error));
       });
   };
 }

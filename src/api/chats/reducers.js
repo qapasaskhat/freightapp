@@ -1,53 +1,53 @@
 import {
-  FETCH_BEGIN_CITY,
-  FETCH_SUCCESS_CITY,
-  FETCH_ERROR_CITY,
-  POST_BEGIN_CITY,
-  POST_SUCCESS_CITY,
-  POST_ERROR_CITY,
+  FETCH_BEGIN_CHATS,
+  FETCH_SUCCESS_CHATS,
+  FETCH_ERROR_CHATS,
+  POST_BEGIN_CHATS,
+  POST_SUCCESS_CHATS,
+  POST_ERROR_CHATS,
 } from './actions';
 
 const initianState = {
-  cityData: {},
+  dataChats: {},
   loading: false,
-  error: null,
   loadingPost: false,
+  error: null,
   errorPost: null,
 };
 
-export default function reducerCity(state = initianState, action) {
+export default function reducerChats(state = initianState, action) {
   switch (action.type) {
-    case FETCH_BEGIN_CITY:
+    case FETCH_BEGIN_CHATS:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case FETCH_SUCCESS_CITY:
+    case FETCH_SUCCESS_CHATS:
       return {
         ...state,
         loading: false,
-        cityData: action.payload.data,
+        dataChats: action.payload.data,
       };
-    case FETCH_ERROR_CITY:
+    case FETCH_ERROR_CHATS:
       return {
         ...state,
         loading: false,
-        cityData: {},
+        dataChats: {},
         error: action.payload.error,
       };
-    case POST_BEGIN_CITY:
+    case POST_BEGIN_CHATS:
       return {
         ...state,
         loadingPost: true,
         errorPost: null,
       };
-    case POST_SUCCESS_CITY:
+    case POST_SUCCESS_CHATS:
       return {
         ...state,
         loadingPost: false,
       };
-    case POST_ERROR_CITY:
+    case POST_ERROR_CHATS:
       return {
         ...state,
         loadingPost: false,

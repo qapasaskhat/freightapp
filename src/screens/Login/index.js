@@ -6,9 +6,9 @@ import Button from '../../components/Button';
 import Logo from '../../components/Logo';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Gilroy_Medium} from '../../const/fonts';
-import Txt from '../../components/Text'
+import Txt from '../../components/Text';
 
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage';
 
 const InputView = ({data}) => {
   return (
@@ -19,7 +19,7 @@ const InputView = ({data}) => {
             key={item.text}
             text={item.text}
             placeholder={item.placeholder}
-            onchange={item.change}
+            //onchange={item.change}
             password={item.password}
             value={item.value}
           />
@@ -31,47 +31,47 @@ const InputView = ({data}) => {
 
 class Login extends React.Component {
   state = {
-    phone_number: '+7',
-    password: '',
+    phone_number: '+77007007070', //'+7',
+    password: 'admin',
   };
-  validatePhone=number=>{
+  validatePhone = number => {
     let val = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-    return val.test(String(number))
-  }
-  _signIn=async(phone_number,password)=>{
-    if(this.validatePhone(phone_number)){
+    return val.test(String(number));
+  };
+  _signIn = async (phone_number, password) => {
+    if (this.validatePhone(phone_number)) {
       this.setState({
-        error_message: ''
-      })
-      if (phone_number === '+77007007070'){
-        if (password===''){
+        error_message: '',
+      });
+      if (phone_number === '+77007007070') {
+        if (password === '') {
           this.setState({
-            error_message: 'Введите пароль'
-          })
-        }else{
-          if(password === 'admin'){
+            error_message: 'Введите пароль',
+          });
+        } else {
+          if (password === 'admin') {
             let user = {
               number: phone_number,
               password: password,
-              status : 'client'
-            }
-            await AsyncStorage.setItem('user',JSON.stringify(user))
-            this.props.navigation.replace('MainClient')
-          }else{
+              status: 'client',
+            };
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+            this.props.navigation.replace('MainClient');
+          } else {
             this.setState({
-              error_message: 'Неверный номер телефона или пароль'
-            })
+              error_message: 'Неверный номер телефона или пароль',
+            });
           }
         }
       }
-    }else{
+    } else {
       this.setState({
-        error_message: 'Введите корректный номер телефона'
-      })
+        error_message: 'Введите корректный номер телефона',
+      });
     }
-  }
+  };
   render() {
-    const { phone_number,password,error_message } = this.state
+    const {phone_number, password, error_message} = this.state;
     this.list = [
       {
         text: 'Введите номер телефона',
@@ -80,7 +80,7 @@ class Login extends React.Component {
           this.setState({phone_number: text});
         },
         password: false,
-        value: phone_number
+        value: phone_number,
       },
       {
         text: 'Ваш пароль',
@@ -89,7 +89,7 @@ class Login extends React.Component {
           this.setState({password: text});
         },
         password: true,
-        value: password
+        value: password,
       },
     ];
     return (
@@ -97,14 +97,18 @@ class Login extends React.Component {
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <Logo />
-          <Txt text='Войти как клиент'/>
+          <Txt text="Войти как клиент" />
           <InputView data={this.list} />
-          <Text style={{
-            color: 'red',
-            fontFamily: Gilroy_Medium,
-            textAlign: 'center'
-          }}>{error_message}</Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('ResetPassword')}>
+          <Text
+            style={{
+              color: 'red',
+              fontFamily: Gilroy_Medium,
+              textAlign: 'center',
+            }}>
+            {error_message}
+          </Text>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('ResetPassword')}>
             <Text
               style={{
                 color: '#007BED',
@@ -116,13 +120,18 @@ class Login extends React.Component {
               Забыли пароль?
             </Text>
           </TouchableOpacity>
-          <Button active text="Войти" onpress={() => this._signIn(phone_number,password)} />
-          <View style={{
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent:'center',
-            marginTop: '7%'
-          }}>
+          <Button
+            active
+            text="Войти"
+            onpress={() => this._signIn(phone_number, password)}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'center',
+              marginTop: '7%',
+            }}>
             <Text
               style={{
                 textAlign: 'center',
@@ -130,8 +139,9 @@ class Login extends React.Component {
               }}>
               Еще нет аккаунта?
             </Text>
-            <TouchableOpacity onPress={()=>this.props.navigation.navigate('Register')}>
-            <Text
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('Register')}>
+              <Text
                 style={{
                   color: '#007BED',
                   fontFamily: Gilroy_Medium,
@@ -139,7 +149,7 @@ class Login extends React.Component {
                 {' '}
                 Регистрация
               </Text>
-              </TouchableOpacity>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </>
