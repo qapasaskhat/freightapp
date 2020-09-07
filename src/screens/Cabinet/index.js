@@ -22,7 +22,11 @@ import axios from 'axios';
 import moment from 'moment';
 import {connect} from 'react-redux';
 import {fetchCity} from '../../api/city/actions';
-import {fetchAnnouncements} from '../../api/Announcements/actions';
+import {fetchUser} from '../../api/users/actions';
+import {
+  fetchAnnouncementsId,
+  deleteAnnouncementId,
+} from '../../api/Announcements/actions';
 
 import {Gilroy_Bold} from '../../const/fonts';
 import Toast from 'react-native-simple-toast';
@@ -37,19 +41,26 @@ class Main extends React.Component {
     loading: false,
     error: null,
   };
-  componentDidMount = () => {
-    //this.getAnnouncements()
-    this.props.dispatch(fetchCity());
-  };
+  componentDidMount = () => {};
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.user !== this.props.user) {
+      console.log('componentDidUpdate Cabinet');
+      this.props.dispatch(fetchCity());
+      this.props.dispatch(fetchAnnouncementsId(this.props.user.id));
+    }
+  }
+
   onChange = () => {
     this.setState({
       isEnabled: !this.state.isEnabled,
     });
   };
+
   renderItem = ({item}) => {
     return (
       <List
-        onpressDelete={() => this.arhived(item)}
+        onpressDelete={() => this.arhived(item.id)}
         name={'Вы'}
         trash={false}
         onpressOrder={() =>
@@ -58,12 +69,32 @@ class Main extends React.Component {
         body={item.body}
         phone_number={item.phone}
         from={item.from}
-        date={moment(item.created_at).format('L')}
+        date={moment(item.created_at).format('DD MM YYYY')}
         to={item.to}
         line
       />
     );
   };
+
+  formatPhoneNumber(phoneNumberString) {
+    let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+    let match = cleaned.match(/^(\d{1}|)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
+    if (match) {
+      let intlCode = match[1] ? `+${match[1]} ` : '+7 ';
+      return [
+        intlCode,
+        '(',
+        match[2],
+        ') ',
+        match[3],
+        '-',
+        match[4],
+        '-',
+        match[5],
+      ].join('');
+    }
+  }
+
   arhived = idAnnouncements => {
     Alert.alert(
       'Удалить',
@@ -81,8 +112,12 @@ class Main extends React.Component {
             //   )
             //   return {items}
             // })
-
-            Toast.show('arhived');
+            try {
+              this.props.dispatch(deleteAnnouncementId(idAnnouncements));
+              Toast.show('Удалено');
+            } catch (error) {
+              console.log(error);
+            }
           },
         },
         {
@@ -123,8 +158,10 @@ class Main extends React.Component {
         </View>
         <Item
           onpress={() => this.props.navigation.navigate('EditProfileClient')}
-          name="Иван Андреев"
-          phone_number="+7 (900) 231-10-00"
+          name={this.props.user ? this.props.user.name : ''}
+          phone_number={
+            this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''
+          }
         />
         <View style={styles.orders}>
           <Text
@@ -168,7 +205,7 @@ class Main extends React.Component {
       refreshing: true,
     });
     //this.getAnnouncements()
-    this.props.dispatch(fetchAnnouncements());
+    this.props.dispatch(fetchAnnouncementsId(this.props.user.id));
     this.setState({
       refreshing: false,
     });
@@ -228,9 +265,10 @@ class Main extends React.Component {
                 ) : (
                   cities &&
                   cities.data &&
-                  cities.data.map(i => {
+                  cities.data.map((i, index) => {
                     return (
                       <TouchableOpacity
+                        key={index.toString()}
                         style={{
                           paddingHorizontal: 20,
                           paddingVertical: 10,
@@ -276,9 +314,9 @@ class Main extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  //user: state.user.dataUser,
+  user: state.users.userData,
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
-  announcements: state.announcements.dataAnnouncements,
+  announcements: state.announcements.dataAnnouncementsUser,
 });
 export default connect(mapStateToProps)(Main);

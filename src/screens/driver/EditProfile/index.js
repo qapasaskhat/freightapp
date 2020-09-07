@@ -5,16 +5,18 @@ import {
   TouchableOpacity,
   StatusBar,
   SafeAreaView,
-  ImageBackground
+  ImageBackground,
 } from 'react-native';
-import styles from './styles'
-import Header from '../../../components/Header'
-import Input from '../../../components/Input'
-import { img_bg } from '../../../const/images'
-import Button from '../../../components/Button'
-import AsyncStorage from '@react-native-community/async-storage'
-import { NavigationActions, StackActions } from 'react-navigation'
-
+import styles from './styles';
+import Header from '../../../components/Header';
+import Input from '../../../components/Input';
+import {img_bg} from '../../../const/images';
+import Button from '../../../components/Button';
+import AsyncStorage from '@react-native-community/async-storage';
+import {NavigationActions, StackActions} from 'react-navigation';
+import {connect} from 'react-redux';
+import {putUser} from '../../../api/users/actions';
+import Toast from 'react-native-simple-toast';
 
 const InputView = ({data}) => {
   return (
@@ -36,39 +38,54 @@ const InputView = ({data}) => {
 };
 
 class EditDriver extends React.Component {
-  state={
-    login: 'Андрей Зотов',
-    number: '+7 (906) 521 26 10',
+  state = {
+    login: '',
+    number: '',
     password: '',
-    newPassword: ''
-  }
+    newPassword: '',
+  };
 
-  signOut=async()=>{
-    await AsyncStorage.removeItem('user')
+  saveChange = () => {
+    const {login, phone} = this.state;
+    let formData = new FormData();
+    formData.append('name', login ? login : this.props.user.name);
+    formData.append('phone', phone ? phone : this.props.user.phone);
+
+    try {
+      this.props.putUser(this.props.user.id, formData);
+      this.props.navigation.goBack();
+      Toast.show('Сохранено');
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
+  signOut = async () => {
+    await AsyncStorage.removeItem('user');
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({routeName: 'Screen'})]
-    })
-    this.props.navigation.dispatch(resetAction)
-  }
+      actions: [NavigationActions.navigate({routeName: 'Screen'})],
+    });
+    this.props.navigation.dispatch(resetAction);
+  };
 
   render() {
     this.list = [
       {
         text: 'Введите ваше имя',
-        placeholder: 'Александр',
+        placeholder: this.props.user ? this.props.user.name : 'Имя',
         change: text => {
           this.setState({login: text});
         },
-        value: this.state.login
+        value: this.state.login,
       },
       {
         text: 'Номер телефона',
-        placeholder: '+7',
+        placeholder: this.props.user ? this.props.user.phone : '+7',
         change: text => {
           this.setState({number: text});
         },
-        value: this.state.number
+        value: this.state.number,
       },
       // {
       //   text: 'Введите старый пароль',
@@ -86,22 +103,34 @@ class EditDriver extends React.Component {
       //   },
       //   value: this.state.password
       // },
-    ]
+    ];
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView style={styles.container}>
-          <Header text='Редактировать профиль' onpress={()=>this.props.navigation.goBack()}/>
-          <ImageBackground source={img_bg} style={{width: '100%', height: '100%', }}>
-            <View style={{
-              margin: 20,
-              backgroundColor: '#fff',
-              borderRadius: 10
-            }}>
-              <InputView data={this.list}/>
+          <Header
+            text="Редактировать профиль"
+            onpress={() => this.props.navigation.goBack()}
+          />
+          <ImageBackground
+            source={img_bg}
+            style={{width: '100%', height: '100%'}}>
+            <View
+              style={{
+                margin: 20,
+                backgroundColor: '#fff',
+                borderRadius: 10,
+              }}>
+              <InputView data={this.list} />
             </View>
             {/* <Button text={'Изменить пароль'} active onpress={()=>{}}/> */}
-            <Button text={'Выйти'} active onpress={()=>{this.signOut()}}/>
+            <Button
+              text={'Выйти'}
+              active
+              onpress={() => {
+                this.signOut();
+              }}
+            />
           </ImageBackground>
           <View
             style={{
@@ -110,15 +139,18 @@ class EditDriver extends React.Component {
               backgroundColor: '#fff',
               bottom: 0,
             }}>
-            <Button
-              text={'Сохранить'}
-              active
-              onpress={() =>{this.props.navigation.goBack()}}
-            />
+            <Button text={'Сохранить'} active onpress={this.saveChange} />
           </View>
         </SafeAreaView>
       </>
     );
   }
 }
-export default EditDriver
+const mapStateToProps = state => ({
+  user: state.users.userData,
+});
+
+export default connect(
+  mapStateToProps,
+  {putUser},
+)(EditDriver);

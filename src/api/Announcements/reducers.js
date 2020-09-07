@@ -2,6 +2,9 @@ import {
   FETCH_BEGIN,
   FETCH_SUCCESS,
   FETCH_ERROR,
+  FETCH_BEGIN_ORDERS_ID,
+  FETCH_SUCCESS_ORDERS_ID,
+  FETCH_ERROR_ORDERS_ID,
   POST_BEGIN,
   POST_SUCCESS,
   POST_ERROR,
@@ -15,14 +18,17 @@ import {
 
 const initianState = {
   dataAnnouncements: [],
+  dataAnnouncementsUser: [],
   loading: false,
   loadingPost: false,
   loadingPut: false,
   loadingDelete: false,
+  loadingUserOrders: false,
   error: null,
   errorPost: null,
   errorDelete: null,
   errorPut: null,
+  errorUserOrders: null,
 };
 
 export default function reducerAnnouncements(state = initianState, action) {
@@ -46,6 +52,25 @@ export default function reducerAnnouncements(state = initianState, action) {
         dataAnnouncements: [],
         error: action.payload.error,
       };
+    case FETCH_BEGIN_ORDERS_ID:
+      return {
+        ...state,
+        loadingUserOrders: true,
+        errorUserOrders: null,
+      };
+    case FETCH_SUCCESS_ORDERS_ID:
+      return {
+        ...state,
+        loadingUserOrders: false,
+        dataAnnouncementsUser: action.payload.data,
+      };
+    case FETCH_ERROR_ORDERS_ID:
+      return {
+        ...state,
+        loadingUserOrders: false,
+        dataAnnouncementsUser: [],
+        errorUserOrders: action.payload.error,
+      };
     case POST_BEGIN:
       return {
         ...state,
@@ -56,6 +81,10 @@ export default function reducerAnnouncements(state = initianState, action) {
       return {
         ...state,
         loadingPost: false,
+        // dataAnnouncementsUser: [
+        //   state.dataAnnouncementsUser,
+        //   action.payload.data,
+        // ],
       };
     case POST_ERROR:
       return {

@@ -388,6 +388,8 @@ PODS:
     - React
   - RNCMaskedView (0.1.10):
     - React
+  - RNDeviceInfo (6.0.1):
+    - React
   - RNFirebase (5.6.0):
     - Firebase/Core
     - React
@@ -463,6 +465,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCCheckbox (from `../node_modules/@react-native-community/checkbox`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -560,6 +563,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/checkbox"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFirebase:
     :path: "../node_modules/react-native-firebase/ios"
   RNGestureHandler:
@@ -628,6 +633,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: db711e29e5e0500d9bd21aa0c2e397efa45302b1
   RNCCheckbox: 2e90172b1ba7a5c7d88f50f6243fe16566bf03aa
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
+  RNDeviceInfo: a0a4edaebb926d04db08640d64281b6615f5505d
   RNFirebase: 37daa9a346d070f9f6ee1f3b4aaf4c8e3b1d5d1c
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNReanimated: b5ccb50650ba06f6e749c7c329a1bc3ae0c88b43
@@ -636,6 +642,6 @@ SPEC CHECKSUMS:
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 67b8d0c2b81f177aad7364b7587a3c6b4a6f69c2
+PODFILE CHECKSUM: c36faa4a70150e9d6a5aeb85297fa27aa169cda9
 
 COCOAPODS: 1.9.3

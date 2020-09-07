@@ -21,6 +21,7 @@ const width = Dimensions.get('window').width;
 
 class CodeInputClass extends React.Component {
   state = {
+    id: this.props.navigation.getParam('param').id,
     phone_number: this.props.navigation.getParam('param').phone,
     address_to: this.props.navigation.getParam('param').to,
     address_from: this.props.navigation.getParam('param').from,
@@ -28,20 +29,30 @@ class CodeInputClass extends React.Component {
     items: this.props.navigation.getParam('param'),
   };
   componentDidMount = () => {
-    console.log(this.props.navigation.getParam('param'));
+    console.log('param', this.props.navigation.getParam('param'));
   };
 
   saveUpdatedOrder = () => {
-    const {items, phone_number, address_from, address_to, desc} = this.state;
+    const {
+      items,
+      phone_number,
+      address_from,
+      address_to,
+      desc,
+      id,
+    } = this.state;
     const {user} = this.props;
     let formData = new FormData();
-    formData.append('data', desc);
+
+    formData.append('body', desc);
     formData.append('phone', phone_number);
     formData.append('from', address_from);
     formData.append('to', address_to);
 
-    //putAnnouncementId(user.id, formData)
-    this.props.navigation.navigate('Cabinet');
+    try {
+      this.props.putAnnouncementId(id, formData);
+      this.props.navigation.navigate('Cabinet');
+    } catch (error) {}
   };
 
   render() {
@@ -115,13 +126,10 @@ class CodeInputClass extends React.Component {
     );
   }
 }
-// const mapStateToProps = state => ({
-//   //user: state.user.dataUser,
-//   cities: state.cities.cityData,
-//   cityLoad: state.cities.loading,
-//   announcements: state.announcements.dataAnnouncements,
-// });
+const mapStateToProps = state => ({
+  user: state.users.userData,
+});
 export default connect(
-  null,
+  mapStateToProps,
   {putAnnouncementId},
 )(CodeInputClass);

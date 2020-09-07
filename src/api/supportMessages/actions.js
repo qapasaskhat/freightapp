@@ -1,7 +1,8 @@
 const api = 'http://gruz.sport-market.kz/api/supportMessages';
 
 import axios from 'axios';
-
+import React from 'react';
+import {Alert} from 'react-native';
 export const FETCH_BEGIN_SUPPORT_MESSAGES = 'FETCH_BEGIN_SUPPORT_MESSAGES';
 export const FETCH_SUCCESS_SUPPORT_MESSAGES = 'FETCH_SUCCESS_SUPPORT_MESSAGES';
 export const FETCH_ERROR_SUPPORT_MESSAGES = 'FETCH_ERROR_SUPPORT_MESSAGES';
@@ -86,6 +87,7 @@ export function postSupportMesssages(data) {
           console.log('Error', error.message);
         }
         console.log(error.config);
+        Alert.alert('Ошибка', error.toString());
         dispatch(post_error_support_messages(error));
       });
   };

@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, Alert} from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -7,8 +7,10 @@ import Logo from '../../components/Logo';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Gilroy_Medium} from '../../const/fonts';
 import Txt from '../../components/Text';
-
+import {fetchLogin} from '../../api/login/actions';
 import AsyncStorage from '@react-native-community/async-storage';
+import {connect} from 'react-redux';
+import {getBrand, getDeviceId} from 'react-native-device-info';
 
 const InputView = ({data}) => {
   return (
@@ -19,7 +21,7 @@ const InputView = ({data}) => {
             key={item.text}
             text={item.text}
             placeholder={item.placeholder}
-            //onchange={item.change}
+            onchange={item.change}
             password={item.password}
             value={item.value}
           />
@@ -31,44 +33,78 @@ const InputView = ({data}) => {
 
 class Login extends React.Component {
   state = {
-    phone_number: '+77007007070', //'+7',
-    password: 'admin',
+    phone_number: '', //'+7',
+    password: '',
   };
-  validatePhone = number => {
-    let val = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-    return val.test(String(number));
-  };
-  _signIn = async (phone_number, password) => {
-    if (this.validatePhone(phone_number)) {
-      this.setState({
-        error_message: '',
-      });
-      if (phone_number === '+77007007070') {
-        if (password === '') {
-          this.setState({
-            error_message: 'Введите пароль',
-          });
-        } else {
-          if (password === 'admin') {
-            let user = {
-              number: phone_number,
-              password: password,
-              status: 'client',
-            };
-            await AsyncStorage.setItem('user', JSON.stringify(user));
-            this.props.navigation.replace('MainClient');
-          } else {
-            this.setState({
-              error_message: 'Неверный номер телефона или пароль',
-            });
-          }
-        }
-      }
+
+  navigateApp = role => {
+    if (role === 0) {
+      this.props.navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'Cabinet'}],
+        }),
+      );
     } else {
-      this.setState({
-        error_message: 'Введите корректный номер телефона',
-      });
+      this.props.navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'CabinetStack'}],
+        }),
+      );
     }
+  };
+
+  _signIn = async (phone_number, password) => {
+    if (phone_number.length < 11 || phone_number.length > 12) {
+      Alert.alert('Пожалуйста, введите корректный номер');
+      return;
+    }
+    if (password.length < 8) {
+      Alert.alert('Пароль должен состоять как минимум из 8 символов');
+      return;
+    }
+
+    let phone = phone_number.replace(/^\D+/g, '');
+    let formData = new FormData();
+    formData.append('phone', phone);
+    formData.append('password', password);
+    formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
+    try {
+      this.props.fetchLogin(formData);
+      //this.props.navigation.navigate('Cabinet');
+    } catch (error) {}
+
+    // if (this.validatePhone(phone_number)) {
+    //   this.setState({
+    //     error_message: '',
+    //   });
+    //   if (phone_number === '+77007007070') {
+    //     if (password === '') {
+    //       this.setState({
+    //         error_message: 'Введите пароль',
+    //       });
+    //     } else {
+    //       if (password === 'admin') {
+    //         let user = {
+    //           number: phone_number,
+    //           password: password,
+    //           status: 'client',
+    //         };
+    //         await AsyncStorage.setItem('user', JSON.stringify(user));
+    //         this.props.navigation.replace('MainClient');
+    //       } else {
+    //         this.setState({
+    //           error_message: 'Неверный номер телефона или пароль',
+    //         });
+    //       }
+    //     }
+    //   }
+    // } else {
+    //   this.setState({
+    //     error_message: 'Введите корректный номер телефона',
+    //   });
+    // }
   };
   render() {
     const {phone_number, password, error_message} = this.state;
@@ -156,4 +192,13 @@ class Login extends React.Component {
     );
   }
 }
-export default Login;
+
+const mapStateToProps = state => ({
+  cities: state.cities.cityData,
+  cityLoad: state.cities.loading,
+});
+
+export default connect(
+  null,
+  {fetchLogin},
+)(Login);

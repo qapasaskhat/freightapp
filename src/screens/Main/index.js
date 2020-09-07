@@ -15,6 +15,7 @@ import Button from '../../components/Button';
 import {ScrollView, FlatList} from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import {postAnnouncements} from '../../api/Announcements/actions';
+import {connect} from 'react-redux';
 
 class Main extends React.Component {
   state = {
@@ -49,18 +50,18 @@ class Main extends React.Component {
         <Input
           text={'Откуда'}
           placeholder={'Введите адрес отправления'}
-          onchange={text => this.setState({address_to: text})}
+          onchange={text => this.setState({address_from: text})}
         />
         {address_to_err ? (
-          <Text style={styles.errorText}>{address_to_err}</Text>
+          <Text style={styles.errorText}>{address_from_err}</Text>
         ) : null}
         <Input
           text={'Куда'}
           placeholder={'Введите адрес получения'}
-          onchange={text => this.setState({address_from: text})}
+          onchange={text => this.setState({address_to: text})}
         />
         {address_from_err ? (
-          <Text style={styles.errorText}>{address_from_err}</Text>
+          <Text style={styles.errorText}>{address_to_err}</Text>
         ) : null}
         <Input
           multiline
@@ -121,15 +122,21 @@ class Main extends React.Component {
       address_to !== '' &&
       desc !== ''
     ) {
+      let phone = phone_number.replace(/^\D+/g, '');
+
       try {
         formdata.append('body', desc);
-        formdata.append('phone', phone_number);
+        formdata.append('user_id', this.props.user.id);
+        formdata.append('phone', phone);
         formdata.append('from', address_from);
         formdata.append('to', address_to);
-        formdata.append('created_at', new Date.now());
+        formdata.append('status', 0);
+        try {
+          this.props.postAnnouncements(formdata);
+          this.props.navigation.navigate('Cabinet');
+        } catch (error) {}
 
-        Toast.show('Success');
-        // postAnnouncements(formdata);
+        Toast.show('Объявление созданно');
       } catch (error) {}
     }
   };
@@ -158,4 +165,12 @@ class Main extends React.Component {
     );
   }
 }
-export default Main;
+
+const mapStateToProps = state => ({
+  user: state.users.userData,
+});
+
+export default connect(
+  mapStateToProps,
+  {postAnnouncements},
+)(Main);

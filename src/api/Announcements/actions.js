@@ -1,10 +1,14 @@
 const api = 'http://gruz.sport-market.kz/api/announcements';
 
 import axios from 'axios';
-
+import React from 'react';
+import {Alert} from 'react-native';
 export const FETCH_BEGIN = 'FETCH_BEGIN';
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';
 export const FETCH_ERROR = 'FETCH_ERROR';
+export const FETCH_BEGIN_ORDERS_ID = 'FETCH_BEGIN_ORDERS_ID';
+export const FETCH_SUCCESS_ORDERS_ID = 'FETCH_SUCCESS_ORDERS_ID';
+export const FETCH_ERROR_ORDERS_ID = 'FETCH_ERROR_ORDERS_ID';
 export const POST_BEGIN = 'POST_BEGIN';
 export const POST_SUCCESS = 'POST_SUCCESS';
 export const POST_ERROR = 'POST_ERROR';
@@ -24,6 +28,18 @@ export const fetch_success = data => ({
 });
 export const fetch_error = error => ({
   type: FETCH_ERROR,
+  payload: {error},
+});
+
+export const fetch_begin_orders_id = () => ({
+  type: FETCH_BEGIN_ORDERS_ID,
+});
+export const fetch_success_orders_id = data => ({
+  type: FETCH_SUCCESS_ORDERS_ID,
+  payload: {data},
+});
+export const fetch_error_orders_id = error => ({
+  type: FETCH_ERROR_ORDERS_ID,
   payload: {error},
 });
 
@@ -84,20 +100,18 @@ export function fetchAnnouncements() {
   };
 }
 
-export function postAnnouncements(data) {
+export function fetchAnnouncementsId(id) {
   return dispatch => {
-    dispatch(post_begin());
+    dispatch(fetch_begin_orders_id());
     const request = axios({
-      method: 'POST',
-      url: api,
-      headers: [],
-      data: data,
+      method: 'GET',
+      url: `${api}/user/${id}`,
     });
     return request
       .then(function(response) {
-        console.log('action postAnnouncements');
+        console.log('action fetchAnnouncementsId');
         console.log(response.data);
-        dispatch(post_success(response.data));
+        dispatch(fetch_success_orders_id(response.data));
       })
       .catch(function(error) {
         if (error.response) {
@@ -116,6 +130,48 @@ export function postAnnouncements(data) {
           console.log('Error', error.message);
         }
         console.log(error.config);
+        Alert.alert('Ошибка', error.toString());
+
+        dispatch(fetch_error_orders_id(error));
+      });
+  };
+}
+
+export function postAnnouncements(data) {
+  return dispatch => {
+    dispatch(post_begin());
+    const request = axios({
+      method: 'POST',
+      url: api,
+      headers: [],
+      data: data,
+    });
+    return request
+      .then(function(response) {
+        console.log('action postAnnouncements');
+        console.log(response.data);
+        dispatch(post_success(response.data));
+        dispatch(fetchAnnouncementsId(response.data.data.user_id));
+      })
+      .catch(function(error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+        Alert.alert('Ошибка', error.toString());
+
+        console.log(error.config);
         dispatch(post_error(error));
       });
   };
@@ -123,11 +179,11 @@ export function postAnnouncements(data) {
 
 export function putAnnouncementId(id, data) {
   return dispatch => {
+    data['_method'] = 'PUT';
     dispatch(put_begin());
     const request = axios({
       method: 'PUT',
       url: `${api}/${id}`,
-      headers: [],
       data: data,
     });
     return request
@@ -153,6 +209,8 @@ export function putAnnouncementId(id, data) {
           console.log('Error', error.message);
         }
         console.log(error.config);
+        Alert.alert('Ошибка', error.toString());
+
         dispatch(put_error(error));
       });
   };
@@ -164,7 +222,6 @@ export function deleteAnnouncementId(id) {
     const request = axios({
       method: 'DELETE',
       url: `${api}/${id}`,
-      headers: [],
     });
     return request
       .then(function(response) {
@@ -173,7 +230,24 @@ export function deleteAnnouncementId(id) {
         dispatch(delete_success(response.data));
       })
       .catch(function(error) {
-        console.log(error);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
+        console.log(error.config);
+        Alert.alert('Ошибка', error.toString());
+
         dispatch(delete_error(error));
       });
   };

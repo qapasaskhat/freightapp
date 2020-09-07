@@ -6,6 +6,7 @@ import {
   StatusBar,
   Image,
   Dimensions,
+  Alert,
 } from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
@@ -20,6 +21,7 @@ const {height, width} = Dimensions.get('screen');
 import {connect} from 'react-redux';
 import {fetchCity} from '../../api/city/actions';
 import {postRegister} from '../../api/register/actions';
+import {getBrand, getDeviceId} from 'react-native-device-info';
 
 const InputView = ({data}) => {
   return (
@@ -60,12 +62,13 @@ class Register extends React.Component {
     login: '',
     phone_number: '',
     password: '',
+    repeatPassword: '',
     toggleCheckBox: false,
     cityValue: false,
     cityName: 'Almaty',
   };
   componentDidMount() {
-    this.props.dispatch(fetchCity());
+    this.props.fetchCity();
   }
   _changeChek = () => {
     this.setState({
@@ -78,6 +81,53 @@ class Register extends React.Component {
       cityName: name,
       cityValue: false,
     });
+  };
+
+  createUser = () => {
+    const {
+      login,
+      phone_number,
+      cityName,
+      password,
+      repeatPassword,
+    } = this.state;
+    if (login === '') {
+      Alert.alert('Пожалуйста, заполните поле имя');
+      return;
+    }
+    if (phone_number.length < 11 || phone_number.length > 12) {
+      Alert.alert('Пожалуйста, введите корректный номер');
+      return;
+    }
+    if (password.length < 8) {
+      Alert.alert('Пароль должен состоять как минимум из 8 символов');
+      return;
+    }
+
+    if (password !== repeatPassword) {
+      Alert.alert('Пароль не совпадает');
+      return;
+    }
+    let formData = new FormData();
+    let phone = phone_number.replace(/^\D+/g, '');
+
+    formData.append('name', login);
+    formData.append('phone', phone);
+    formData.append('password', password);
+    formData.append('password_confirmation', password);
+
+    formData.append('city_id', 1); //TO DO
+    formData.append('type', 0);
+    formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
+
+    try {
+      this.props.postRegister(formData, () =>
+        this.props.navigation.navigate('Login'),
+      );
+      //this.props.navigation.navigate('CodeInput');
+    } catch (error) {
+      console.log('createUser error: ', error);
+    }
   };
   render() {
     const {toggleCheckBox, cityValue} = this.state;
@@ -111,7 +161,7 @@ class Register extends React.Component {
         text: 'Повторите пароль',
         placeholder: '•  •  •  •  •  •  •  • ',
         change: text => {
-          this.setState({password: text});
+          this.setState({repeatPassword: text});
         },
         password: true,
       },
@@ -231,11 +281,7 @@ class Register extends React.Component {
             <Button
               active={toggleCheckBox}
               text="Далее"
-              onpress={() =>
-                toggleCheckBox
-                  ? this.props.navigation.navigate('CodeInput')
-                  : {}
-              }
+              onpress={() => (toggleCheckBox ? this.createUser() : {})}
             />
             <Login onperss={() => this.props.navigation.navigate('Login')} />
           </ScrollView>
@@ -248,4 +294,7 @@ const mapStateToProps = state => ({
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
 });
-export default connect(mapStateToProps)(Register);
+export default connect(
+  mapStateToProps,
+  {postRegister, fetchCity},
+)(Register);

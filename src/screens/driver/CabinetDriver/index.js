@@ -8,10 +8,11 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import styles from './styles';
 import List from '../../../components/List';
-import {FlatList} from 'react-native-gesture-handler';
+//import {FlatList} from 'react-native-gesture-handler';
 import Item from '../../../components/Item';
 import {img_bg} from '../../../const/images';
 import {drop} from '../../../const/images';
@@ -26,6 +27,7 @@ import {fetchAnnouncements} from '../../../api/Announcements/actions';
 import {fetchCity} from '../../../api/city/actions';
 import {Gilroy_Bold} from '../../../const/fonts';
 import isEmpty from '../../../components/Empty';
+import {fetchUser} from '../../../api/users/actions';
 
 class Main extends React.Component {
   state = {
@@ -35,11 +37,17 @@ class Main extends React.Component {
     userName: '',
     refreshing: false,
   };
-  componentDidMount = () => {
-    this.props.dispatch(fetchAnnouncements());
-    this.props.dispatch(fetchCity());
-  };
+  componentDidMount = () => {};
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.user !== this.props.user) {
+      console.log('componentWillUpdate Cabinet Driver');
+      this.props.dispatch(fetchCity());
+
+      this.props.dispatch(fetchAnnouncements());
+    }
+  }
   onChange = () => {
+    //TO DO
     this.setState({
       isEnabled: !this.state.isEnabled,
     });
@@ -48,16 +56,13 @@ class Main extends React.Component {
     return (
       <List
         body={item.body}
-        date={moment(item.created_at)
-          .format('L')
-          .replace('/', '.')
-          .replace('/', '.')}
+        date={moment(item.created_at).format('DD MM YYYY')}
         phone_number={item.phone}
         from={item.from}
         to={item.to}
         del
         line
-        name={this.getUser(item.id)}
+        name={item.user.name}
         onpressOrder={() => this.onPressList(item)}
       />
     );
@@ -72,17 +77,25 @@ class Main extends React.Component {
       visibleModal: true,
     });
   };
-  getUser = id => {
-    const api = `http://gruz.sport-market.kz/api/announcements/${id}/`;
-    var name = '';
-    axios.get(api).then(response => {
-      console.log('action fetchAnnouncements');
-      //console.log(response.data)
-      //name = response.data.data.user.name
-      //console.log(name);
-    });
-    return name;
-  };
+
+  formatPhoneNumber(phoneNumberString) {
+    let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+    let match = cleaned.match(/^(\d{1}|)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
+    if (match) {
+      let intlCode = match[1] ? `+${match[1]} ` : '+7 ';
+      return [
+        intlCode,
+        '(',
+        match[2],
+        ') ',
+        match[3],
+        '-',
+        match[4],
+        '-',
+        match[5],
+      ].join('');
+    }
+  }
 
   headerComp = () => {
     return (
@@ -135,8 +148,10 @@ class Main extends React.Component {
         </View>
         <Item
           onpress={() => this.props.navigation.navigate('EditProfileDriver')}
-          name={'Андрей Зотов'}
-          phone_number={'+7 (906) 521-26-10'}
+          name={this.props.user ? this.props.user.name : ''}
+          phone_number={
+            this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''
+          }
         />
         <Push
           isEnabled={this.state.isEnabled}
@@ -147,6 +162,7 @@ class Main extends React.Component {
   };
 
   onRefresh = () => {
+    console.log('onRefresh');
     this.setState({
       refreshing: true,
     });
@@ -174,7 +190,7 @@ class Main extends React.Component {
               <FlatList
                 data={data.data}
                 refreshing={this.state.refreshing}
-                onRefresh={() => this.onRefresh()}
+                onRefresh={this.onRefresh}
                 ListEmptyComponent={isEmpty('Нет обьялении')}
                 renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
@@ -216,9 +232,10 @@ class Main extends React.Component {
                 ) : (
                   cities &&
                   cities.data &&
-                  cities.data.map(i => {
+                  cities.data.map((i, index) => {
                     return (
                       <TouchableOpacity
+                        key={index.toString()}
                         style={{
                           paddingHorizontal: 20,
                           paddingVertical: 12,
@@ -258,7 +275,8 @@ class Main extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  data: state.announcements.data,
+  user: state.users.userData,
+  data: state.announcements.dataAnnouncements,
   loading: state.announcements.loading,
   error: state.announcements.error,
   cities: state.cities.cityData,
