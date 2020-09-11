@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar, Alert} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator} from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -55,12 +55,14 @@ class Login extends React.Component {
     try {
       this.props.fetchLogin(formData,1);
       setTimeout(() => {
+        this.props.loginError ? null :
         this.props.navigation.navigate('Cabinet');
       }, 1000);
     } catch (error) {}
   };
   render() {
     const {phone_number, password, error_message} = this.state;
+    const {loginError,loginLoad} = this.props
     this.list = [
       {
         text: 'Введите номер телефона',
@@ -109,15 +111,17 @@ class Login extends React.Component {
               Забыли пароль?
             </Text>
           </TouchableOpacity>
-          <Button
+          { 
+          loginLoad?
+          <ActivityIndicator color=''/>:
+            <Button
             active
             text="Войти"
             onpress={() => {
-              //AsyncStorage.clear()
-              //Alert.alert('AsyncStorage.clear')
               this._signIn(phone_number, password)
             }}
           />
+          }
           <View
             style={{
               flexDirection: 'row',
@@ -153,9 +157,11 @@ class Login extends React.Component {
 const mapStateToProps = state => ({
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
+  loginLoad: state.login.loading,
+  loginError: state.login.error,
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   {fetchLogin},
 )(Login);

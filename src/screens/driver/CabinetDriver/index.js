@@ -51,17 +51,8 @@ class Main extends React.Component {
       { this.props.dispatch(fetchUser(this.props.token)) }
     );
   };
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevProps.user !== this.props.user) {
-  //     console.log('componentWillUpdate Cabinet Driver');
-  //     this.props.dispatch(fetchCity());
-  //     this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page));
-  //   }
-  // }
   onChange = () => {
-    this.setState({
-      isEnabled: !this.state.isEnabled,
-    });
+    this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" });
   };
   renderItem = ({item}) => {
     return (
@@ -78,15 +69,10 @@ class Main extends React.Component {
       />
     )
   }
-  onPressList = item => {
-    // alert(id)
-    this.props.navigation.navigate('OrderDriver', {param: item});
-  };
+  onPressList = item => { this.props.navigation.navigate('OrderDriver', {param: item});};
   city = () => {
     this.props.dispatch(fetchCity());
-    this.setState({
-      visibleModal: true,
-    });
+    this.setState({ visibleModal: true });
   };
   handleLoadMore=()=>{
     this.setState({
@@ -167,23 +153,20 @@ class Main extends React.Component {
         />
         <Push
           text='Получать уведомления'
-          isEnabled={this.state.isEnabled}
+          isEnabled={this.props.statusNotification}
           onChange={() => this.onChange()}
         />
         <Push
           text='Звук уведомления'
-          isEnabled={this.state.isEnabledMute}
+          isEnabled={this.props.muteNotification}
           onChange={() => this.onChangeMute()}
         />
       </View>
     );
   };
   onChangeMute=()=>{
-    this.setState({
-      isEnabledMute: !this.state.isEnabledMute
-    })
+    this.props.dispatch({ type: "CHANGE_MUTE_NOTIFICATION" });
   }
-
   onRefresh = () => {
     console.log('onRefresh');
     this.setState({
@@ -213,7 +196,10 @@ class Main extends React.Component {
               <FlatList
                 data={data }
                 refreshing={this.state.refreshing}
-                //onEndReached={this.handleLoadMore}
+                onEndReached={()=>{
+                  console.log('more')
+                  this.handleLoadMore 
+                }}
                 onRefresh={this.onRefresh}
                 ListEmptyComponent={isEmpty('Нет обьялении')}
                 renderItem={item => this.renderItem(item)}
@@ -300,6 +286,11 @@ const mapStateToProps = state => ({
   error: state.announcements.error,
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
-  token: state.login.token
+  token: state.login.token,
+  statusNotification: state.appReducer.statusNotification,
+  muteNotification: state.appReducer.muteNotification
 });
-export default connect(mapStateToProps)(Main);
+const mapDispatchToProps = dispatch => ({
+  dispatch
+});
+export default connect(mapStateToProps,mapDispatchToProps)(Main);

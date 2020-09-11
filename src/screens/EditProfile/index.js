@@ -18,7 +18,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {NavigationActions, StackActions} from 'react-navigation';
 import Toast from 'react-native-simple-toast';
 import {connect} from 'react-redux';
-import {putUser} from '../../api/users/actions';
+import {putUser,fetchUser} from '../../api/users/actions';
 
 const InputView = ({data}) => {
   return (
@@ -77,9 +77,11 @@ class EditClient extends React.Component {
     const {login, phone} = this.state;
     let formData = new FormData();
     formData.append('name', login ? login : this.props.user.name);
+    formData.append('_method','PUT')
     //formData.append('phone', phone ? phone : this.props.user.phone);
     try {
-      this.props.dispatch(putUser(this.props.user.id, formData));
+      this.props.dispatch(putUser(this.props.user.id, formData, this.props.token));
+      this.props.dispatch(fetchUser(this.props.token))
       this.props.navigation.goBack();
       Toast.show('Сохранено');
     } catch (error) {
@@ -176,6 +178,7 @@ class EditClient extends React.Component {
 }
 const mapStateToProps = state => ({
   user: state.users.userData,
+  token: state.login.token
 });
 const mapDispatchToProps = dispatch => ({
   dispatch

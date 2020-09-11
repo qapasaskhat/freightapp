@@ -13,7 +13,6 @@ import Logo from '../../components/Logo';
 import {img} from '../../const/images';
 import {fcmService} from '../../notification';
 import {connect} from 'react-redux'
-
 import AsyncStorage from '@react-native-community/async-storage';
 
 const width = Dimensions.get('window').width;

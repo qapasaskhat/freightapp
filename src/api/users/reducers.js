@@ -75,6 +75,17 @@ export default function reducerUsers(state = initianState, action) {
         loadingPut: false,
         errorPut: action.payload.error,
       };
+    case 'LOG_OUT':
+      return{
+        ...state,
+        userData: {},
+        loading: false,
+        error: null,
+        loadingPost: false,
+        errorPost: null,
+        loadingPut: false,
+        errorPut: null,
+      }
     default:
       return state;
   }

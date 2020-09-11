@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar, Alert} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator} from 'react-native';
 import styles from './styles';
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
@@ -58,45 +58,15 @@ class Login extends React.Component {
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
     try {
       this.props.fetchLogin(formData,0);
+      this.props.loginError ? null :
       this.props.navigation.navigate('CabinetStack');
     } catch (error) {
       console.log('LoginDriver ', error);
     }
-
-    //console.log(this.validatePhone(phone_number))
-    // if (this.validatePhone(phone_number)) {
-    //   this.setState({
-    //     error_message: '',
-    //   });
-    //   if (phone_number === '+77007007070') {
-    //     if (password === '') {
-    //       this.setState({
-    //         error_message: 'Введите пароль',
-    //       });
-    //     } else {
-    //       if (password === 'admin') {
-    //         let user = {
-    //           number: phone_number,
-    //           password: password,
-    //           status: 'driver',
-    //         };
-    //         await AsyncStorage.setItem('user', JSON.stringify(user));
-    //         this.props.navigation.replace('MainDriver');
-    //       } else {
-    //         this.setState({
-    //           error_message: 'Неверный номер телефона или пароль',
-    //         });
-    //       }
-    //     }
-    //   }
-    // } else {
-    //   this.setState({
-    //     error_message: 'Введите корректный номер телефона',
-    //   });
-    // }
-  };
+  }
   render() {
     const {phone_number, password, error_message} = this.state;
+    const {loginLoad}= this.props
     this.list = [
       {
         text: 'Введите номер телефона',
@@ -149,11 +119,13 @@ class Login extends React.Component {
               Забыли пароль?
             </Text>
           </TouchableOpacity>
-          <Button
+          {loginLoad?
+          <ActivityIndicator />:
+            <Button
             active
             text="Войти"
             onpress={() => this._signIn(phone_number, password)}
-          />
+          />}
           <View
             style={{
               flexDirection: 'row',
@@ -189,9 +161,11 @@ class Login extends React.Component {
 const mapStateToProps = state => ({
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
+  loginLoad: state.login.loading,
+  loginError: state.login.error,
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   {fetchLogin},
 )(Login);

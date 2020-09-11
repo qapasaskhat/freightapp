@@ -19,7 +19,7 @@ import Button from '../../../components/Button';
 import AsyncStorage from '@react-native-community/async-storage';
 import {NavigationActions, StackActions} from 'react-navigation';
 import {connect} from 'react-redux';
-import {putUser} from '../../../api/users/actions';
+import {putUser,fetchUser} from '../../../api/users/actions';
 import Toast from 'react-native-simple-toast';
 import {Gilroy_Medium} from '../../../const/fonts';
 
@@ -58,10 +58,13 @@ class EditDriver extends React.Component {
     const {login, phone} = this.state;
     let formData = new FormData();
     formData.append('name', login ? login : this.props.user.name);
+    formData.append('_method','PUT')
     //formData.append('phone', phone ? phone : this.props.user.phone);
-
     try {
       this.props.dispatch(putUser(this.props.user.id, formData, this.props.token));
+      setTimeout(() => {
+        this.props.dispatch(fetchUser(this.props.token))
+      }, 500);
       this.props.navigation.goBack();
       Toast.show('Сохранено');
     } catch (error) {

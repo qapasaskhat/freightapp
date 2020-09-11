@@ -41,16 +41,16 @@ class CodeInputClass extends React.Component {
       desc,
       id,
     } = this.state;
-    const {user} = this.props;
+    const {user,token} = this.props;
     let formData = new FormData();
 
     formData.append('body', desc);
     formData.append('phone', phone_number);
     formData.append('from', address_from);
     formData.append('to', address_to);
-
+    formData.append('_method','PUT')
     try {
-      this.props.putAnnouncementId(id, formData);
+      this.props.putAnnouncementId(id, formData,token);
       this.props.navigation.replace('Cabinet');
     } catch (error) {}
   };
@@ -128,6 +128,7 @@ class CodeInputClass extends React.Component {
 }
 const mapStateToProps = state => ({
   user: state.users.userData,
+  token: state.login.token
 });
 export default connect(
   mapStateToProps,

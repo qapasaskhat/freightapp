@@ -21,7 +21,7 @@ export const fetch_success_login = (data,role) => ({
   payload: {data,role},
 });
 export const fetch_error_login = error => ({
-  type: FETCH_BEGIN_LOGIN,
+  type: FETCH_ERROR_LOGIN,
   payload: {error},
 });
 

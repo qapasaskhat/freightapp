@@ -10,6 +10,7 @@ import chats from '../chats/reducers';
 import users from '../users/reducers';
 import support from '../supportMessages/reducers';
 import archive from '../archive/reducers';
+import appReducer from './appReducer'
 
 const rootRedusers = combineReducers({
   announcements,
@@ -42,6 +43,7 @@ const reducer = persistCombineReducers(config, {
   users,
   support,
   archive,
+  appReducer
 });
 
 export default reducer;

@@ -42,13 +42,13 @@ class Main extends React.Component {
     error: null,
   }
   componentDidMount = async () => {
-    const {user,login,dispatch} = this.props
+    const {user,login,dispatch,loadAnnouncements} = this.props
     console.log(user,login)
     setTimeout(() => {
       this.changeCity(user && user.city_id)
     }, 600)
-    dispatch(fetchUser(login.token))
-    dispatch(fetchAnnouncementsId(user.id,login.token))
+    dispatch(fetchUser(login.token,1))
+    //dispatch(fetchAnnouncementsId(user.id,login.token))
   };
   changeCity=(id)=>{
     this.props.cities &&
@@ -65,27 +65,22 @@ class Main extends React.Component {
     if (prevProps.user !== this.props.user) {
       console.log('componentDidUpdate Cabinet');
       this.props.dispatch(fetchCity());
+      this.changeCity(this.props.user && this.props.user.city_id)
       this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token));
-    }else{
-      //this.props.dispatch(fetchCity());
-      //this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token));
-    }
+    }else{}
   }
   onChange = () => {
     this.setState({
       isEnabled: !this.state.isEnabled,
     });
   };
-
   renderItem = ({item}) => {
     return (
       <List
         onpressDelete={() => this.arhived(item.id)}
         name={'Вы'}
         trash={false}
-        onpressOrder={() =>
-          this.props.navigation.navigate('OpenOrder', {param: item})
-        }
+        onpressOrder={() => this.props.navigation.navigate('OpenOrder', {param: item})}
         body={item.body}
         phone_number={item.phone}
         from={item.from}
@@ -95,7 +90,6 @@ class Main extends React.Component {
       />
     );
   };
-
   formatPhoneNumber(phoneNumberString) {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
     let match = cleaned.match(/^(\d{1}|)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
@@ -114,7 +108,6 @@ class Main extends React.Component {
       ].join('');
     }
   }
-
   arhived = idAnnouncements => {
     Alert.alert(
       'Удалить',
@@ -140,9 +133,6 @@ class Main extends React.Component {
       ],
       {cancelable: false},
     );
-  };
-  putAnnouncements = () => {
-    const api = '';
   };
   headerComp = () => {
     return (
@@ -194,24 +184,6 @@ class Main extends React.Component {
       </View>
     );
   };
-  // getAnnouncements = ()=>{
-  //   const api = 'http://gruz.sport-market.kz/api/announcements/'
-  //   this.setState({
-  //     loading: true
-  //   })
-  //   axios.get(api).then(response=>{
-  //     console.log(response.data)
-  //     this.setState({
-  //       items: response.data.data,
-  //       loading: false
-  //     })
-  //   }).catch(err=>{
-  //     this.setState({
-  //       error: err,
-  //       loading: false
-  //     })
-  //   })
-  // }
   onRefresh = () => {
     this.setState({
       refreshing: true,
@@ -224,16 +196,16 @@ class Main extends React.Component {
   };
 
   render() {
-    const {loading, error, items} = this.state;
-    const {cities, cityLoad, announcements} = this.props;
+    const { error, items} = this.state;
+    const {cities, cityLoad, announcements, loadAnnouncements} = this.props;
     return (
       <>
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <ImageBackground source={img_bg} style={styles.img_bg}>
-            {loading ? (
+            {loadAnnouncements ? (
               <View>
-                <ActivityIndicator />
+                <ActivityIndicator color={'#007BED'} />
               </View>
             ) : (
               <FlatList
@@ -334,6 +306,8 @@ const mapStateToProps = state => ({
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
   announcements: state.announcements.dataAnnouncementsUser,
-  login: state.login
+  login: state.login,
+  loadAnnouncements: state.announcements.loading,
+  errorAnnouncements: state.announcements.error
 });
 export default connect(mapStateToProps)(Main);

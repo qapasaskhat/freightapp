@@ -82,7 +82,7 @@ export const delete_error = error => ({
 });
 
 export function fetchAnnouncements(token,page) {
-  console.log(token,'token')
+
   return dispatch => {
     dispatch(fetch_begin());
     const request = axios({
@@ -139,7 +139,7 @@ export function fetchAnnouncementsId(id,token) {
         //   console.log('Error', error.message);
         // }
         console.log(error);
-        Alert.alert('Ошибка', error.toString());
+        //Alert.alert('Ошибка', error.toString());
 
         dispatch(fetch_error_orders_id(error));
       });
@@ -190,10 +190,10 @@ export function postAnnouncements(data,token) {
 export function putAnnouncementId(id, data,token) {
 
   return dispatch => {
-    data['_method'] = 'PUT';
+    
     dispatch(put_begin());
     const request = axios({
-      method: 'PUT',
+      method: 'POST',
       url: `${api}/${id}`,
       data: data,
       headers: {
@@ -207,24 +207,24 @@ export function putAnnouncementId(id, data,token) {
         dispatch(put_success(response.data));
       })
       .catch(function(error) {
-        // if (error.response) {
-        //   // The request was made and the server responded with a status code
-        //   // that falls out of the range of 2xx
-        //   console.log(error)
-        //   console.log(error.response.data);
-        //   console.log(error.response.status);
-        //   console.log(error.response.headers);
-        // } else if (error.request) {
-        //   // The request was made but no response was received
-        //   // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        //   // http.ClientRequest in node.js
-        //   console.log(error.request);
-        // } else {
-        //   // Something happened in setting up the request that triggered an Error
-        //   console.log('Error', error.message);
-        // }
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error)
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
         console.log(error);
-        //Alert.alert('Ошибка', error.toString());
+        Alert.alert('Ошибка', error.toString());
 
         dispatch(put_error(error));
       });

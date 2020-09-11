@@ -6,7 +6,7 @@ import React from 'react';
 import {Alert} from 'react-native';
 import axios from 'axios';
 import store from '../../api/store';
-import {fetchAnnouncementsId} from '../Announcements/actions'
+import {fetchAnnouncementsId,fetchAnnouncements} from '../Announcements/actions'
 
 export const FETCH_BEGIN_USERS = 'FETCH_BEGIN_USERS';
 export const FETCH_SUCCESS_USERS = 'FETCH_SUCCESS_USERS';
@@ -54,23 +54,8 @@ export const put_error_users = error => ({
   payload: {error},
 });
 
-// axios.interceptors.request.use(async config => {
-//   const {
-//     login: {token},
-//   } = store.getState();
 
-//   const tokenId = `Bearer ${token}`;
-//   config.headers.Authorization = tokenId;
-
-//   return config;
-// });
-
-export function fetchUser(token) {
-  // const {
-  //   login: {token},
-  // } = store.getState();
-
-  //console.log('reducerLogin ', token);
+export function fetchUser(token,role) {
   return dispatch => {
     dispatch(fetch_begin_users());
     const request = axios({
@@ -85,7 +70,8 @@ export function fetchUser(token) {
         console.log('action fetchUser');
         console.log(response.data);
         dispatch(fetch_success_users(response.data));
-        dispatch(fetchAnnouncementsId(response.data.id,token))
+        role === 1 &&  dispatch(fetchAnnouncementsId(response.data.id,token))
+        role === 0 && dispatch(fetchAnnouncements(token))
       })
       .catch(function(error) {
         if (error.response) {
@@ -104,7 +90,7 @@ export function fetchUser(token) {
           console.log('Error', error.message);
         }
         console.log(error.config);
-        Alert.alert('Ошибка', error.toString());
+        //Alert.alert('Ошибка', error.toString());
         dispatch(fetch_error_users(error));
       });
   };
@@ -159,7 +145,7 @@ export function putUser(id, data, token) {
   return dispatch => {
     dispatch(put_begin_users());
     const request = axios({
-      method: 'PUT',
+      method: 'POST',
       url: `${apiPut}/${id}`,
       data: data,
       headers: {
