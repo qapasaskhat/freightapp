@@ -52,19 +52,22 @@ class EditClient extends React.Component {
       [
         {
           text: 'Выйти',
+          style: 'cancel',
           onPress: async () => {
-            await AsyncStorage.removeItem('user');
-            const resetAction = StackActions.reset({
-              index: 0,
-              actions: [NavigationActions.navigate({routeName: 'Screen'})],
-            });
-            this.props.navigation.dispatch(resetAction);
+            setTimeout(async() => {
+              //AsyncStorage.clear();
+              this.props.dispatch({ type: "LOG_OUT" });
+              const resetAction = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({routeName: 'Screen'})],
+              });
+              this.props.navigation.dispatch(resetAction);
+            }, 1000)
           },
         },
         {
           text: 'Отмена',
           onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
         },
       ],
       {cancelable: false},
@@ -74,16 +77,20 @@ class EditClient extends React.Component {
     const {login, phone} = this.state;
     let formData = new FormData();
     formData.append('name', login ? login : this.props.user.name);
-    formData.append('phone', phone ? phone : this.props.user.phone);
-
+    //formData.append('phone', phone ? phone : this.props.user.phone);
     try {
-      this.props.putUser(this.props.user.id, formData);
+      this.props.dispatch(putUser(this.props.user.id, formData));
       this.props.navigation.goBack();
       Toast.show('Сохранено');
     } catch (error) {
       console.warn(error);
     }
   };
+  componentDidMount=()=>{
+    this.setState({
+      login: this.props.user.name
+    })
+  }
   render() {
     this.list = [
       {
@@ -94,14 +101,14 @@ class EditClient extends React.Component {
         },
         value: this.state.login,
       },
-      {
-        text: 'Номер телефона',
-        placeholder: this.props.user ? this.props.user.phone : '+7',
-        change: text => {
-          this.setState({number: text});
-        },
-        value: this.state.number,
-      },
+      // {
+      //   text: 'Номер телефона',
+      //   placeholder: this.props.user ? this.props.user.phone : '+7',
+      //   change: text => {
+      //     this.setState({number: text});
+      //   },
+      //   value: this.state.number,
+      // },
       // {
       //   text: 'Введите старый пароль',
       //   placeholder: '',
@@ -170,8 +177,11 @@ class EditClient extends React.Component {
 const mapStateToProps = state => ({
   user: state.users.userData,
 });
+const mapDispatchToProps = dispatch => ({
+  dispatch
+});
 
 export default connect(
   mapStateToProps,
-  {putUser},
+  mapDispatchToProps,
 )(EditClient);

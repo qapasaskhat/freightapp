@@ -8,49 +8,35 @@ import {
   StyleSheet,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import {fetchUser} from '../../api/users/actions'
 import {connect} from 'react-redux';
 
 class Load extends React.Component {
-  componentDidMount() {
-    const {rehydrated} = this.props;
-    if (rehydrated) {
+
+  componentDidMount=async()=>{
+    //this.props.navigation.navigate('Login')
+    const {rehydrated,login} = this.props;
+    if (rehydrated && rehydrated) {
       this._onLoading();
+    }else{
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate=(prevProps)=>{
     if (this.props.rehydrated !== prevProps.rehydrated) {
       this._onLoading();
+    }else{
     }
   }
 
   _onLoading = async () => {
     const {login} = this.props;
+    console.log(login+ ' login')
     if (login && login.token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${login.token}`;
-      //if (appReducer.user.type === 0) {
-      this.props.navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{name: 'MainClient'}],
-        }),
-      );
-      // } else {
-      //   this.props.navigation.dispatch(
-      //     CommonActions.reset({
-      //       index: 0,
-      //       routes: [{name: 'Login'}],
-      //     }),
-      //   );
-      // }
+        this.props.navigation.replace('MainClient')
     } else {
       console.log('AuthStack');
-      this.props.navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{name: 'Login'}],
-        }),
-      );
+      this.props.navigation.replace('Login')
     }
   };
 

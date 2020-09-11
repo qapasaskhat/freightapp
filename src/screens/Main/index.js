@@ -40,6 +40,7 @@ class Main extends React.Component {
         }}>
         <Input
           text={'Введите номер телефона'}
+          value={this.state.phone_number}
           placeholder={'+7'}
           onchange={text => this.setState({phone_number: text})}
         />
@@ -50,6 +51,7 @@ class Main extends React.Component {
         <Input
           text={'Откуда'}
           placeholder={'Введите адрес отправления'}
+          value={this.state.address_from}
           onchange={text => this.setState({address_from: text})}
         />
         {address_to_err ? (
@@ -132,7 +134,7 @@ class Main extends React.Component {
         formdata.append('to', address_to);
         formdata.append('status', 0);
         try {
-          this.props.postAnnouncements(formdata);
+          this.props.postAnnouncements(formdata,this.props.login.token);
           this.props.navigation.navigate('Cabinet');
         } catch (error) {}
 
@@ -143,6 +145,19 @@ class Main extends React.Component {
   postOrder = () => {
     //TO DO
   };
+  componentDidMount=()=>{
+    console.log(this.props.cities.data)
+    this.props.cities.data.map(item=>{
+      if(item.id === this.props.user.city_id){
+        this.setState({
+          address_from: item.name
+        })
+      }
+    })
+    this.setState({
+      phone_number: this.props.user.phone
+    })
+  }
   render() {
     return (
       <>
@@ -168,6 +183,8 @@ class Main extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.users.userData,
+  cities: state.cities.cityData,
+  login: state.login
 });
 
 export default connect(

@@ -74,6 +74,7 @@
 		8E8F9FE7940D43C9B321BB3B /* Gilroy-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy-Thin.ttf"; path = "../assets/fonts/Gilroy-Thin.ttf"; sourceTree = "<group>"; };
 		BB50836D368FDD50FFE3EA87 /* Pods-freightapp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-freightapp-tvOSTests/Pods-freightapp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C91B32E924A474250071BED4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C9D840602508919C003F48BD /* freightapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = freightapp.entitlements; path = freightapp/freightapp.entitlements; sourceTree = "<group>"; };
 		CCDA85F11E940D0DA92CDE9B /* Pods-freightapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp.release.xcconfig"; path = "Target Support Files/Pods-freightapp/Pods-freightapp.release.xcconfig"; sourceTree = "<group>"; };
 		D732DFCC8F0B54D3777D322F /* libPods-freightapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-freightapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF1C5B6F1184063C15B8CA3E /* Pods-freightapp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-freightapp-tvOS/Pods-freightapp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -137,6 +138,7 @@
 		13B07FAE1A68108700A75B9A /* freightapp */ = {
 			isa = PBXGroup;
 			children = (
+				C9D840602508919C003F48BD /* freightapp.entitlements */,
 				C91B32E924A474250071BED4 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -317,6 +319,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = ZS7TGSTLHR;
 						LastSwiftMigration = 1120;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -660,7 +663,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = freightapp/freightapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZS7TGSTLHR;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -687,7 +692,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = freightapp/freightapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZS7TGSTLHR;
 				INFOPLIST_FILE = freightapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (

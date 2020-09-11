@@ -12,25 +12,39 @@ import Button from '../../components/Button';
 import Logo from '../../components/Logo';
 import {img} from '../../const/images';
 import {fcmService} from '../../notification';
+import {connect} from 'react-redux'
 
 import AsyncStorage from '@react-native-community/async-storage';
 
 const width = Dimensions.get('window').width;
 
 class Screen extends React.Component {
-  async componentDidMount() {
+  
+   componentDidMount=async()=> {
+    console.log('role',this.props.role)
     const {navigation} = this.props;
+     if(this.props.role === 0){
+      navigation.replace('AuthDriver');
+     }else if(this.props.role === 1){
+      navigation.replace('AuthClient');
+     }
+    AsyncStorage.getAllKeys().then(keys => {
+      console.log(keys)
+    });
     fcmService.register(
       this.onRegister,
       this.onNotification,
       this.onOpenNotification,
+    )
+    this.props.navigation.addListener ('willFocus', () =>
+      {
+        if(this.props.role === 0){
+          navigation.replace('AuthDriver');
+         }else if(this.props.role === 1){
+          navigation.replace('AuthClient');
+         }
+      }
     );
-    let status = await AsyncStorage.getItem('user');
-    if (status !== null) {
-      let user = JSON.parse(status);
-      user.status === 'driver' && navigation.replace('AuthDriver');
-      user.status === 'client' && navigation.replace('AuthClient');
-    }
   }
   onRegister = token => {
     console.log('device token ', token);
@@ -70,7 +84,6 @@ class Screen extends React.Component {
     this.props.navigation.navigate('AuthClient');
   };
   _goToDriver = async () => {
-    //console.log('driver')
     this.props.navigation.navigate('AuthDriver');
   };
   render() {
@@ -79,20 +92,10 @@ class Screen extends React.Component {
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <Logo />
-          <View
-            style={{
-              position: 'absolute',
-              bottom: -10,
-            }}>
+          <View style={{position: 'absolute',bottom: -10,}}>
             <Button active text="Клиент" onpress={() => this._goTo()} />
             <Button light text="Водитель" onpress={() => this._goToDriver()} />
-            <Image
-              source={img}
-              style={{
-                width: width,
-                resizeMode: 'contain',
-                height: width,
-              }}
+            <Image  source={img}  style={{width: width,resizeMode: 'contain',height: width,}}
             />
           </View>
         </SafeAreaView>
@@ -100,4 +103,7 @@ class Screen extends React.Component {
     );
   }
 }
-export default Screen;
+const mapStateToProps = state => ({
+  role: state.login.role,
+});
+export default connect(mapStateToProps)(Screen);

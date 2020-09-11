@@ -6,6 +6,7 @@ import React from 'react';
 import {Alert} from 'react-native';
 import axios from 'axios';
 import store from '../../api/store';
+import {fetchAnnouncementsId} from '../Announcements/actions'
 
 export const FETCH_BEGIN_USERS = 'FETCH_BEGIN_USERS';
 export const FETCH_SUCCESS_USERS = 'FETCH_SUCCESS_USERS';
@@ -53,21 +54,21 @@ export const put_error_users = error => ({
   payload: {error},
 });
 
-axios.interceptors.request.use(async config => {
-  const {
-    login: {token},
-  } = store.getState();
+// axios.interceptors.request.use(async config => {
+//   const {
+//     login: {token},
+//   } = store.getState();
 
-  const tokenId = `Bearer ${token}`;
-  config.headers.Authorization = tokenId;
+//   const tokenId = `Bearer ${token}`;
+//   config.headers.Authorization = tokenId;
 
-  return config;
-});
+//   return config;
+// });
 
-export function fetchUser() {
-  const {
-    login: {token},
-  } = store.getState();
+export function fetchUser(token) {
+  // const {
+  //   login: {token},
+  // } = store.getState();
 
   //console.log('reducerLogin ', token);
   return dispatch => {
@@ -84,6 +85,7 @@ export function fetchUser() {
         console.log('action fetchUser');
         console.log(response.data);
         dispatch(fetch_success_users(response.data));
+        dispatch(fetchAnnouncementsId(response.data.id,token))
       })
       .catch(function(error) {
         if (error.response) {
@@ -109,12 +111,17 @@ export function fetchUser() {
 }
 
 export function postUser(data) {
+  const {
+    login: {token},
+  } = store.getState();
   return dispatch => {
     dispatch(post_begin_users());
     const request = axios({
       method: 'POST',
       url: api,
-      headers: [],
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       data: data,
     });
     return request
@@ -122,6 +129,7 @@ export function postUser(data) {
         console.log('action postUser');
         console.log(response.data);
         dispatch(post_success_users(response.data));
+
       })
       .catch(function(error) {
         if (error.response) {
@@ -141,19 +149,22 @@ export function postUser(data) {
         }
         console.log(error.config);
         Alert.alert('Ошибка', error.toString());
-
         dispatch(post_error_users(error));
       });
   };
 }
 
-export function putUser(id, data) {
+export function putUser(id, data, token) {
+
   return dispatch => {
     dispatch(put_begin_users());
     const request = axios({
       method: 'PUT',
       url: `${apiPut}/${id}`,
       data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     return request
       .then(function(response) {
@@ -165,6 +176,7 @@ export function putUser(id, data) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
+          console.log(error)
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);

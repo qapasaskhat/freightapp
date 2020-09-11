@@ -27,7 +27,7 @@ import {
   fetchAnnouncementsId,
   deleteAnnouncementId,
 } from '../../api/Announcements/actions';
-
+import AsyncStorage from '@react-native-community/async-storage'
 import {Gilroy_Bold} from '../../const/fonts';
 import Toast from 'react-native-simple-toast';
 
@@ -40,17 +40,37 @@ class Main extends React.Component {
     items: [],
     loading: false,
     error: null,
+  }
+  componentDidMount = async () => {
+    const {user,login,dispatch} = this.props
+    console.log(user,login)
+    setTimeout(() => {
+      this.changeCity(user && user.city_id)
+    }, 600)
+    dispatch(fetchUser(login.token))
+    dispatch(fetchAnnouncementsId(user.id,login.token))
   };
-  componentDidMount = () => {};
-
-  componentDidUpdate(prevProps, prevState) {
+  changeCity=(id)=>{
+    this.props.cities &&
+    this.props.cities.data &&
+    this.props.cities.data.map(item=>{
+      if(item.id === id){
+        this.setState({
+          cityName: item.name
+        })
+      }
+    })
+  }
+  componentDidUpdate=(prevProps, prevState)=> {
     if (prevProps.user !== this.props.user) {
       console.log('componentDidUpdate Cabinet');
       this.props.dispatch(fetchCity());
-      this.props.dispatch(fetchAnnouncementsId(this.props.user.id));
+      this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token));
+    }else{
+      //this.props.dispatch(fetchCity());
+      //this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token));
     }
   }
-
   onChange = () => {
     this.setState({
       isEnabled: !this.state.isEnabled,
@@ -103,18 +123,10 @@ class Main extends React.Component {
         {
           text: 'Удалить',
           onPress: () => {
-            // alert(idAnnouncements)
-            // this.setState(state=>{
-            //   const items = state.items.filter(i=>
-            //     {
-            //       return i.id !== idAnnouncements.id
-            //     }
-            //   )
-            //   return {items}
-            // })
             try {
-              this.props.dispatch(deleteAnnouncementId(idAnnouncements));
+              this.props.dispatch(deleteAnnouncementId(idAnnouncements,this.props.login.token));
               Toast.show('Удалено');
+              this.props.dispatch(fetchAnnouncementsId(this.props.user.id,this.props.login.token));
             } catch (error) {
               console.log(error);
             }
@@ -205,7 +217,7 @@ class Main extends React.Component {
       refreshing: true,
     });
     //this.getAnnouncements()
-    this.props.dispatch(fetchAnnouncementsId(this.props.user.id));
+    this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token));
     this.setState({
       refreshing: false,
     });
@@ -269,6 +281,10 @@ class Main extends React.Component {
                     return (
                       <TouchableOpacity
                         key={index.toString()}
+                        onPress={()=>{
+                          this.changeCity(i.id)
+                          this.setState({visibleModal: false,})
+                        }}
                         style={{
                           paddingHorizontal: 20,
                           paddingVertical: 10,
@@ -318,5 +334,6 @@ const mapStateToProps = state => ({
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
   announcements: state.announcements.dataAnnouncementsUser,
+  login: state.login
 });
 export default connect(mapStateToProps)(Main);

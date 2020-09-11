@@ -26,7 +26,6 @@ class Support extends React.Component {
     const {text} = this.state;
     let formData = new FormData();
     formData.append('text', text);
-
     try {
       this.props.postSupportMesssages(formData);
     } catch (error) {}

@@ -1,6 +1,8 @@
 const api = 'http://gruz.sport-market.kz/api/supportMessages';
 
 import axios from 'axios';
+import store from '../../api/store';
+
 import React from 'react';
 import {Alert} from 'react-native';
 export const FETCH_BEGIN_SUPPORT_MESSAGES = 'FETCH_BEGIN_SUPPORT_MESSAGES';
@@ -35,12 +37,17 @@ export const post_error_support_messages = error => ({
 });
 
 export function fetchSupportMessages() {
+  const {
+    login: {token},
+  } = store.getState();
   return dispatch => {
     dispatch(fetch_begin_support_messages());
     const request = axios({
       method: 'GET',
       url: api,
-      headers: [],
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     return request
       .then(function(response) {
@@ -56,12 +63,17 @@ export function fetchSupportMessages() {
 }
 
 export function postSupportMesssages(data) {
+  const {
+    login: {token},
+  } = store.getState();
   return dispatch => {
     dispatch(post_begin_support_messages());
     const request = axios({
       method: 'POST',
       url: api,
-      headers: [],
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       data: data,
     });
     return request

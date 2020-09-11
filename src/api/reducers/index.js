@@ -1,4 +1,6 @@
 import {combineReducers} from 'redux';
+import {persistStore, persistCombineReducers} from 'redux-persist';
+import AsyncStorage from '@react-native-community/async-storage';
 import announcements from '../Announcements/reducers';
 import cities from '../city/reducers';
 import login from '../login/reducers';
@@ -21,4 +23,25 @@ const rootRedusers = combineReducers({
   archive,
 });
 
-export default rootRedusers;
+const config = {
+  key: 'primary',
+  storage: AsyncStorage,
+  whitelist: ['login'], // only login will be persisted
+  //transform: [saveSubsetBlacklistFilter],
+  //blacklist: ['rootRedusers'],
+  timeout: 0,
+};
+
+const reducer = persistCombineReducers(config, {
+  announcements,
+  cities,
+  login,
+  register,
+  codes,
+  chats,
+  users,
+  support,
+  archive,
+});
+
+export default reducer;

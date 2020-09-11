@@ -51,7 +51,7 @@ class CodeInputClass extends React.Component {
 
     try {
       this.props.putAnnouncementId(id, formData);
-      this.props.navigation.navigate('Cabinet');
+      this.props.navigation.replace('Cabinet');
     } catch (error) {}
   };
 
@@ -84,15 +84,15 @@ class CodeInputClass extends React.Component {
                 />
                 <Input
                   text={'Откуда'}
-                  placeholder={'Введите адрес отправления'}
-                  value={address_to}
-                  onchange={text => this.setState({address_to: text})}
-                />
-                <Input
-                  text={'Куда'}
                   value={address_from}
                   placeholder={'Введите адрес получения'}
                   onchange={text => this.setState({address_from: text})}
+                />
+                <Input
+                  text={'Куда'}
+                  placeholder={'Введите адрес отправления'}
+                  value={address_to}
+                  onchange={text => this.setState({address_to: text})}
                 />
                 <Input
                   multiline

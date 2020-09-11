@@ -57,7 +57,7 @@ class Login extends React.Component {
     formData.append('password', password);
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
     try {
-      this.props.fetchLogin(formData);
+      this.props.fetchLogin(formData,0);
       this.props.navigation.navigate('CabinetStack');
     } catch (error) {
       console.log('LoginDriver ', error);

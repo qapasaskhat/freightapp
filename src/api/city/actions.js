@@ -1,6 +1,7 @@
 const api = 'http://gruz.sport-market.kz/api/cities';
 
-import axios from 'axios';
+import AXS from 'axios';
+const axios = AXS.create();
 import React from 'react';
 import {Alert} from 'react-native';
 export const FETCH_BEGIN_CITY = 'FETCH_BEGIN_CITY';
@@ -35,19 +36,23 @@ export const post_error_city = error => ({
 });
 
 export function fetchCity() {
+  
   return dispatch => {
+    console.log('city fetch_begin_city')
     dispatch(fetch_begin_city());
+
     const request = axios({
       method: 'GET',
       url: api,
     });
     return request
       .then(function(response) {
-        console.log('action fetchAnnouncements');
+        console.log('action city');
         console.log(response.data);
         dispatch(fetch_success_city(response.data));
       })
       .catch(function(error) {
+        console.log('eerrrooorrr')
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -63,9 +68,8 @@ export function fetchCity() {
           // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
-        console.log(error.config);
+        console.log(error);
         Alert.alert('Ошибка', error.toString());
-
         dispatch(fetch_error_city(error));
       });
   };

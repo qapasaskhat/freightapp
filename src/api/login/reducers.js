@@ -5,9 +5,10 @@ import {
 } from './actions';
 
 const initialState = {
-  token: {},
+  token: '',
   loading: false,
   error: null,
+  role: null
 };
 
 export default function reducerLogin(state = initialState, action) {
@@ -23,14 +24,23 @@ export default function reducerLogin(state = initialState, action) {
         ...state,
         loading: false,
         token: action.payload.data,
+        role: action.payload.role
       };
     case FETCH_ERROR_LOGIN:
       return {
         ...state,
-        token: {},
+        token: '',
         loading: false,
         error: action.payload.error,
       };
+    case 'LOG_OUT':
+      return{
+        ...state,
+        token: '',
+        loading: false,
+        error: null,
+        role: null
+      }
     default:
       return state;
   }

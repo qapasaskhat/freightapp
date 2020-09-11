@@ -33,12 +33,13 @@ class OrderDriver extends React.Component {
   callNumber = phone => {
     console.log('callNumber ----> ', phone);
     let phoneNumber = phone;
-    if (Platform.OS !== 'android') {
-      phoneNumber = `telprompt:+${phone}`;
-    } else {
+    if (Platform.OS === 'android') {
       phoneNumber = `tel:+${phone}`;
+    } else {
+      phoneNumber = `telprompt:+${phone}`;
     }
     console.log('phoneNumber ----> ', phoneNumber);
+    
     Linking.canOpenURL(phoneNumber)
       .then(supported => {
         if (!supported) {
@@ -64,7 +65,7 @@ class OrderDriver extends React.Component {
             />
             <ScrollView>
               <List
-                name={item.user_id}
+                name={item.user && item.user.name}
                 desc={item.body}
                 line
                 phone_number={item.phone}

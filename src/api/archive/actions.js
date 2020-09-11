@@ -9,6 +9,7 @@ export const FETCH_ERROR_ARCHIVE = 'FETCH_ERROR_ARCHIVE';
 export const DELETE_BEGIN_ARCHIVE = 'DELETE_BEGIN_ARCHIVE';
 export const DELETE_SUCCESS_ARCHIVE = 'DELETE_SUCCESS_ARCHIVE';
 export const DELETE_ERROR_ARCHIVE = 'DELETE_ERROR_ARCHIVE';
+import store from '../../api/store';
 
 export const fetch_begin_archive = () => ({
   type: FETCH_BEGIN_ARCHIVE,
@@ -23,12 +24,18 @@ export const fetch_error_archive = error => ({
 });
 
 export function fetchArchive(id) {
+  const {
+    login: {token},
+  } = store.getState();
+
   return dispatch => {
     dispatch(fetch_begin_archive());
     const request = axios({
       method: 'GET',
       url: api + `${id}/archived`,
-      headers: [],
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     return request
       .then(function(response) {
@@ -39,6 +46,7 @@ export function fetchArchive(id) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
+          console.log(error)
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);

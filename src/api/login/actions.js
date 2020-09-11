@@ -1,8 +1,8 @@
-import AXS from 'axios';
+import axios from 'axios';
 import React from 'react';
 import {Alert} from 'react-native';
 import {fetchUser} from '../users/actions';
-const axios = AXS.create();
+import AsyncStorage from '@react-native-community/async-storage';
 
 const api = 'http://gruz.sport-market.kz/api/sanctum/token';
 //const api = 'http://gruz.sport-market.kz/api/check';
@@ -16,32 +16,30 @@ export const FETCH_ERROR_LOGIN = 'FETCH_ERROR_LOGIN';
 export const fetch_begin_login = () => ({
   type: FETCH_BEGIN_LOGIN,
 });
-export const fetch_success_login = data => ({
+export const fetch_success_login = (data,role) => ({
   type: FETCH_SUCCESS_LOGIN,
-  payload: {data},
+  payload: {data,role},
 });
 export const fetch_error_login = error => ({
   type: FETCH_BEGIN_LOGIN,
   payload: {error},
 });
 
-export function fetchLogin(user) {
+export function fetchLogin(user,role) {
   return dispatch => {
     dispatch(fetch_begin_login());
     const request = axios({
       method: 'POST',
-      //   headers: {
-      //     Authorization:
-      //       'Bearer 13|XGf3tcEbQMYJU4uddY6pdL9fpUQHlq7mHZosuRheeiDnUXOSWZEZMcVzjCaBhpOEikyvxRGsccNTjX6m',
-      //   },
       data: user,
       url: api,
     });
     return request
-      .then(function(response) {
+      .then(async function(response) {
         console.log(response.data);
-        dispatch(fetch_success_login(response.data.token));
-        //dispatch(fetchUser());
+        dispatch(fetchUser(response.data.token));  
+        setTimeout(() => {
+          dispatch(fetch_success_login(response.data.token,role));
+        }, 500);
       })
       .catch(function(error) {
         if (error.response) {
@@ -61,7 +59,6 @@ export function fetchLogin(user) {
         }
         console.log(error.config);
         Alert.alert('Ошибка', error.toString());
-
         dispatch(fetch_error_login(error));
       });
   };

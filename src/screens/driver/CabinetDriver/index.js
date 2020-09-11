@@ -21,6 +21,7 @@ import Push from '../../../components/Push';
 import Modal from 'react-native-modal';
 import axios from 'axios';
 import moment from 'moment';
+import localization_ru from 'moment/locale/ru'
 
 import {connect} from 'react-redux';
 import {fetchAnnouncements} from '../../../api/Announcements/actions';
@@ -36,18 +37,28 @@ class Main extends React.Component {
     cityName: 'Алматы',
     userName: '',
     refreshing: false,
+    isEnabledMute: false,
+    page: 1
   };
-  componentDidMount = () => {};
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.user !== this.props.user) {
-      console.log('componentWillUpdate Cabinet Driver');
-      this.props.dispatch(fetchCity());
-
-      this.props.dispatch(fetchAnnouncements());
-    }
-  }
+  componentDidMount = async() => {
+    setTimeout(() => {
+      this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page));
+    }, 1000);
+    console.log(this.props.data,'data')
+    this.props.dispatch(fetchUser(this.props.token))
+    const { navigation } = this.props;
+    navigation.addListener ('willFocus', () =>
+      { this.props.dispatch(fetchUser(this.props.token)) }
+    );
+  };
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevProps.user !== this.props.user) {
+  //     console.log('componentWillUpdate Cabinet Driver');
+  //     this.props.dispatch(fetchCity());
+  //     this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page));
+  //   }
+  // }
   onChange = () => {
-    //TO DO
     this.setState({
       isEnabled: !this.state.isEnabled,
     });
@@ -56,7 +67,7 @@ class Main extends React.Component {
     return (
       <List
         body={item.body}
-        date={moment(item.created_at).format('DD MM YYYY')}
+        date={moment(item.created_at).local('ru',localization_ru).format('lll')}
         phone_number={item.phone}
         from={item.from}
         to={item.to}
@@ -65,8 +76,8 @@ class Main extends React.Component {
         name={item.user.name}
         onpressOrder={() => this.onPressList(item)}
       />
-    );
-  };
+    )
+  }
   onPressList = item => {
     // alert(id)
     this.props.navigation.navigate('OrderDriver', {param: item});
@@ -77,7 +88,13 @@ class Main extends React.Component {
       visibleModal: true,
     });
   };
-
+  handleLoadMore=()=>{
+    this.setState({
+      page: this.state.page + 1
+    }, () => {
+      this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page))
+    });
+  }
   formatPhoneNumber(phoneNumberString) {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
     let match = cleaned.match(/^(\d{1}|)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
@@ -99,10 +116,7 @@ class Main extends React.Component {
 
   headerComp = () => {
     return (
-      <View
-        style={{
-          backgroundColor: '#fff',
-        }}>
+      <View style={{backgroundColor: '#fff'}}>
         <Text
           style={{
             textAlign: 'center',
@@ -149,24 +163,33 @@ class Main extends React.Component {
         <Item
           onpress={() => this.props.navigation.navigate('EditProfileDriver')}
           name={this.props.user ? this.props.user.name : ''}
-          phone_number={
-            this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''
-          }
+          phone_number={this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''}
         />
         <Push
+          text='Получать уведомления'
           isEnabled={this.state.isEnabled}
           onChange={() => this.onChange()}
+        />
+        <Push
+          text='Звук уведомления'
+          isEnabled={this.state.isEnabledMute}
+          onChange={() => this.onChangeMute()}
         />
       </View>
     );
   };
+  onChangeMute=()=>{
+    this.setState({
+      isEnabledMute: !this.state.isEnabledMute
+    })
+  }
 
   onRefresh = () => {
     console.log('onRefresh');
     this.setState({
       refreshing: true,
     });
-    this.props.dispatch(fetchAnnouncements());
+    this.props.dispatch(fetchAnnouncements(this.props.token));
     this.setState({
       refreshing: false,
     });
@@ -188,18 +211,14 @@ class Main extends React.Component {
               <ActivityIndicator />
             ) : (
               <FlatList
-                data={data.data}
+                data={data }
                 refreshing={this.state.refreshing}
+                //onEndReached={this.handleLoadMore}
                 onRefresh={this.onRefresh}
                 ListEmptyComponent={isEmpty('Нет обьялении')}
                 renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
                 keyExtractor={item => item.id.toString()}
-                style={
-                  {
-                    // marginBottom: 64,
-                  }
-                }
               />
             )}
             <Modal
@@ -281,5 +300,6 @@ const mapStateToProps = state => ({
   error: state.announcements.error,
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
+  token: state.login.token
 });
 export default connect(mapStateToProps)(Main);

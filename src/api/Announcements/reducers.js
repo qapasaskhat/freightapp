@@ -43,7 +43,7 @@ export default function reducerAnnouncements(state = initianState, action) {
       return {
         ...state,
         loading: false,
-        dataAnnouncements: action.payload.data,
+        dataAnnouncements:action.payload.data // action.payload.page===1? action.payload.data: [...state.dataAnnouncements, action.payload.data],
       };
     case FETCH_ERROR:
       return {

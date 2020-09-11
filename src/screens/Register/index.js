@@ -57,6 +57,7 @@ const Login = ({onperss}) => {
     </TouchableOpacity>
   );
 };
+
 class Register extends React.Component {
   state = {
     login: '',
@@ -65,16 +66,34 @@ class Register extends React.Component {
     repeatPassword: '',
     toggleCheckBox: false,
     cityValue: false,
-    cityName: 'Almaty',
+    cityName: '',
+    cityId: 1
   };
-  componentDidMount() {
-    this.props.fetchCity();
+  componentDidMount=()=> {
+    setTimeout(() => {
+      this.props.fetchCity();
+    }, 1000);
+    
+    console.log('fetchCity')
+    this.changeCity(1)
+  }
+  changeCity=(id)=>{
+    const { cities } = this.props
+    cities.data.map(item=>{
+      if(item.id === id){
+        this.setState({
+          cityName: item.name,
+          cityId: item.id
+        })
+      }
+    })
   }
   _changeChek = () => {
     this.setState({
       toggleCheckBox: !this.state.toggleCheckBox,
     });
   };
+
   getCity = (id, name) => {
     const {cities} = this.props;
     this.setState({
@@ -90,6 +109,7 @@ class Register extends React.Component {
       cityName,
       password,
       repeatPassword,
+      cityId
     } = this.state;
     if (login === '') {
       Alert.alert('Пожалуйста, заполните поле имя');
@@ -103,7 +123,6 @@ class Register extends React.Component {
       Alert.alert('Пароль должен состоять как минимум из 8 символов');
       return;
     }
-
     if (password !== repeatPassword) {
       Alert.alert('Пароль не совпадает');
       return;
@@ -116,7 +135,7 @@ class Register extends React.Component {
     formData.append('password', password);
     formData.append('password_confirmation', password);
 
-    formData.append('city_id', 1); //TO DO
+    formData.append('city_id', cityId); //TO DO
     formData.append('type', 0);
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
 
@@ -166,6 +185,7 @@ class Register extends React.Component {
         password: true,
       },
     ];
+
     return (
       <>
         <StatusBar />
@@ -238,11 +258,12 @@ class Register extends React.Component {
                       }}>
                       Выберите город
                     </Text>
-                    {cities.data.map(item => {
+                    {cities.data && cities.data.map(item => {
                       return (
                         <TouchableOpacity
                           onPress={() => {
-                            this.getCity(item.id, item.name);
+                            this.changeCity(item.id)
+                            this.setState({cityValue: false})
                           }}
                           style={{
                             borderWidth: 1,

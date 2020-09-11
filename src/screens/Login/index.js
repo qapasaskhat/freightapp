@@ -11,6 +11,7 @@ import {fetchLogin} from '../../api/login/actions';
 import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import {getBrand, getDeviceId} from 'react-native-device-info';
+import {NavigationActions, StackActions} from 'react-navigation';
 
 const InputView = ({data}) => {
   return (
@@ -37,24 +38,6 @@ class Login extends React.Component {
     password: '',
   };
 
-  navigateApp = role => {
-    if (role === 0) {
-      this.props.navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{name: 'Cabinet'}],
-        }),
-      );
-    } else {
-      this.props.navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{name: 'CabinetStack'}],
-        }),
-      );
-    }
-  };
-
   _signIn = async (phone_number, password) => {
     if (phone_number.length < 11 || phone_number.length > 12) {
       Alert.alert('Пожалуйста, введите корректный номер');
@@ -64,47 +47,17 @@ class Login extends React.Component {
       Alert.alert('Пароль должен состоять как минимум из 8 символов');
       return;
     }
-
     let phone = phone_number.replace(/^\D+/g, '');
     let formData = new FormData();
     formData.append('phone', phone);
     formData.append('password', password);
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
     try {
-      this.props.fetchLogin(formData);
-      //this.props.navigation.navigate('Cabinet');
+      this.props.fetchLogin(formData,1);
+      setTimeout(() => {
+        this.props.navigation.navigate('Cabinet');
+      }, 1000);
     } catch (error) {}
-
-    // if (this.validatePhone(phone_number)) {
-    //   this.setState({
-    //     error_message: '',
-    //   });
-    //   if (phone_number === '+77007007070') {
-    //     if (password === '') {
-    //       this.setState({
-    //         error_message: 'Введите пароль',
-    //       });
-    //     } else {
-    //       if (password === 'admin') {
-    //         let user = {
-    //           number: phone_number,
-    //           password: password,
-    //           status: 'client',
-    //         };
-    //         await AsyncStorage.setItem('user', JSON.stringify(user));
-    //         this.props.navigation.replace('MainClient');
-    //       } else {
-    //         this.setState({
-    //           error_message: 'Неверный номер телефона или пароль',
-    //         });
-    //       }
-    //     }
-    //   }
-    // } else {
-    //   this.setState({
-    //     error_message: 'Введите корректный номер телефона',
-    //   });
-    // }
   };
   render() {
     const {phone_number, password, error_message} = this.state;
@@ -159,7 +112,11 @@ class Login extends React.Component {
           <Button
             active
             text="Войти"
-            onpress={() => this._signIn(phone_number, password)}
+            onpress={() => {
+              //AsyncStorage.clear()
+              //Alert.alert('AsyncStorage.clear')
+              this._signIn(phone_number, password)
+            }}
           />
           <View
             style={{
@@ -173,7 +130,7 @@ class Login extends React.Component {
                 textAlign: 'center',
                 fontFamily: Gilroy_Medium,
               }}>
-              Еще нет аккаунта?
+              Еще нет аккаунта? 
             </Text>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate('Register')}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; //Aрхив заказов
 import {
   SafeAreaView,
   View,
@@ -28,6 +28,7 @@ class Order extends React.Component {
     user: {},
   };
   componentDidMount = () => {
+    console.log(this.props.user.id)
     if (this.props.user) {
       this.props.dispatch(fetchArchive(this.props.user.id));
     }
