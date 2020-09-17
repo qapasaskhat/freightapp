@@ -20,6 +20,8 @@ import Modal from 'react-native-modal';
 import isEmpty from '../../components/Empty';
 import axios from 'axios';
 import moment from 'moment';
+import localization_ru from 'moment/locale/ru'
+
 import {connect} from 'react-redux';
 import {fetchCity} from '../../api/city/actions';
 import {fetchUser} from '../../api/users/actions';
@@ -40,6 +42,7 @@ class Main extends React.Component {
     items: [],
     loading: false,
     error: null,
+    page: 1
   }
   componentDidMount = async () => {
     const {user,login,dispatch,loadAnnouncements} = this.props
@@ -61,13 +64,19 @@ class Main extends React.Component {
       }
     })
   }
-  componentDidUpdate=(prevProps, prevState)=> {
-    if (prevProps.user !== this.props.user) {
-      console.log('componentDidUpdate Cabinet');
-      this.props.dispatch(fetchCity());
-      this.changeCity(this.props.user && this.props.user.city_id)
-      this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token));
-    }else{}
+  // componentDidUpdate=(prevProps, prevState)=> {
+  //   if (prevProps.user !== this.props.user) {
+  //     console.log('componentDidUpdate Cabinet');
+  //     this.props.dispatch(fetchCity());
+  //     this.changeCity(this.props.user && this.props.user.city_id)
+  //     this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token, this.state.page));
+  //   }else{}
+  // }
+  handleLoadMore=()=>{
+    console.log('more')
+    this.setState({
+      page: this.state.page + 1
+    }, () => {  this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token, this.state.page))  })
   }
   onChange = () => {
     this.setState({
@@ -84,7 +93,7 @@ class Main extends React.Component {
         body={item.body}
         phone_number={item.phone}
         from={item.from}
-        date={moment(item.created_at).format('DD MM YYYY')}
+        date={moment(item.created_at).local('ru',localization_ru).format('lll')}
         to={item.to}
         line
       />
@@ -189,14 +198,13 @@ class Main extends React.Component {
       refreshing: true,
     });
     //this.getAnnouncements()
-    this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token));
+    this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token,1));
     this.setState({
       refreshing: false,
     });
   };
 
   render() {
-    const { error, items} = this.state;
     const {cities, cityLoad, announcements, loadAnnouncements} = this.props;
     return (
       <>
@@ -214,10 +222,10 @@ class Main extends React.Component {
                 onRefresh={() => this.onRefresh()}
                 ListEmptyComponent={isEmpty('Вы не добавили обьявление')}
                 renderItem={item => this.renderItem(item)}
+                onEndReached={()=>this.handleLoadMore}
                 ListHeaderComponent={this.headerComp()}
-                keyExtractor={(item, index) => index.toString()}
-                style={{marginBottom: 64}}
-              />
+                keyExtractor={(item, index) => String(index)}
+                style={{marginBottom: 64}}  />
             )}
             <Modal
               isVisible={this.state.visibleModal}
@@ -284,12 +292,7 @@ class Main extends React.Component {
             </Modal>
           </ImageBackground>
           <View
-            style={{
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: '#fff',
-              bottom: 0,
-            }}>
+            style={{  position: 'absolute',width: '100%',backgroundColor: '#fff',bottom: 0, }}>
             <Button
               text={'Добавить заказ'}
               active
@@ -309,5 +312,5 @@ const mapStateToProps = state => ({
   login: state.login,
   loadAnnouncements: state.announcements.loading,
   errorAnnouncements: state.announcements.error
-});
+})
 export default connect(mapStateToProps)(Main);

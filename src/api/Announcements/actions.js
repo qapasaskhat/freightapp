@@ -18,6 +18,8 @@ export const PUT_ERROR = 'PUT_ERROR';
 export const DELETE_BEGIN = 'DELETE_BEGIN';
 export const DELETE_SUCCESS = 'DELETE_SUCCESS';
 export const DELETE_ERROR = 'DELETE_ERROR';
+export const FETCH_SUCCESS_ADD = 'FETCH_SUCCESS_ADD'
+export const FETCH_SUCCESS_ADD_ORDERS_ID = 'FETCH_SUCCESS_ADD_ORDERS_ID'
 import store from '../../api/store';
 
 export const fetch_begin = () => ({
@@ -26,8 +28,12 @@ export const fetch_begin = () => ({
 export const fetch_success = (data, page) => ({
   type: FETCH_SUCCESS,
   payload: {data},
-  page: {page}
+  page: page
 });
+export const fetch_success_add = (data)=>({
+  type: FETCH_SUCCESS_ADD,
+  payload: {data}
+})
 export const fetch_error = error => ({
   type: FETCH_ERROR,
   payload: {error},
@@ -40,6 +46,10 @@ export const fetch_success_orders_id = data => ({
   type: FETCH_SUCCESS_ORDERS_ID,
   payload: {data},
 });
+export const fetch_success_add_orders_id = data =>({
+  type: FETCH_SUCCESS_ADD_ORDERS_ID,
+  payload: {data}
+})
 export const fetch_error_orders_id = error => ({
   type: FETCH_ERROR_ORDERS_ID,
   payload: {error},
@@ -82,12 +92,11 @@ export const delete_error = error => ({
 });
 
 export function fetchAnnouncements(token,page) {
-
   return dispatch => {
-    dispatch(fetch_begin());
+    page === 1 && dispatch(fetch_begin());
     const request = axios({
       method: 'GET',
-      url: `http://gruz.sport-market.kz/api/announcements?page=${2}` ,
+      url: `http://gruz.sport-market.kz/api/announcements?page=${page}` ,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -96,7 +105,8 @@ export function fetchAnnouncements(token,page) {
       .then(function(response) {
         console.log('action fetchAnnouncements');
         console.log(response.data);
-        dispatch(fetch_success(response.data.data, page));
+        page === 1? dispatch(fetch_success(response.data.data, page))
+        : dispatch(fetch_success_add(response.data.data))
       })
       .catch(function(error) {
         console.log(error);
@@ -105,13 +115,13 @@ export function fetchAnnouncements(token,page) {
   };
 }
 
-export function fetchAnnouncementsId(id,token) {
+export function fetchAnnouncementsId(id,token,page) {
 
   return dispatch => {
-    dispatch(fetch_begin_orders_id());
+    page === 1 && dispatch(fetch_begin_orders_id());
     const request = axios({
       method: 'GET',
-      url: `${api}/user/${id}`,
+      url: `${api}/user/${id}?page=${page}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -120,24 +130,25 @@ export function fetchAnnouncementsId(id,token) {
       .then(function(response) {
         console.log('action fetchAnnouncementsId');
         console.log(response.data);
-        dispatch(fetch_success_orders_id(response.data));
+        page === 1 ? dispatch(fetch_success_orders_id(response.data))
+        : dispatch(fetch_success_add_orders_id(response.data))
       })
       .catch(function(error) {
-        // if (error.response) {
-        //   // The request was made and the server responded with a status code
-        //   // that falls out of the range of 2xx
-        //   console.log(error.response.data);
-        //   console.log(error.response.status);
-        //   console.log(error.response.headers);
-        // } else if (error.request) {
-        //   // The request was made but no response was received
-        //   // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        //   // http.ClientRequest in node.js
-        //   console.log(error.request);
-        // } else {
-        //   // Something happened in setting up the request that triggered an Error
-        //   console.log('Error', error.message);
-        // }
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
         console.log(error);
         //Alert.alert('Ошибка', error.toString());
 
@@ -162,7 +173,7 @@ export function postAnnouncements(data,token) {
         console.log('action postAnnouncements');
         console.log(response.data);
         dispatch(post_success(response.data));
-        dispatch(fetchAnnouncementsId(response.data.data.user_id,token));
+        dispatch(fetchAnnouncementsId(response.data.data.user_id,token,1));
       })
       .catch(function(error) {
         // if (error.response) {
@@ -208,19 +219,13 @@ export function putAnnouncementId(id, data,token) {
       })
       .catch(function(error) {
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
           console.log(error)
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
           console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
         console.log(error);
@@ -250,18 +255,12 @@ export function deleteAnnouncementId(id,token) {
       })
       .catch(function(error) {
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
           console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
           console.log('Error', error.message);
         }
         console.log(error.config);

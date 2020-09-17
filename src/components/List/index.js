@@ -9,18 +9,7 @@ import {
 import styles from './styles';
 import {trash, right} from '../../const/images';
 
-const List = ({
-  date,
-  phone_number,
-  name,
-  onpressOrder,
-  desc,
-  line,
-  del,
-  onpressDelete,
-  body,
-  from,
-  to,
+const List = ({  date,phone_number,name,onpressOrder,desc,line,del,onpressDelete,body,from,to,
 }) => {
   const formatPhoneNumber = phoneNumberString => {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
@@ -42,7 +31,11 @@ const List = ({
   };
 
   return (
-    <TouchableHighlight onPress={onpressOrder} underlayColor="#ececec">
+    <TouchableHighlight style={{
+        marginHorizontal: 16,
+        marginBottom: 10,
+        marginTop: 10
+    }} onPress={onpressOrder} underlayColor="#eee">
       <View style={styles.view}>
         <View style={styles.row}>
           <Text style={styles.text_date}>{date}</Text>
@@ -67,15 +60,7 @@ const List = ({
         </View>
         <View style={styles.empty}>
           <Text style={styles.text_address}>{from}</Text>
-          <Image
-            source={right}
-            style={{
-              width: 16,
-              height: 8,
-              resizeMode: 'contain',
-              marginBottom: 5,
-            }}
-          />
+          <Image  source={right}  style={{  width: 16,height: 8,resizeMode: 'contain',marginBottom: 5,  }}  />
           <Text style={styles.text_address}>{to}</Text>
         </View>
       </View>

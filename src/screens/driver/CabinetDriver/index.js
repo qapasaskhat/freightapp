@@ -51,9 +51,7 @@ class Main extends React.Component {
       { this.props.dispatch(fetchUser(this.props.token)) }
     );
   };
-  onChange = () => {
-    this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" });
-  };
+  onChange = () => {  this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" })  }
   renderItem = ({item}) => {
     return (
       <List
@@ -65,15 +63,14 @@ class Main extends React.Component {
         del
         line
         name={item.user.name}
-        onpressOrder={() => this.onPressList(item)}
-      />
-    )
+        onpressOrder={() => this.onPressList(item)} />  )
   }
-  onPressList = item => { this.props.navigation.navigate('OrderDriver', {param: item});};
+  onPressList = item => { this.props.navigation.navigate('OrderDriver', {param: item}) };
   city = () => {
     this.props.dispatch(fetchCity());
     this.setState({ visibleModal: true });
   };
+
   handleLoadMore=()=>{
     this.setState({
       page: this.state.page + 1
@@ -99,7 +96,6 @@ class Main extends React.Component {
       ].join('');
     }
   }
-
   headerComp = () => {
     return (
       <View style={{backgroundColor: '#fff'}}>
@@ -124,11 +120,7 @@ class Main extends React.Component {
             Ваш город
           </Text>
           <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+            style={{  flexDirection: 'row',justifyContent: 'center',alignItems: 'center' }}
             onPress={() => this.city()}>
             <Text
               style={{
@@ -140,27 +132,21 @@ class Main extends React.Component {
               }}>
               {this.state.cityName}
             </Text>
-            <Image
-              source={drop}
-              style={{marginLeft: 6, width: 12, resizeMode: 'contain'}}
-            />
+            <Image source={drop}  style={{marginLeft: 6, width: 12, resizeMode: 'contain'}}  />
           </TouchableOpacity>
         </View>
         <Item
           onpress={() => this.props.navigation.navigate('EditProfileDriver')}
           name={this.props.user ? this.props.user.name : ''}
-          phone_number={this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''}
-        />
+          phone_number={this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''}/>
         <Push
           text='Получать уведомления'
           isEnabled={this.props.statusNotification}
-          onChange={() => this.onChange()}
-        />
+          onChange={() => this.onChange()}/>
         <Push
           text='Звук уведомления'
           isEnabled={this.props.muteNotification}
-          onChange={() => this.onChangeMute()}
-        />
+          onChange={() => this.onChangeMute()}/>
       </View>
     );
   };
@@ -185,26 +171,19 @@ class Main extends React.Component {
         <SafeAreaView style={styles.container}>
           <ImageBackground
             source={img_bg}
-            style={{
-              width: '100%',
-              height: '100%',
-              resizeMode: 'center',
-            }}>
-            {loading ? (
-              <ActivityIndicator />
-            ) : (
+            style={{  width: '100%',height: '100%',resizeMode: 'center'  }}>
+            {loading ? (  <ActivityIndicator />  ) : (
               <FlatList
                 data={data }
                 refreshing={this.state.refreshing}
                 onEndReached={()=>{
-                  console.log('more')
-                  this.handleLoadMore 
+                  this.handleLoadMore() 
                 }}
                 onRefresh={this.onRefresh}
                 ListEmptyComponent={isEmpty('Нет обьялении')}
                 renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={(item, index) => String(index)}
               />
             )}
             <Modal

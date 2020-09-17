@@ -10,13 +10,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     view:{
-        backgroundColor: '#fff',
-        marginHorizontal: 16,
-        //padding: 10,
-        marginBottom: 10,
         borderRadius: 10,
-       // borderWidth: 0.3
-       marginTop: 10
+        backgroundColor: '#fff',
     },
     row:{
         flexDirection: 'row',

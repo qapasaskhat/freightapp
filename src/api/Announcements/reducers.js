@@ -1,3 +1,4 @@
+import { cos } from 'react-native-reanimated';
 import {
   FETCH_BEGIN,
   FETCH_SUCCESS,
@@ -14,6 +15,8 @@ import {
   DELETE_BEGIN,
   DELETE_SUCCESS,
   DELETE_ERROR,
+  FETCH_SUCCESS_ADD,
+  FETCH_SUCCESS_ADD_ORDERS_ID
 } from './actions';
 
 const initianState = {
@@ -40,11 +43,17 @@ export default function reducerAnnouncements(state = initianState, action) {
         error: null,
       };
     case FETCH_SUCCESS:
+      console.log('action',action)
       return {
         ...state,
         loading: false,
-        dataAnnouncements: action.payload.data //action.payload.page === 1? action.payload.data : [...state.dataAnnouncements, action.payload.data],
+        dataAnnouncements: action.payload.data // action.payload.page === 1 ? action.payload.data : state.dataAnnouncements.concat(action.payload.data)  //[...state.dataAnnouncements, action.payload.data],
       };
+    case FETCH_SUCCESS_ADD:
+      return{
+        ...state,
+        dataAnnouncements: state.dataAnnouncements.concat(action.payload.data) 
+      }
     case FETCH_ERROR:
       return {
         ...state,
@@ -64,6 +73,11 @@ export default function reducerAnnouncements(state = initianState, action) {
         loadingUserOrders: false,
         dataAnnouncementsUser: action.payload.data,
       };
+    case FETCH_SUCCESS_ADD_ORDERS_ID:
+      return {
+        ...state,
+        dataAnnouncementsUser: state.dataAnnouncementsUser.data.concat(action.payload.data.data)
+      }
     case FETCH_ERROR_ORDERS_ID:
       return {
         ...state,

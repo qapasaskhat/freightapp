@@ -147,13 +147,13 @@ class Main extends React.Component {
   };
   componentDidMount=()=>{
     console.log(this.props.cities.data)
-    this.props.cities.data.map(item=>{
-      if(item.id === this.props.user.city_id){
-        this.setState({
-          address_from: item.name
-        })
-      }
-    })
+    // this.props.cities && this.props.cities.data.map(item=>{
+    //   if(item.id === this.props.user.city_id){
+    //     this.setState({
+    //       address_from: item.name
+    //     })
+    //   }
+    // })
     this.setState({
       phone_number: this.props.user.phone
     })
