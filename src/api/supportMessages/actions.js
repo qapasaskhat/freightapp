@@ -62,7 +62,7 @@ export function fetchSupportMessages() {
   };
 }
 
-export function postSupportMesssages(data) {
+export function postSupportMesssages(data,access_token) {
   const {
     login: {token},
   } = store.getState();
@@ -72,7 +72,7 @@ export function postSupportMesssages(data) {
       method: 'POST',
       url: api,
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${access_token}`,
       },
       data: data,
     });

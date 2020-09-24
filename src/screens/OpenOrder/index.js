@@ -15,10 +15,10 @@ import {img_bg} from '../../const/images';
 import Button from '../../components/Button';
 import List from '../../components/List';
 import moment from 'moment';
+import {language} from '../../const/const'
+import {connect} from 'react-redux'
 
 const width = Dimensions.get('window').width;
-const text =
-  'Таким образом рамки и место обучения кадров требуют определения и уточнения системы обучения кадров, соответствует насущным потребностям. Повседневная практика показывает, что сложившаяся структура организации способствует подготовки и реализации дальнейших направлений развития';
 
 class CodeInputClass extends React.Component {
   state = {
@@ -29,17 +29,17 @@ class CodeInputClass extends React.Component {
   };
   arhived = () => {
     Alert.alert(
-      'Удалить',
-      'Действительно ли вы хотите удалить?',
+      language[this.props.langId].cabinet.delete,
+      language[this.props.langId].cabinet.delete_text,
       [
         {
-          text: 'Удалить',
+          text: language[this.props.langId].cabinet.delete,
           onPress: async () => {
             console.log('delete');
           },
         },
         {
-          text: 'Отмена',
+          text: language[this.props.langId].cabinet.otmena,
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
@@ -54,13 +54,13 @@ class CodeInputClass extends React.Component {
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <Header
-            text={'Просмотр заказа'}
+            text={language[this.props.langId].view_orders.title}
             onpress={() => this.props.navigation.goBack()}
           />
           <ImageBackground style={styles.img_bg} source={img_bg}>
             <List
               onpressDelete={() => this.arhived()}
-              name="Вы"
+              name={language[this.props.langId].cabinet.name}
               body={item.body}
               line
               from={item.from}
@@ -71,7 +71,7 @@ class CodeInputClass extends React.Component {
           </ImageBackground>
           <View style={styles.bottom}>
             <Button
-              text={'Редактировать заказ'}
+              text={language[this.props.langId].view_orders.edit_btn}
               active
               onpress={() =>
                 this.props.navigation.navigate('EditOrder', {param: item})
@@ -83,4 +83,7 @@ class CodeInputClass extends React.Component {
     );
   }
 }
-export default CodeInputClass;
+const mapStateToProps = state => ({
+  langId: state.appReducer.langId
+})
+export default connect(mapStateToProps)(CodeInputClass);

@@ -3,7 +3,7 @@ import {
     View,
     Text,
     Image,
-    TouchableOpacity
+    TouchableOpacity, ActivityIndicator
 } from 'react-native'
 import styles from './styles'
 import { Gilroy_Medium } from '../../const/fonts'
@@ -12,9 +12,12 @@ import { right } from '../../const/images'
 const Item = ({
   name,
   phone_number,
-  onpress
+  onpress,
+  load
 }) => {
     return (
+      load?
+      <ActivityIndicator />:
       <TouchableOpacity
         style={styles.view} onPress={onpress}>
         <View

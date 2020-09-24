@@ -1,7 +1,8 @@
 
   const initialState = {
     statusNotification: true,
-    muteNotification: false
+    muteNotification: true,
+    langId:1
   };
   
   export default function appReducer(state = initialState, action) {
@@ -16,6 +17,11 @@
                 ...state,
                 muteNotification: !state.muteNotification
             }
+        case 'CHANGE_LANG':
+          return{
+            ...state,
+            langId: action.payload
+          }
       default:
         return state;
     }

@@ -4,12 +4,12 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  TouchableHighlight,
+  TouchableHighlight, ActivityIndicator
 } from 'react-native';
 import styles from './styles';
 import {trash, right} from '../../const/images';
 
-const List = ({  date,phone_number,name,onpressOrder,desc,line,del,onpressDelete,body,from,to,
+const List = ({ load, date,phone_number,name,onpressOrder,desc,line,del,onpressDelete,body,from,to,
 }) => {
   const formatPhoneNumber = phoneNumberString => {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
@@ -31,6 +31,8 @@ const List = ({  date,phone_number,name,onpressOrder,desc,line,del,onpressDelete
   };
 
   return (
+    load?
+    <ActivityIndicator />:
     <TouchableHighlight style={{
         marginHorizontal: 16,
         marginBottom: 10,

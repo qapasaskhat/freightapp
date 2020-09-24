@@ -12,6 +12,15 @@ const styles = StyleSheet.create({
     view:{
         borderRadius: 10,
         backgroundColor: '#fff',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.35,
+        shadowRadius: 3.84,
+
+        elevation: 5,
     },
     row:{
         flexDirection: 'row',

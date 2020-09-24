@@ -22,7 +22,8 @@ import {connect} from 'react-redux';
 import {putUser,fetchUser} from '../../../api/users/actions';
 import Toast from 'react-native-simple-toast';
 import {Gilroy_Medium} from '../../../const/fonts';
-
+import firebase from 'react-native-firebase'
+import { language } from '../../../const/const'
 const {height, width} = Dimensions.get('screen');
 
 const InputView = ({data}) => {
@@ -75,6 +76,7 @@ class EditDriver extends React.Component {
   signOut = async () => {
     //AsyncStorage.clear()
     this.props.dispatch({ type: "LOG_OUT" });
+    firebase.messaging().unsubscribeFromTopic('gruzz')
     const resetAction = StackActions.reset({
       index: 0,
       actions: [NavigationActions.navigate({routeName: 'Screen'})],
@@ -93,157 +95,97 @@ class EditDriver extends React.Component {
     const {cities} = this.props
     this.list = [
       {
-        text: 'Введите ваше имя',
-        placeholder: this.props.user ? this.props.user.name : 'Имя',
+        text: language[this.props.langId].edit.name,
+        placeholder: this.props.user ? this.props.user.name : language[this.props.langId].edit.name,
         change: text => {
           this.setState({login: text});
         },
         value: this.state.login,
-      },
-      // {
-      //   text: 'Введите старый пароль',
-      //   placeholder: '',
-      //   change: text => {
-      //     this.setState({password: text});
-      //   },
-      //   value: this.state.password
-      // },
-      // {
-      //   text: 'Введите новый пароль',
-      //   placeholder: '',
-      //   change: text => {
-      //     this.setState({password: text});
-      //   },
-      //   value: this.state.password
-      // },
+      }
     ];
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView style={styles.container}>
           <Header
-            text="Редактировать профиль"
-            onpress={() => this.props.navigation.goBack()}
-          />
+            text={language[this.props.langId].edit.title}
+            onpress={() => this.props.navigation.goBack()}  />
           <ImageBackground
             source={img_bg}
             style={{width: '100%', height: '100%'}}>
+              <View style={{
+                flexDirection:'row', 
+                justifyContent:'space-between',
+                marginHorizontal:20,
+                backgroundColor:'#fff',
+                marginTop: 20,
+                paddingVertical:10,
+                alignItems: 'center',
+                borderRadius: 10,
+                paddingHorizontal:30,
+                shadowColor: "#000",
+shadowOffset: {
+	width: 0,
+	height: 2,
+},
+shadowOpacity: 0.25,
+shadowRadius: 3.84,
+
+elevation: 5,
+                }}>
+                <Text style={{
+                  fontSize: 15,
+                  fontFamily: Gilroy_Medium,
+                  fontWeight: '600',
+                }}>{language[this.props.langId].edit.lang}</Text>
+                <View style={{
+                  alignSelf:'center',
+                  flexDirection:'row',
+                  width:80,
+                  height:30,
+                  borderRadius:30,
+                  backgroundColor: '#fff',
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5,
+                  }}>
+                  <TouchableOpacity onPress={()=>{
+                    this.props.dispatch({ type: "CHANGE_LANG", payload: 0 })
+                  }} style={{backgroundColor: this.props.langId===0? '#007BED':'#fff', height: 30, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
+                    <Text style={{color:this.props.langId===0?'#fff':'#000'}}>Рус</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={()=>{
+                    this.props.dispatch({ type: "CHANGE_LANG", payload: 1 })
+                  }} style={{backgroundColor:this.props.langId===1? '#007BED':'#fff', height: 30, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
+                    <Text style={{color:this.props.langId===1?'#fff':'#000'}}>Қаз</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             <View
               style={{
                 margin: 20,
                 backgroundColor: '#fff',
                 borderRadius: 10,
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+
+                elevation: 5,
               }}>
+                
               <InputView data={this.list} />
             </View>
-            {/* <View style={{paddingVertical: 5,backgroundColor: '#fff'}}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontFamily: Gilroy_Medium,
-                  color: '#0B0B2A',
-                  paddingLeft: 50,
-                }}>
-                Выберите город
-              </Text>
-              <TouchableOpacity
-                onPress={()=>{this.setState({cityValue: true})}}
-                style={{
-                  height: height * 0.06,
-                  marginHorizontal: 38,
-                  backgroundColor: '#fff',
-                  borderRadius: 60,
-                  justifyContent: 'space-between',
-                  paddingHorizontal: 12,
-                  shadowColor: 'rgba(170, 178, 190, 0.25)',
-                  shadowOffset: {
-                    width: 1,
-                    height: 2,
-                  },
-                  shadowOpacity: 1,
-                  shadowRadius: 4,
-                  elevation: 5,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginBottom: 20,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: Gilroy_Medium,
-                    lineHeight: 14,
-                    color: '#0B0B2A',
-                  }}>
-                  {this.state.cityName}
-                </Text>
-                <Image
-                  source={drop}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    resizeMode: 'contain',
-                  }}
-                />
-              </TouchableOpacity>
-              {this.state.cityValue && (
-                <View
-                  style={{
-                    marginHorizontal: 38,
-                    backgroundColor: '#fff',
-                    position: 'absolute',
-                    bottom: -10,
-                    width: width - 2 * 38,
-                    height: '130%',
-                    borderRadius: 12,
-                    shadowColor: 'rgba(170, 178, 190, 0.25)',
-                    shadowOffset: {
-                      width: 1,
-                      height: 2,
-                    },
-                    shadowOpacity: 1,
-                    shadowRadius: 4,
-                    elevation: 5,
-                  }}>
-                  <ScrollView>
-                    <Text
-                      style={{
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        fontFamily: Gilroy_Medium,
-                      }}>
-                      Выберите город
-                    </Text>
-                    {cities.data.map(item => {
-                      return (
-                        <TouchableOpacity
-                          onPress={() => {
-                            this.getCity(item.id, item.name);
-                          }}
-                          style={{
-                            borderWidth: 1,
-                            margin: 3,
-                            borderColor: '#eee',
-                            paddingHorizontal: 12,
-                            flexDirection: 'row',
-                          }}>
-                          <Text>{item.id}. </Text>
-                          <Text
-                            style={{
-                              fontFamily: Gilroy_Medium,
-                              fontSize: 14,
-                            }}>
-                            {item.name}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </ScrollView>
-                </View>
-              )}
-            </View> */}
-            {/* <Button text={'Изменить пароль'} active onpress={()=>{}}/> */}
             <Button
-              text={'Выйти'}
+              text={language[this.props.langId].edit.logout}
               active
               onpress={() => {
                 this.signOut();
@@ -257,7 +199,7 @@ class EditDriver extends React.Component {
               backgroundColor: '#fff',
               bottom: 0,
             }}>
-            <Button text={'Сохранить'} active onpress={this.saveChange} />
+            <Button text={language[this.props.langId].edit.save} active onpress={this.saveChange} />
           </View>
         </SafeAreaView>
       </>
@@ -267,7 +209,8 @@ class EditDriver extends React.Component {
 const mapStateToProps = state => ({
   user: state.users.userData,
   cities: state.cities.cityData,
-  token: state.login.token
+  token: state.login.token,
+  langId: state.appReducer.langId
 });
 const mapDispatchToProps = dispatch => ({
   dispatch

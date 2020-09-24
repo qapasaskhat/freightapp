@@ -22,7 +22,7 @@ import {connect} from 'react-redux';
 import {fetchCity} from '../../api/city/actions';
 import {postRegister} from '../../api/register/actions';
 import {getBrand, getDeviceId} from 'react-native-device-info';
-
+import { language } from '../../const/const'
 const InputView = ({data}) => {
   return (
     <View style={styles.view}>
@@ -41,7 +41,7 @@ const InputView = ({data}) => {
   );
 };
 
-const Login = ({onperss}) => {
+const Login = ({onperss, text, txt}) => {
   return (
     <TouchableOpacity onPress={onperss} style={{margin: 12}}>
       <Text
@@ -51,8 +51,8 @@ const Login = ({onperss}) => {
           marginTop: '3%',
           fontFamily: Gilroy_Medium,
         }}>
-        Уже есть аккаунт?{' '}
-        <Text style={{color: '#007BED', fontFamily: Gilroy_Medium}}>Войти</Text>
+        {text}{' '}
+      <Text style={{color: '#007BED', fontFamily: Gilroy_Medium}}>{txt}</Text>
       </Text>
     </TouchableOpacity>
   );
@@ -67,19 +67,35 @@ class Register extends React.Component {
     toggleCheckBox: false,
     cityValue: false,
     cityName: '',
-    cityId: 1
+    cityId: 1,
+    allCities: {}
   };
   componentDidMount=()=> {
-    setTimeout(() => {
-      this.props.fetchCity();
-    }, 1000);
-    
+    this.getAllCities()
     console.log('fetchCity')
-    this.changeCity(1)
+  }
+  getAllCities=()=>{
+    var axios = require('axios');
+    var config = {
+      method: 'get',
+      url: 'http://gruz.sport-market.kz/api/cities/',
+    };
+
+    axios(config)
+    .then( (response) => {
+      console.log(JSON.stringify(response.data));
+      this.setState({
+        allCities: response.data
+      })
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
   changeCity=(id)=>{
-    const { cities } = this.props
-    cities.data.map(item=>{
+    const { allCities } = this.state
+
+    allCities.data.map(item=>{
       if(item.id === id){
         this.setState({
           cityName: item.name,
@@ -95,7 +111,6 @@ class Register extends React.Component {
   };
 
   getCity = (id, name) => {
-    const {cities} = this.props;
     this.setState({
       cityName: name,
       cityValue: false,
@@ -149,11 +164,10 @@ class Register extends React.Component {
     }
   };
   render() {
-    const {toggleCheckBox, cityValue} = this.state;
-    const {cities} = this.props;
+    const {toggleCheckBox, cityValue, allCities} = this.state;
     this.list = [
       {
-        text: 'Введите ваше имя',
+        text: language[this.props.langId].register.name,
         placeholder: 'Александр',
         change: text => {
           this.setState({login: text});
@@ -161,7 +175,7 @@ class Register extends React.Component {
         password: false,
       },
       {
-        text: 'Введите номер телефона',
+        text: language[this.props.langId].register.phone,
         placeholder: '+ 7',
         change: text => {
           this.setState({phone_number: text});
@@ -169,7 +183,7 @@ class Register extends React.Component {
         password: false,
       },
       {
-        text: 'Ваш пароль',
+        text: language[this.props.langId].register.password,
         placeholder: '•  •  •  •  •  •  •  • ',
         change: text => {
           this.setState({password: text});
@@ -177,7 +191,7 @@ class Register extends React.Component {
         password: true,
       },
       {
-        text: 'Повторите пароль',
+        text: language[this.props.langId].register.repeatPass,
         placeholder: '•  •  •  •  •  •  •  • ',
         change: text => {
           this.setState({repeatPassword: text});
@@ -192,7 +206,7 @@ class Register extends React.Component {
         <SafeAreaView style={styles.container}>
           <ScrollView>
             <Logo little />
-            <Txt text={'Регистрация'} />
+            <Txt text={language[this.props.langId].register.title} />
             <View
               style={{
                 paddingVertical: 5,
@@ -205,7 +219,7 @@ class Register extends React.Component {
                   color: '#0B0B2A',
                   paddingLeft: 50,
                 }}>
-                Выберите город
+                {language[this.props.langId].register.city}
               </Text>
               <TouchableOpacity
                 style={styles.touch}
@@ -256,9 +270,9 @@ class Register extends React.Component {
                         fontWeight: 'bold',
                         fontFamily: Gilroy_Medium,
                       }}>
-                      Выберите город
+                      {language[this.props.langId].register.city}
                     </Text>
-                    {cities.data && cities.data.map(item => {
+                    {allCities.data && allCities.data.map(item => {
                       return (
                         <TouchableOpacity
                           onPress={() => {
@@ -295,16 +309,19 @@ class Register extends React.Component {
               />
               <TouchableOpacity onPress={() => this._changeChek()}>
                 <Text style={[styles.text]}>
-                  Я согласен с условиями {'\n'}пользовательского соглашения
+                  {language[this.props.langId].register.agreement}
                 </Text>
               </TouchableOpacity>
             </View>
             <Button
               active={toggleCheckBox}
-              text="Далее"
+              text={language[this.props.langId].register.next}
               onpress={() => (toggleCheckBox ? this.createUser() : {})}
             />
-            <Login onperss={() => this.props.navigation.navigate('Login')} />
+            <Login 
+              txt={language[this.props.langId].login.bnt} 
+              text={language[this.props.langId].register.login} 
+              onperss={() => this.props.navigation.navigate('Login')} />
           </ScrollView>
         </SafeAreaView>
       </>
@@ -314,6 +331,7 @@ class Register extends React.Component {
 const mapStateToProps = state => ({
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
+  langId: state.appReducer.langId
 });
 export default connect(
   mapStateToProps,

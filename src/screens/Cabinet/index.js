@@ -32,7 +32,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage'
 import {Gilroy_Bold} from '../../const/fonts';
 import Toast from 'react-native-simple-toast';
-
+import {language} from '../../const/const'
 class Main extends React.Component {
   state = {
     isEnabled: false,
@@ -87,7 +87,8 @@ class Main extends React.Component {
     return (
       <List
         onpressDelete={() => this.arhived(item.id)}
-        name={'Вы'}
+        name={language[this.props.langId].cabinet.name}
+        load={this.props.loadAnnouncements}
         trash={false}
         onpressOrder={() => this.props.navigation.navigate('OpenOrder', {param: item})}
         body={item.body}
@@ -119,15 +120,15 @@ class Main extends React.Component {
   }
   arhived = idAnnouncements => {
     Alert.alert(
-      'Удалить',
-      'Действительно ли вы хотите удалить?',
+      language[this.props.langId].cabinet.delete,
+      language[this.props.langId].cabinet.delete_text,
       [
         {
-          text: 'Удалить',
+          text: language[this.props.langId].cabinet.delete,
           onPress: () => {
             try {
               this.props.dispatch(deleteAnnouncementId(idAnnouncements,this.props.login.token));
-              Toast.show('Удалено');
+              Toast.show(language[this.props.langId].cabinet.delete_success);
               this.props.dispatch(fetchAnnouncementsId(this.props.user.id,this.props.login.token));
             } catch (error) {
               console.log(error);
@@ -135,7 +136,7 @@ class Main extends React.Component {
           },
         },
         {
-          text: 'Отмена',
+          text: language[this.props.langId].cabinet.otmena,
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
@@ -146,9 +147,9 @@ class Main extends React.Component {
   headerComp = () => {
     return (
       <View style={{backgroundColor: '#fff'}}>
-        <Text style={styles.cabinet}>Личный Кабинет</Text>
+        <Text style={styles.cabinet}>{language[this.props.langId].cabinet.title}</Text>
         <View>
-          <Text style={styles.city}>Ваш город</Text>
+          <Text style={styles.city}>{language[this.props.langId].cabinet.city}</Text>
           <TouchableOpacity
             style={{
               flexDirection: 'row',
@@ -169,6 +170,7 @@ class Main extends React.Component {
         </View>
         <Item
           onpress={() => this.props.navigation.navigate('EditProfileClient')}
+          load={this.props.userLoad}
           name={this.props.user ? this.props.user.name : ''}
           phone_number={
             this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''
@@ -183,11 +185,11 @@ class Main extends React.Component {
               lineHeight: 24,
               fontFamily: 'Gilroy-Medium',
             }}>
-            Текущие заказы
+            {language[this.props.langId].cabinet.orders}
           </Text>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Order')}>
-            <Text style={styles.arhived}>Перейти в архив</Text>
+            <Text style={styles.arhived}>{language[this.props.langId].cabinet.arhive}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -211,22 +213,16 @@ class Main extends React.Component {
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <ImageBackground source={img_bg} style={styles.img_bg}>
-            {loadAnnouncements ? (
-              <View>
-                <ActivityIndicator color={'#007BED'} />
-              </View>
-            ) : (
               <FlatList
                 data={announcements.data}
                 refreshing={this.state.refreshing}
                 onRefresh={() => this.onRefresh()}
-                ListEmptyComponent={isEmpty('Вы не добавили обьявление')}
+                ListEmptyComponent={isEmpty(language[this.props.langId].cabinet.empty)}
                 renderItem={item => this.renderItem(item)}
                 onEndReached={()=>this.handleLoadMore}
                 ListHeaderComponent={this.headerComp()}
                 keyExtractor={(item, index) => String(index)}
                 style={{marginBottom: 64}}  />
-            )}
             <Modal
               isVisible={this.state.visibleModal}
               style={styles.modal}
@@ -250,7 +246,7 @@ class Main extends React.Component {
                     fontSize: 18,
                     fontFamily: Gilroy_Bold,
                   }}>
-                  Выберите город
+                  {language[this.props.langId].register.city}
                 </Text>
                 {cityLoad ? (
                   <ActivityIndicator />
@@ -286,7 +282,7 @@ class Main extends React.Component {
                       visibleModal: false,
                     });
                   }}>
-                  <Text>Закрыть</Text>
+                  <Text>{language[this.props.langId].cabinet.otmena}</Text>
                 </TouchableOpacity>
               </View>
             </Modal>
@@ -294,7 +290,7 @@ class Main extends React.Component {
           <View
             style={{  position: 'absolute',width: '100%',backgroundColor: '#fff',bottom: 0, }}>
             <Button
-              text={'Добавить заказ'}
+              text={language[this.props.langId].cabinet.btn}
               active
               onpress={() => this.props.navigation.navigate('Main')}
             />
@@ -306,11 +302,13 @@ class Main extends React.Component {
 }
 const mapStateToProps = state => ({
   user: state.users.userData,
+  userLoad: state.users.loading,
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
   announcements: state.announcements.dataAnnouncementsUser,
   login: state.login,
   loadAnnouncements: state.announcements.loading,
-  errorAnnouncements: state.announcements.error
+  errorAnnouncements: state.announcements.error,
+  langId: state.appReducer.langId
 })
 export default connect(mapStateToProps)(Main);

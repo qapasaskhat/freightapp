@@ -36,7 +36,7 @@ export function fetchLogin(user,role) {
     return request
       .then(async function(response) {
         console.log(response.data);
-        dispatch(fetchUser(response.data.token));  
+        dispatch(fetchUser(response.data.token));
         setTimeout(() => {
           dispatch(fetch_success_login(response.data.token,role));
         }, 500);

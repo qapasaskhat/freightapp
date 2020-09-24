@@ -140,6 +140,21 @@ export default function reducerAnnouncements(state = initianState, action) {
         loadingDelete: false,
         errorDelete: action.payload.error,
       };
+    case 'LOG_OUT':
+      return {
+        dataAnnouncements: [],
+        dataAnnouncementsUser: [],
+        loading: false,
+        loadingPost: false,
+        loadingPut: false,
+        loadingDelete: false,
+        loadingUserOrders: false,
+        error: null,
+        errorPost: null,
+        errorDelete: null,
+        errorPut: null,
+        errorUserOrders: null,
+      }
     default:
       return state;
   }

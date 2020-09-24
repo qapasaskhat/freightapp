@@ -16,7 +16,10 @@ import Header from '../../../components/Header';
 import List from '../../../components/List';
 import Button from '../../../components/Button';
 import moment from 'moment';
+import localization_ru from 'moment/locale/ru'
 import {ScrollView} from 'react-native-gesture-handler';
+import { connect } from 'react-redux'
+import { language } from '../../../const/const'
 
 class OrderDriver extends React.Component {
   constructor(props) {
@@ -60,7 +63,7 @@ class OrderDriver extends React.Component {
             source={img_bg}
             style={{width: '100%', height: '100%'}}>
             <Header
-              text={'Просмотр заказа'}
+              text={language[this.props.langId].view_orders.title}
               onpress={() => this.props.navigation.goBack()}
             />
             <ScrollView>
@@ -70,7 +73,7 @@ class OrderDriver extends React.Component {
                 line
                 phone_number={item.phone}
                 del
-                date={moment(item.created_at).format('DD MM YYYY')}
+                date={moment(item.created_at).local('ru',localization_ru).format('lll')}
                 from={item.from}
                 to={item.to}
               />
@@ -84,7 +87,7 @@ class OrderDriver extends React.Component {
               bottom: 0,
             }}>
             <Button
-              text={'Позвонить'}
+              text={language[this.props.langId].view_orders.call}
               active
               onpress={() => this.callNumber(item.phone)}
             />
@@ -94,4 +97,7 @@ class OrderDriver extends React.Component {
     );
   }
 }
-export default OrderDriver;
+const mapStateToProps = state => ({
+  langId: state.appReducer.langId
+});
+export default connect(mapStateToProps)(OrderDriver);

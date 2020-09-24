@@ -14,6 +14,7 @@ import {img} from '../../const/images';
 import {fcmService} from '../../notification';
 import {connect} from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage';
+import {language} from '../../const/const'
 
 const width = Dimensions.get('window').width;
 
@@ -86,15 +87,16 @@ class Screen extends React.Component {
     this.props.navigation.navigate('AuthDriver');
   };
   render() {
+
     return (
       <>
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <Logo />
           <View style={{position: 'absolute',bottom: -10,}}>
-            <Button active text="Клиент" onpress={() => this._goTo()} />
-            <Button light text="Водитель" onpress={() => this._goToDriver()} />
-            <Image  source={img}  style={{width: width,resizeMode: 'contain',height: width,}}
+            <Button active text={language[this.props.langId].main.client} onpress={() => this._goTo()} />
+            <Button light text={language[this.props.langId].main.driver} onpress={() => this._goToDriver()} />
+            <Image source={img}  style={{width: width,resizeMode: 'contain',height: width,}}
             />
           </View>
         </SafeAreaView>
@@ -104,5 +106,6 @@ class Screen extends React.Component {
 }
 const mapStateToProps = state => ({
   role: state.login.role,
+  langId: state.appReducer.langId
 });
 export default connect(mapStateToProps)(Screen);

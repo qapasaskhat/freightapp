@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import {NavigationActions, StackActions} from 'react-navigation';
-
+import { language } from '../../const/const'
 const InputView = ({data}) => {
   return (
     <View style={styles.view}>
@@ -40,11 +40,11 @@ class Login extends React.Component {
 
   _signIn = async (phone_number, password) => {
     if (phone_number.length < 11 || phone_number.length > 12) {
-      Alert.alert('Пожалуйста, введите корректный номер');
+      Alert.alert(language[this.props.langId].login.alert_phone);
       return;
     }
     if (password.length < 8) {
-      Alert.alert('Пароль должен состоять как минимум из 8 символов');
+      Alert.alert(language[this.props.langId].login.alert_password);
       return;
     }
     let phone = phone_number.replace(/^\D+/g, '');
@@ -53,7 +53,7 @@ class Login extends React.Component {
     formData.append('password', password);
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
     try {
-      this.props.fetchLogin(formData,1);
+      this.props.dispatch(fetchLogin(formData,1));
       setTimeout(() => {
         this.props.loginError ? null :
         this.props.navigation.navigate('Cabinet');
@@ -65,7 +65,7 @@ class Login extends React.Component {
     const {loginError,loginLoad} = this.props
     this.list = [
       {
-        text: 'Введите номер телефона',
+        text: language[this.props.langId].login.phone,
         placeholder: '+ 7',
         change: text => {
           this.setState({phone_number: text});
@@ -74,7 +74,7 @@ class Login extends React.Component {
         value: phone_number,
       },
       {
-        text: 'Ваш пароль',
+        text: language[this.props.langId].login.password,
         placeholder: '•  •  •  •  •  •  •  • ',
         change: text => {
           this.setState({password: text});
@@ -88,7 +88,34 @@ class Login extends React.Component {
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <Logo />
-          <Txt text="Войти как клиент" />
+          <View style={{
+            alignSelf:'center',
+            flexDirection:'row',
+            width:80,
+            height:30,
+            borderRadius:30,
+            backgroundColor: '#fff',
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+            }}>
+            <TouchableOpacity onPress={()=>{
+              this.props.dispatch({ type: "CHANGE_LANG", payload: 0 })
+            }} style={{backgroundColor: this.props.langId===0? '#007BED':'#fff', height: 30, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
+              <Text style={{color:this.props.langId===0?'#fff':'#000'}}>Рус</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>{
+              this.props.dispatch({ type: "CHANGE_LANG", payload: 1 })
+            }} style={{backgroundColor:this.props.langId===1? '#007BED':'#fff', height: 30, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
+              <Text style={{color:this.props.langId===1?'#fff':'#000'}}>Қаз</Text>
+            </TouchableOpacity>
+          </View>
+          <Txt text={language[this.props.langId].login.titleClient} />
           <InputView data={this.list} />
           <Text
             style={{
@@ -108,7 +135,7 @@ class Login extends React.Component {
                 textAlign: 'right',
                 marginRight: 32,
               }}>
-              Забыли пароль?
+              {language[this.props.langId].login.forgot}
             </Text>
           </TouchableOpacity>
           { 
@@ -116,7 +143,7 @@ class Login extends React.Component {
           <ActivityIndicator color=''/>:
             <Button
             active
-            text="Войти"
+            text={language[this.props.langId].login.bnt}
             onpress={() => {
               this._signIn(phone_number, password)
             }}
@@ -134,7 +161,7 @@ class Login extends React.Component {
                 textAlign: 'center',
                 fontFamily: Gilroy_Medium,
               }}>
-              Еще нет аккаунта? 
+              {language[this.props.langId].login.register}
             </Text>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate('Register')}>
@@ -144,7 +171,7 @@ class Login extends React.Component {
                   fontFamily: Gilroy_Medium,
                 }}>
                 {' '}
-                Регистрация
+                {language[this.props.langId].register.title}
               </Text>
             </TouchableOpacity>
           </View>
@@ -159,9 +186,12 @@ const mapStateToProps = state => ({
   cityLoad: state.cities.loading,
   loginLoad: state.login.loading,
   loginError: state.login.error,
+  langId: state.appReducer.langId
 });
-
+const mapDispatchToProps = dispatch => ({
+  dispatch
+});
 export default connect(
   mapStateToProps,
-  {fetchLogin},
+  mapDispatchToProps,
 )(Login);

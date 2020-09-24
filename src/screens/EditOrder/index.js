@@ -16,7 +16,7 @@ import Button from '../../components/Button';
 import {ScrollView} from 'react-native-gesture-handler';
 import {putAnnouncementId} from '../../api/Announcements/actions';
 import {connect} from 'react-redux';
-
+import { language } from '../../const/const'
 const width = Dimensions.get('window').width;
 
 class CodeInputClass extends React.Component {
@@ -62,7 +62,7 @@ class CodeInputClass extends React.Component {
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <Header
-            text={'Редактирование заказа'}
+            text={language[this.props.langId].view_orders.edit_btn}
             onpress={() => this.props.navigation.goBack()}
           />
           <ScrollView>
@@ -72,25 +72,34 @@ class CodeInputClass extends React.Component {
               <View
                 style={{
                   backgroundColor: '#fff',
-                  margin: 26,
+                  marginVertical: 26,
+                  marginHorizontal: 26,
                   borderRadius: 10,
                   paddingBottom: 50,
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5,
                 }}>
                 <Input
-                  text={'Введите номер телефона'}
+                  text={language[this.props.langId].add_new_order.phone}
                   placeholder={'+7'}
                   value={phone_number}
                   onchange={text => this.setState({phone_number: text})}
                 />
                 <Input
-                  text={'Откуда'}
+                  text={language[this.props.langId].add_new_order.from}
                   value={address_from}
-                  placeholder={'Введите адрес получения'}
+                  placeholder={language[this.props.langId].add_new_order.address_from}
                   onchange={text => this.setState({address_from: text})}
                 />
                 <Input
-                  text={'Куда'}
-                  placeholder={'Введите адрес отправления'}
+                  text={language[this.props.langId].add_new_order.to}
+                  placeholder={language[this.props.langId].add_new_order.address_to}
                   value={address_to}
                   onchange={text => this.setState({address_to: text})}
                 />
@@ -100,8 +109,8 @@ class CodeInputClass extends React.Component {
                   value={desc}
                   top
                   radius={14}
-                  text={'Описание груза'}
-                  placeholder={'Опишите свой заказ'}
+                  text={language[this.props.langId].add_new_order.description}
+                  placeholder={language[this.props.langId].add_new_order.description_placeholder}
                   onchange={text => this.setState({desc: text})}
                 />
               </View>
@@ -116,7 +125,7 @@ class CodeInputClass extends React.Component {
               paddingBottom: 5,
             }}>
             <Button
-              text={'Сохранить изменения'}
+              text={language[this.props.langId].add_new_order.save}
               active
               onpress={this.saveUpdatedOrder}
             />
@@ -128,7 +137,8 @@ class CodeInputClass extends React.Component {
 }
 const mapStateToProps = state => ({
   user: state.users.userData,
-  token: state.login.token
+  token: state.login.token,
+  langId: state.appReducer.langId
 });
 export default connect(
   mapStateToProps,

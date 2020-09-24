@@ -16,6 +16,7 @@ import {ScrollView, FlatList} from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import {postAnnouncements} from '../../api/Announcements/actions';
 import {connect} from 'react-redux';
+import {language} from '../../const/const';
 
 class Main extends React.Component {
   state = {
@@ -34,12 +35,22 @@ class Main extends React.Component {
       <View
         style={{
           backgroundColor: '#fff',
-          margin: 26,
+          marginHorizontal: 26,
+          marginTop: 26,
           borderRadius: 10,
           paddingBottom: 50,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+
+          elevation: 5,
         }}>
         <Input
-          text={'Введите номер телефона'}
+          text={language[this.props.langId].add_new_order.phone}
           value={this.state.phone_number}
           placeholder={'+7'}
           onchange={text => this.setState({phone_number: text})}
@@ -49,8 +60,8 @@ class Main extends React.Component {
         ) : null}
 
         <Input
-          text={'Откуда'}
-          placeholder={'Введите адрес отправления'}
+          text={language[this.props.langId].add_new_order.from}
+          placeholder={language[this.props.langId].add_new_order.address_from}
           value={this.state.address_from}
           onchange={text => this.setState({address_from: text})}
         />
@@ -58,8 +69,8 @@ class Main extends React.Component {
           <Text style={styles.errorText}>{address_from_err}</Text>
         ) : null}
         <Input
-          text={'Куда'}
-          placeholder={'Введите адрес получения'}
+          text={language[this.props.langId].add_new_order.to}
+          placeholder={language[this.props.langId].add_new_order.address_to}
           onchange={text => this.setState({address_to: text})}
         />
         {address_from_err ? (
@@ -70,8 +81,8 @@ class Main extends React.Component {
           height={120}
           top
           radius={14}
-          text={'Описание груза'}
-          placeholder={'Опишите свой заказ'}
+          text={language[this.props.langId].add_new_order.description}
+          placeholder={language[this.props.langId].add_new_order.description_placeholder}
           onchange={text => this.setState({desc: text})}
         />
         {desc_err ? <Text style={styles.errorText}>{desc_err}</Text> : null}
@@ -82,7 +93,7 @@ class Main extends React.Component {
     return (
       <View style={styles.footer}>
         <Button
-          text={'Добавить заказ'}
+          text={language[this.props.langId].add_new_order.btn}
           active
           onpress={() => this.addNewOrders()}
         />
@@ -136,9 +147,9 @@ class Main extends React.Component {
         try {
           this.props.postAnnouncements(formdata,this.props.login.token);
           this.props.navigation.navigate('Cabinet');
+          Toast.show( language[this.props.langId].add_new_order.success);
         } catch (error) {}
 
-        Toast.show('Объявление созданно');
       } catch (error) {}
     }
   };
@@ -164,7 +175,7 @@ class Main extends React.Component {
         <StatusBar />
         <SafeAreaView style={styles.container}>
           <Header
-            text={'Оформить заказ'}
+            text={language[this.props.langId].add_new_order.title}
             onpress={() => this.props.navigation.goBack()}
           />
           <ScrollView>
@@ -184,7 +195,8 @@ class Main extends React.Component {
 const mapStateToProps = state => ({
   user: state.users.userData,
   cities: state.cities.cityData,
-  login: state.login
+  langId: state.appReducer.langId,
+  login: state.login,
 });
 
 export default connect(

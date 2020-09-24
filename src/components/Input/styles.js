@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+    
   },
   inputView: {
     marginTop: 12,
@@ -15,6 +16,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
     //width: 340,
     marginVertical: 20,
+    
   },
   textInput: {
     fontSize: 14,

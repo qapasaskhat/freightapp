@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  Alert
 } from 'react-native';
 import styles from './styles';
 import List from '../../../components/List';
-//import {FlatList} from 'react-native-gesture-handler';
 import Item from '../../../components/Item';
 import {img_bg} from '../../../const/images';
 import {drop} from '../../../const/images';
@@ -29,6 +29,8 @@ import {fetchCity} from '../../../api/city/actions';
 import {Gilroy_Bold} from '../../../const/fonts';
 import isEmpty from '../../../components/Empty';
 import {fetchUser} from '../../../api/users/actions';
+import firebase from 'react-native-firebase'
+import { language } from '../../../const/const'
 
 class Main extends React.Component {
   state = {
@@ -41,17 +43,34 @@ class Main extends React.Component {
     page: 1
   };
   componentDidMount = async() => {
+    console.log('token', this.props.token)
     setTimeout(() => {
       this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page));
     }, 1000);
     console.log(this.props.data,'data')
     this.props.dispatch(fetchUser(this.props.token))
     const { navigation } = this.props;
+    this.props.dispatch(fetchUser(this.props.token))
     navigation.addListener ('willFocus', () =>
       { this.props.dispatch(fetchUser(this.props.token)) }
     );
   };
-  onChange = () => {  this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" })  }
+  onChange = () => {  
+    this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" })
+    this.props.statusNotification ? 
+    firebase.messaging().unsubscribeFromTopic('gruzz').then((res)=>{
+      Alert.alert('','Уведомление отключено')
+    }).catch((error)=>{
+     console.log('error')
+      console.log(error)
+    }):
+    firebase.messaging().subscribeToTopic('gruzz').then((res)=>{
+      Alert.alert('','Уведомление включено')
+    }).catch((error)=>{
+     console.log('error')
+      console.log(error)
+    }) 
+    }
   renderItem = ({item}) => {
     return (
       <List
@@ -59,6 +78,7 @@ class Main extends React.Component {
         date={moment(item.created_at).local('ru',localization_ru).format('lll')}
         phone_number={item.phone}
         from={item.from}
+        load ={this.props.loading}
         to={item.to}
         del
         line
@@ -106,7 +126,7 @@ class Main extends React.Component {
             fontSize: 20,
             fontFamily: 'Gilroy-Medium',
           }}>
-          Личный Кабинет
+          {language[this.props.langId].cabinet.title}
         </Text>
         <View>
           <Text
@@ -117,7 +137,7 @@ class Main extends React.Component {
               textAlign: 'center',
               fontFamily: 'Gilroy-Medium',
             }}>
-            Ваш город
+            {language[this.props.langId].cabinet.city}
           </Text>
           <TouchableOpacity
             style={{  flexDirection: 'row',justifyContent: 'center',alignItems: 'center' }}
@@ -137,14 +157,15 @@ class Main extends React.Component {
         </View>
         <Item
           onpress={() => this.props.navigation.navigate('EditProfileDriver')}
+          load={this.props.userLaod}
           name={this.props.user ? this.props.user.name : ''}
           phone_number={this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''}/>
         <Push
-          text='Получать уведомления'
+          text={language[this.props.langId].cabinet.notification}
           isEnabled={this.props.statusNotification}
           onChange={() => this.onChange()}/>
         <Push
-          text='Звук уведомления'
+          text={language[this.props.langId].cabinet.mute}
           isEnabled={this.props.muteNotification}
           onChange={() => this.onChangeMute()}/>
       </View>
@@ -180,7 +201,7 @@ class Main extends React.Component {
                   this.handleLoadMore() 
                 }}
                 onRefresh={this.onRefresh}
-                ListEmptyComponent={isEmpty('Нет обьялении')}
+                ListEmptyComponent={isEmpty(language[this.props.langId].cabinet.empty)}
                 renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
                 keyExtractor={(item, index) => String(index)}
@@ -209,7 +230,7 @@ class Main extends React.Component {
                     fontSize: 18,
                     fontFamily: Gilroy_Bold,
                   }}>
-                  Выберите город
+                  {language[this.props.langId].register.city}
                 </Text>
                 {cityLoad ? (
                   <ActivityIndicator />
@@ -247,7 +268,7 @@ class Main extends React.Component {
                       visibleModal: false,
                     });
                   }}>
-                  <Text>Закрыть</Text>
+                  <Text>{language[this.props.langId].cabinet.otmena}</Text>
                 </TouchableOpacity>
               </View>
             </Modal>
@@ -260,6 +281,7 @@ class Main extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.users.userData,
+  userLaod: state.users.loading,
   data: state.announcements.dataAnnouncements,
   loading: state.announcements.loading,
   error: state.announcements.error,
@@ -267,7 +289,8 @@ const mapStateToProps = state => ({
   cityLoad: state.cities.loading,
   token: state.login.token,
   statusNotification: state.appReducer.statusNotification,
-  muteNotification: state.appReducer.muteNotification
+  muteNotification: state.appReducer.muteNotification,
+  langId: state.appReducer.langId
 });
 const mapDispatchToProps = dispatch => ({
   dispatch

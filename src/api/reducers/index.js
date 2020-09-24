@@ -27,7 +27,7 @@ const rootRedusers = combineReducers({
 const config = {
   key: 'primary',
   storage: AsyncStorage,
-  whitelist: ['login'], // only login will be persisted
+  whitelist: ['login','appReducer'], // only login will be persisted
   //transform: [saveSubsetBlacklistFilter],
   //blacklist: ['rootRedusers'],
   timeout: 0,

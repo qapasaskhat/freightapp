@@ -23,7 +23,7 @@ import {connect} from 'react-redux';
 import {fetchCity} from '../../../api/city/actions';
 import {postRegister} from '../../../api/register/actions';
 import {getBrand, getDeviceId} from 'react-native-device-info';
-
+import { language } from '../../../const/const'
 const {height, width} = Dimensions.get('screen');
 
 const InputView = ({data}) => {
@@ -43,7 +43,7 @@ const InputView = ({data}) => {
     </View>
   );
 };
-const Login = ({onperss}) => {
+const Login = ({onperss,text,txt}) => {
   return (
     <TouchableOpacity onPress={onperss} style={{margin: 12}}>
       <Text
@@ -53,8 +53,8 @@ const Login = ({onperss}) => {
           marginTop: 12,
           // fontFamily: Gilroy_Medium,
         }}>
-        Уже есть аккаунт?{' '}
-        <Text style={{color: '#007BED', fontFamily: Gilroy_Medium}}>Войти</Text>
+        {text}{' '}
+        <Text style={{color: '#007BED', fontFamily: Gilroy_Medium}}>{txt}</Text>
       </Text>
     </TouchableOpacity>
   );
@@ -68,15 +68,48 @@ class Register extends React.Component {
     toggleCheckBox: false,
     cityValue: false,
     cityName: 'Almaty',
+    allCities: {},
+    cityId: 1
   };
   componentDidMount() {
-    this.props.dispatch(fetchCity());
+    this.getAllCities()
+    //this.props.dispatch(fetchCity());
+  }
+  getAllCities=()=>{
+    var axios = require('axios');
+    var config = {
+      method: 'get',
+      url: 'http://gruz.sport-market.kz/api/cities/',
+    };
+
+    axios(config)
+    .then( (response) => {
+      console.log(JSON.stringify(response.data));
+      this.setState({
+        allCities: response.data
+      })
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
   _changeChek = () => {
     this.setState({
       toggleCheckBox: !this.state.toggleCheckBox,
     });
   };
+  changeCity=(id)=>{
+    const { allCities } = this.state
+
+    allCities.data.map(item=>{
+      if(item.id === id){
+        this.setState({
+          cityName: item.name,
+          cityId: item.id
+        })
+      }
+    })
+  }
   getCity = (id, name) => {
     const {cities} = this.props;
     this.setState({
@@ -91,6 +124,7 @@ class Register extends React.Component {
       cityName,
       password,
       repeatPassword,
+      cityId
     } = this.state;
     if (login === '') {
       Alert.alert('Пожалуйста, заполните поле имя');
@@ -117,7 +151,7 @@ class Register extends React.Component {
     formData.append('phone', phone);
     formData.append('password', password);
     formData.append('password_confirmation', password);
-    formData.append('city_id', 1); // TO DO
+    formData.append('city_id', cityId); // TO DO
     formData.append('type', 1);
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
 
@@ -132,11 +166,11 @@ class Register extends React.Component {
   };
 
   render() {
-    const {toggleCheckBox, cityValue} = this.state;
+    const {toggleCheckBox, cityValue, allCities} = this.state;
     const {cities} = this.props;
     this.list = [
       {
-        text: 'Введите ваше имя',
+        text: language[this.props.langId].register.name,
         placeholder: 'Александр',
         change: text => {
           this.setState({login: text});
@@ -144,7 +178,7 @@ class Register extends React.Component {
         password: false,
       },
       {
-        text: 'Введите номер телефона',
+        text: language[this.props.langId].register.phone,
         placeholder: '+ 7',
         change: text => {
           this.setState({phone_number: text});
@@ -152,7 +186,7 @@ class Register extends React.Component {
         password: false,
       },
       {
-        text: 'Ваш пароль',
+        text: language[this.props.langId].register.password,
         placeholder: '•  •  •  •  •  •  •  • ',
         change: text => {
           this.setState({password: text});
@@ -160,7 +194,7 @@ class Register extends React.Component {
         password: true,
       },
       {
-        text: 'Повторите пароль',
+        text: language[this.props.langId].register.repeatPass,
         placeholder: '•  •  •  •  •  •  •  • ',
         change: text => {
           this.setState({repeatPassword: text});
@@ -174,7 +208,7 @@ class Register extends React.Component {
         <SafeAreaView style={styles.container}>
           <ScrollView>
             <Logo little />
-            <Txt text={'Регистрация'} />
+            <Txt text={language[this.props.langId].register.title} />
             <View
               style={{
                 paddingVertical: 5,
@@ -187,7 +221,7 @@ class Register extends React.Component {
                   color: '#0B0B2A',
                   paddingLeft: 50,
                 }}>
-                Выберите город
+                {language[this.props.langId].register.city}
               </Text>
               <TouchableOpacity
                 style={{
@@ -253,9 +287,9 @@ class Register extends React.Component {
                         fontWeight: 'bold',
                         fontFamily: Gilroy_Medium,
                       }}>
-                      Выберите город
+                      {language[this.props.langId].register.city}
                     </Text>
-                    {cities.data.map(item => {
+                    { allCities.data && allCities.data.map(item => {
                       return (
                         <TouchableOpacity
                           onPress={() => {
@@ -291,13 +325,13 @@ class Register extends React.Component {
               />
               <TouchableOpacity onPress={() => this._changeChek()}>
                 <Text style={styles.text}>
-                  Я согласен с условиями {'\n'}пользовательского соглашения
+                  {language[this.props.langId].register.agreement}
                 </Text>
               </TouchableOpacity>
             </View>
             <Button
               active={toggleCheckBox}
-              text="Далее"
+              text={language[this.props.langId].register.next}
               onpress={() =>
                 toggleCheckBox
                   ? this.createDriver() //this.props.navigation.navigate('CodeInputDriver')
@@ -305,6 +339,8 @@ class Register extends React.Component {
               }
             />
             <Login
+              text={language[this.props.langId].register.login}
+              txt = {language[this.props.langId].login.bnt}
               onperss={() => this.props.navigation.navigate('LoginDriver')}
             />
           </ScrollView>
@@ -316,5 +352,7 @@ class Register extends React.Component {
 const mapStateToProps = state => ({
   cities: state.cities.cityData,
   cityLoad: state.cities.loading,
+  langId: state.appReducer.langId
+
 });
 export default connect(mapStateToProps)(Register);
