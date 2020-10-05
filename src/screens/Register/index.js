@@ -6,7 +6,7 @@ import {
   StatusBar,
   Image,
   Dimensions,
-  Alert,
+  Alert, ActivityIndicator
 } from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
@@ -17,12 +17,17 @@ import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 import Logo from '../../components/Logo';
 import CheckBox from '../../components/CheckBox';
 import {drop} from '../../const/images';
+
 const {height, width} = Dimensions.get('screen');
+
 import {connect} from 'react-redux';
 import {fetchCity} from '../../api/city/actions';
 import {postRegister} from '../../api/register/actions';
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import { language } from '../../const/const'
+import Modal from 'react-native-modal';
+import { WebView } from 'react-native-webview';
+
 const InputView = ({data}) => {
   return (
     <View style={styles.view}>
@@ -40,6 +45,8 @@ const InputView = ({data}) => {
     </View>
   );
 };
+
+const hhtml = "<h1>hello</h1>"
 
 const Login = ({onperss, text, txt}) => {
   return (
@@ -68,7 +75,10 @@ class Register extends React.Component {
     cityValue: false,
     cityName: '',
     cityId: 1,
-    allCities: {}
+    allCities: {},
+    termModal:false,
+    termHtml: '',
+    load:false
   };
   componentDidMount=()=> {
     this.getAllCities()
@@ -116,7 +126,31 @@ class Register extends React.Component {
       cityValue: false,
     });
   };
+  getTerm=()=>{
+    this.setState({
+      termModal: true,
+      load: true
+    })
+    var axios = require('axios');
 
+    var config = {
+      method: 'get',
+      url: 'http://gruz.sport-market.kz/api/terms',
+      headers: { }
+    };
+
+    axios(config)
+    .then( (response) => {
+      this.setState({
+        load: false,
+        termHtml: response.data.term
+      })
+      console.log(response.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
   createUser = () => {
     const {
       login,
@@ -156,7 +190,7 @@ class Register extends React.Component {
 
     try {
       this.props.postRegister(formData, () =>
-        this.props.navigation.navigate('Login'),
+        this.props.navigation.navigate('CodeInput'),
       );
       //this.props.navigation.navigate('CodeInput');
     } catch (error) {
@@ -305,19 +339,52 @@ class Register extends React.Component {
             <View style={styles.viewCheckBox}>
               <CheckBox
                 toggleCheckBox={toggleCheckBox}
-                onChange={() => this._changeChek()}
-              />
+                onChange={() => this._changeChek()}  />
               <TouchableOpacity onPress={() => this._changeChek()}>
                 <Text style={[styles.text]}>
                   {language[this.props.langId].register.agreement}
                 </Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity onPress={()=>{
+              this.getTerm()
+            }}>
+              <Text style={{
+                textAlign: 'center',
+                color:'#007BED',
+                fontFamily: Gilroy_Medium
+              }}>{language[this.props.langId].register.view_agreement}</Text>
+            </TouchableOpacity>
+            <Modal isVisible={this.state.termModal}>
+              <View style={{
+                width:'100%',
+                height:'90%',
+                backgroundColor: '#fff',
+                borderRadius: 30,
+                padding: 30
+              }}>
+                {this.state.load?
+                <ActivityIndicator />:
+                <WebView 
+                  originWhitelist={['*']}
+                  source={{ html: `<h1>Пользовательское соглашение сервисов Яндекса</h1> 
+                                    <h1>1. Общие положения
+                                    1.1. ООО «ЯНДЕКС» (далее — «Яндекс») предлагает пользователю сети Интернет (далее – Пользователь) - использовать свои сервисы на условиях, изложенных в настоящем Пользовательском соглашении (далее — «Соглашение», «ПС»). Соглашение вступает в силу с момента выражения Пользователем согласия с его условиями в порядке, предусмотренном п. 1.4 Соглашения.
+                                    1.2. Яндекс предлагает Пользователям доступ к широкому спектру сервисов, включая средства навигации, коммуникации, поиска, размещения и хранения разного рода информации и материалов (контента), персонализации контента, совершения покупок и т. д. Все существующие на данный момент сервисы ООО «ЯНДЕКС» и других компаний, условия использования которых ссылаются на данное Соглашение, а также любое развитие их и/или добавление новых является предметом настоящего Соглашения.</h1>` }} />
+                }
+                <TouchableOpacity style={{
+                  backgroundColor:'#007BED',
+                  padding:10,
+                  borderRadius: 30
+                }} onPress={()=>{this.setState({termModal: false})}}>
+                  <Text style={{textAlign:'center',color:'#fff'}}>Закрыть</Text>
+                </TouchableOpacity>                    
+              </View> 
+            </Modal>
             <Button
               active={toggleCheckBox}
               text={language[this.props.langId].register.next}
-              onpress={() => (toggleCheckBox ? this.createUser() : {})}
-            />
+              onpress={() => (toggleCheckBox ? this.createUser() : {})} />
             <Login 
               txt={language[this.props.langId].login.bnt} 
               text={language[this.props.langId].register.login} 

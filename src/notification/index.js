@@ -2,7 +2,8 @@ import firebase from 'react-native-firebase';
 import {Platform} from 'react-native';
 
 class FCMService {
-  register = (onRegister, onNotification, onOpenNotification) => {
+
+register = (onRegister, onNotification, onOpenNotification) => {
     this.checkPermission(onRegister);
     this.createNotificationListeners(
       onRegister,
@@ -58,11 +59,13 @@ class FCMService {
       console.log('[FCMService] delete token error ', error);
     });
   };
+  
   createNotificationListeners = (
     onRegister,
     onNotification,
     onOpenNotification,
   ) => {
+
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
@@ -72,9 +75,11 @@ class FCMService {
     this.notificationOpenedListener = firebase
       .notifications()
       .onNotificationOpened(notificationOpen => {
-        onOpenNotification(notificationOpen);
+        //onOpenNotification(notificationOpen);
         if (notificationOpen) {
+          console.log('notificationOpenedListener',notificationOpen)
           const notification = notificationOpen.notification;
+          console.log('notificationOpen',notification)
           onOpenNotification(notification);
           this.removeDeliveredNotification(notification);
         }
@@ -111,18 +116,18 @@ class FCMService {
   };
 
   buildChannel = obj => {
-    console.log(obj, ' build channel android');
+    console.log(obj, 'build channel android');
     const channel = new firebase.notifications.Android.Channel(
       obj.channelId,
       obj.channelName,
-      firebase.notifications.Android.Importance.High,
+      firebase.notifications.Android.Importance.Low,
     ).setDescription(obj.channelDes);
     firebase.notifications().android.createChannel(channel);
     return channel;
   };
 
   buildNotification = obj => {
-    console.log(obj, ' build notification android ');
+    console.log(obj, 'build notification android ');
     firebase.notifications().android.createChannel(obj.channel);
 
     return new firebase.notifications.Notification()
@@ -131,15 +136,19 @@ class FCMService {
       .setTitle(obj.title)
       .setBody(obj.content)
       .setData(obj.data)
+      .ios.setBadge(1)
+      // for android
       .android.setChannelId(obj.channel.channelId)
       .android.setLargeIcon(obj.largeIcon)
       .android.setSmallIcon(obj.smallIcon)
       .android.setColor(obj.color)
+      .android.setGroupAlertBehaviour(firebase.notifications.Android.GroupAlert.Summary)
       .android.setPriority(firebase.notifications.Android.Priority.High)
       .android.setVibrate(obj.vibrate);
   };
 
   displayNotify = notification => {
+    console.log('displayNotify',notification)
     firebase
       .notifications()
       .displayNotification(notification)
@@ -149,8 +158,8 @@ class FCMService {
   };
 
   removeDeliveredNotification = notification => {
-    //firebase.notifications().removeDeliveredNotification(notification.notificationId)
-    firebase.notifications().removeAllDeliveredNotifications();
+    firebase.notifications().removeDeliveredNotification(notification.notificationId)
+    //firebase.notifications().removeAllDelive redNotifications();
   };
   cancellAllNotification = () => {
     firebase

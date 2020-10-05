@@ -47,6 +47,9 @@ export function fetchLogin(user,role) {
           // that falls out of the range of 2xx
           console.log(error.response.data);
           console.log(error.response.status);
+          if(error.response.status === 401){
+            Alert.alert('Уведомление', 'Может быть вас забанили');
+          }
           console.log(error.response.headers);
         } else if (error.request) {
           // The request was made but no response was received

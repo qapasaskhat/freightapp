@@ -24,6 +24,9 @@ import {fetchCity} from '../../../api/city/actions';
 import {postRegister} from '../../../api/register/actions';
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import { language } from '../../../const/const'
+
+import Modal from 'react-native-modal';
+import { WebView } from 'react-native-webview';
 const {height, width} = Dimensions.get('screen');
 
 const InputView = ({data}) => {
@@ -69,7 +72,9 @@ class Register extends React.Component {
     cityValue: false,
     cityName: 'Almaty',
     allCities: {},
-    cityId: 1
+    cityId: 1,
+    termModal: false,
+    termHtml: ''
   };
   componentDidMount() {
     this.getAllCities()
@@ -157,7 +162,7 @@ class Register extends React.Component {
 
     try {
       this.props.dispatch(
-        postRegister(formData, () => this.props.navigation.navigate('Login')),
+        postRegister(formData, () => this.props.navigation.navigate('CodeInputDriver')),
       );
       //this.props.navigation.navigate('CodeInput');
     } catch (error) {
@@ -329,6 +334,39 @@ class Register extends React.Component {
                 </Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity onPress={()=>{ this.setState({termModal: true}) }}>
+              <Text style={{
+                textAlign: 'center',
+                color:'#007BED',
+                fontFamily: Gilroy_Medium
+              }}>{language[this.props.langId].register.view_agreement}</Text>
+            </TouchableOpacity>
+            <Modal isVisible={this.state.termModal}>
+              <View style={{
+                width:'100%',
+                height:'90%',
+                backgroundColor: '#fff',
+                borderRadius: 30,
+                padding: 30
+              }}>
+                {this.state.load?
+                <ActivityIndicator />:
+                <WebView 
+                  originWhitelist={['*']}
+                  source={{ html: `<h1>Пользовательское соглашение сервисов Яндекса</h1> 
+                                    <h1>1. Общие положения
+                                    1.1. ООО «ЯНДЕКС» (далее — «Яндекс») предлагает пользователю сети Интернет (далее – Пользователь) - использовать свои сервисы на условиях, изложенных в настоящем Пользовательском соглашении (далее — «Соглашение», «ПС»). Соглашение вступает в силу с момента выражения Пользователем согласия с его условиями в порядке, предусмотренном п. 1.4 Соглашения.
+                                    1.2. Яндекс предлагает Пользователям доступ к широкому спектру сервисов, включая средства навигации, коммуникации, поиска, размещения и хранения разного рода информации и материалов (контента), персонализации контента, совершения покупок и т. д. Все существующие на данный момент сервисы ООО «ЯНДЕКС» и других компаний, условия использования которых ссылаются на данное Соглашение, а также любое развитие их и/или добавление новых является предметом настоящего Соглашения.</h1>` }} />
+                }
+                <TouchableOpacity style={{
+                  backgroundColor:'#007BED',
+                  padding:10,
+                  borderRadius: 30
+                }} onPress={()=>{this.setState({termModal: false})}}>
+                  <Text style={{textAlign:'center',color:'#fff'}}>Закрыть</Text>
+                </TouchableOpacity>                    
+              </View> 
+            </Modal>
             <Button
               active={toggleCheckBox}
               text={language[this.props.langId].register.next}

@@ -25,13 +25,40 @@ class OrderDriver extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      item: this.props.navigation.getParam('param'),
+      //item: this.props.navigation.getParam('param'),
+      //type: this.props.navigation.getParam('notification').type,
+      id: this.props.navigation.getParam('id'),
+      data: {}
     };
   }
-  // componentDidMount(){
-  //   let params =  this.props.navigation.getParam('param')
-  //   this.getUser(params.id)
-  // }
+  componentDidMount(){
+    let notification =  this.props.navigation.getParam('id')
+    console.log(notification)
+    //this.state.type && 
+    this.getOrder(this.state.id)
+  }
+  getOrder=(id)=>{
+    var axios = require('axios');
+    var config = {
+      method: 'get',
+      url: `http://gruz.sport-market.kz/api/announcements/${id}`,
+      headers: { 
+        'Authorization': 'Bearer 390|l36MS2SOVLuoTevgzR5gCwmgsdZuzRVLeLDeGSqZarvSoeSocXHLHX6L94sNvFtprUzfVAE42iTzeknl'
+      }
+    };
+
+    axios(config)
+    .then( (response) => {
+      this.setState({
+        data: response.data.data
+      })
+      console.log(JSON.stringify(response.data));
+    })
+    .catch( (error)=> {
+      console.log(error);
+    });
+
+  }
 
   callNumber = phone => {
     console.log('callNumber ----> ', phone);
@@ -53,8 +80,9 @@ class OrderDriver extends React.Component {
       })
       .catch(err => console.log(err));
   };
+  
   render() {
-    const {item} = this.state;
+    const {item,data} = this.state;
     return (
       <>
         <StatusBar />
@@ -66,18 +94,32 @@ class OrderDriver extends React.Component {
               text={language[this.props.langId].view_orders.title}
               onpress={() => this.props.navigation.goBack()}
             />
-            <ScrollView>
+           { //this.state.type?
+           <ScrollView>
               <List
-                name={item.user && item.user.name}
-                desc={item.body}
+                name={data.user && data.user.name}
+                desc={data.body}
                 line
-                phone_number={item.phone}
+                phone_number={data.phone}
                 del
-                date={moment(item.created_at).local('ru',localization_ru).format('lll')}
-                from={item.from}
-                to={item.to}
+                date={moment(data.created_at).local('ru',localization_ru).format('lll')}
+                from={data.from}
+                to={data.to}
               />
             </ScrollView>
+            // :<ScrollView>
+            //   <List
+            //     name={item.user && item.user.name}
+            //     desc={item.body}
+            //     line
+            //     phone_number={item.phone}
+            //     del
+            //     date={moment(item.created_at).local('ru',localization_ru).format('lll')}
+            //     from={item.from}
+            //     to={item.to}
+            //   />
+            // </ScrollView>
+            }
           </ImageBackground>
           <View
             style={{
@@ -89,8 +131,7 @@ class OrderDriver extends React.Component {
             <Button
               text={language[this.props.langId].view_orders.call}
               active
-              onpress={() => this.callNumber(item.phone)}
-            />
+              onpress={() => this.callNumber(data.phone)}  />
           </View>
         </SafeAreaView>
       </>

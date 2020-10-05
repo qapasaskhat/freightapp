@@ -35,10 +35,10 @@ class Main extends React.Component {
       <View
         style={{
           backgroundColor: '#fff',
-          marginHorizontal: 26,
-          marginTop: 26,
+          marginHorizontal: 16,
+          marginTop: 16,
           borderRadius: 10,
-          paddingBottom: 50,
+          //paddingBottom: 20,
           shadowColor: "#000",
           shadowOffset: {
             width: 0,
@@ -46,8 +46,8 @@ class Main extends React.Component {
           },
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
-
           elevation: 5,
+          paddingVertical: 8
         }}>
         <Input
           text={language[this.props.langId].add_new_order.phone}
@@ -174,18 +174,18 @@ class Main extends React.Component {
       <>
         <StatusBar />
         <SafeAreaView style={styles.container}>
+        <ImageBackground
+              style={{width: '100%', height: '100%'}}
+              source={img_bg}>
           <Header
             text={language[this.props.langId].add_new_order.title}
             onpress={() => this.props.navigation.goBack()}
           />
           <ScrollView>
-            <ImageBackground
-              style={{width: '100%', height: '100%'}}
-              source={img_bg}>
               <this.renderItem />
-            </ImageBackground>
           </ScrollView>
-          <this.footer />
+          {this.footer()}
+          </ImageBackground>
         </SafeAreaView>
       </>
     );

@@ -11,11 +11,11 @@ const styles = StyleSheet.create({
     
   },
   inputView: {
-    marginTop: 12,
+    marginTop: 8,
     borderRadius: 60,
     marginHorizontal: 32,
     //width: 340,
-    marginVertical: 20,
+    marginVertical: 10,
     
   },
   textInput: {

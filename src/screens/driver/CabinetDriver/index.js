@@ -11,6 +11,7 @@ import {
   FlatList,
   Alert
 } from 'react-native';
+
 import styles from './styles';
 import List from '../../../components/List';
 import Item from '../../../components/Item';
@@ -50,10 +51,22 @@ class Main extends React.Component {
     console.log(this.props.data,'data')
     this.props.dispatch(fetchUser(this.props.token))
     const { navigation } = this.props;
-    this.props.dispatch(fetchUser(this.props.token))
-    navigation.addListener ('willFocus', () =>
-      { this.props.dispatch(fetchUser(this.props.token)) }
+    navigation.addListener ('didFocus', () =>
+      { 
+        this.props.dispatch(fetchUser(this.props.token))
+        this.props.dispatch(fetchAnnouncements(this.props.token,1)) }
     );
+  };
+  
+  onRefresh = () => {
+    console.log('onRefresh');
+    this.setState({
+      refreshing: true,
+    });
+    this.props.dispatch(fetchAnnouncements(this.props.token,1));
+    this.setState({
+      refreshing: false,
+    });
   };
   onChange = () => {  
     this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" })
@@ -82,10 +95,10 @@ class Main extends React.Component {
         to={item.to}
         del
         line
-        name={item.user.name}
+        name={item.user && item.user.name}
         onpressOrder={() => this.onPressList(item)} />  )
   }
-  onPressList = item => { this.props.navigation.navigate('OrderDriver', {param: item}) };
+  onPressList = item => { this.props.navigation.navigate('OrderDriver', {id: item.id}) };
   city = () => {
     this.props.dispatch(fetchCity());
     this.setState({ visibleModal: true });
@@ -174,16 +187,6 @@ class Main extends React.Component {
   onChangeMute=()=>{
     this.props.dispatch({ type: "CHANGE_MUTE_NOTIFICATION" });
   }
-  onRefresh = () => {
-    console.log('onRefresh');
-    this.setState({
-      refreshing: true,
-    });
-    this.props.dispatch(fetchAnnouncements(this.props.token));
-    this.setState({
-      refreshing: false,
-    });
-  };
   render() {
     const {loading, data, cities, cityLoad} = this.props;
     return (
@@ -201,7 +204,7 @@ class Main extends React.Component {
                   this.handleLoadMore() 
                 }}
                 onRefresh={this.onRefresh}
-                ListEmptyComponent={isEmpty(language[this.props.langId].cabinet.empty)}
+                ListEmptyComponent={isEmpty(language[this.props.langId].cabinet.empty_driver)}
                 renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
                 keyExtractor={(item, index) => String(index)}

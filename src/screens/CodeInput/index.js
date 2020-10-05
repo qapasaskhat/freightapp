@@ -14,6 +14,7 @@ import {img} from '../../const/images';
 import Txt from '../../components/Text';
 import CodeInput from 'react-native-confirmation-code-input';
 import {Gilroy_Medium} from '../../const/fonts';
+import {connect} from 'react-redux'
 
 const width = Dimensions.get('window').width;
 
@@ -27,6 +28,7 @@ class CodeInputClass extends React.Component {
   };
   componentDidMount = () => {
     this.startTimer(this.state.time);
+    console.log(this.props.login)
   };
   _goTo = () => {
     this.props.navigation.replace('AuthClient');
@@ -49,11 +51,52 @@ class CodeInputClass extends React.Component {
   };
   _codeInput=(code)=>{
     console.log(code)
-    const smsCode = '0000'
-    this.setState({
-      activeBtn: code===smsCode,
-      error: code===smsCode?'':'error'
+    var axios = require('axios');
+
+    var FormData = require('form-data');
+    var data = new FormData();
+    data.append('code', code);
+
+    var config = {
+      method: 'post',
+      url: 'http://gruz.sport-market.kz/api/sanctum/verify',
+      headers: { 
+        'Authorization': `Bearer ${this.props.login.token}`, 
+      },
+      data : data
+    };
+
+    axios(config)
+    .then( (response) => {
+      if (response.status = 200){
+        this.setState({
+          activeBtn: true
+        })
+      }
+      console.log(JSON.stringify(response.data));
     })
+    .catch( (error) => {
+      this.setState({
+        error: 'Ошибка кода',
+      })
+      console.log(error);
+    });
+  }
+  success=()=>{
+    this.props.navigation.replace('Login')
+    Alert.alert(
+      'Регистрация прошла успешно! ',
+      '',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            navigationPress();
+          },
+        },
+      ],
+      {cancelable: false},
+    );
   }
   render() {
     const {time, timeLeft, activeBtn, error} = this.state;
@@ -136,7 +179,7 @@ class CodeInputClass extends React.Component {
           <Button
             text="Далее"
             active={activeBtn}
-            onpress={() => activeBtn? this.props.navigation.replace('MainClient'): {}}
+            onpress={() => activeBtn? this.success(): {}}
           />
           <View
             style={{
@@ -160,4 +203,7 @@ class CodeInputClass extends React.Component {
     );
   }
 }
-export default CodeInputClass;
+const mapStateToProps = state => ({
+  login: state.login,
+});
+export default connect(mapStateToProps)(CodeInputClass);

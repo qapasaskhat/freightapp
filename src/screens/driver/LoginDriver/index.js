@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView} from 'react-native';
 import styles from './styles';
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
@@ -10,8 +10,11 @@ import Txt from '../../../components/Text';
 import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import {fetchLogin} from '../../../api/login/actions';
+import firebase from 'react-native-firebase'
+
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import { language } from '../../../const/const'
+
 const InputView = ({data}) => {
   return (
     <View style={styles.view}>
@@ -58,11 +61,21 @@ class Login extends React.Component {
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
     try {
       this.props.dispatch(fetchLogin(formData,0));
-      this.props.loginError ? null :
-      this.props.navigation.navigate('CabinetStack');
+      this.props.loginError ? null : this.navigate();
+      
     } catch (error) {
       console.log('LoginDriver ', error);
     }
+  }
+
+  navigate=()=>{
+    this.props.navigation.navigate('CabinetStack');
+    firebase.messaging().subscribeToTopic('gruzz').then((res)=>{
+      console.log('Уведомление включено')
+    }).catch((error)=>{
+     console.log('error')
+      console.log(error)
+    }) 
   }
   render() {
     const {phone_number, password, error_message} = this.state;
@@ -91,6 +104,7 @@ class Login extends React.Component {
       <>
         <StatusBar />
         <SafeAreaView style={styles.container}>
+          <ScrollView>
           <Logo />
           <View style={{
             alignSelf:'center',
@@ -131,7 +145,7 @@ class Login extends React.Component {
               {error_message}
             </Text>
           }
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               this.props.navigation.navigate('ResetPasswordDriver');
             }}>
@@ -145,7 +159,7 @@ class Login extends React.Component {
               }}>
               {language[this.props.langId].login.forgot}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {loginLoad?
           <ActivityIndicator />:
             <Button
@@ -179,6 +193,7 @@ class Login extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
+          </ScrollView>
         </SafeAreaView>
       </>
     );

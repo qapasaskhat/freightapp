@@ -50,7 +50,7 @@ class Main extends React.Component {
     setTimeout(() => {
       this.changeCity(user && user.city_id)
     }, 600)
-    dispatch(fetchUser(login.token,1))
+    dispatch(fetchUser(login.token))
     //dispatch(fetchAnnouncementsId(user.id,login.token))
   };
   changeCity=(id)=>{
@@ -64,14 +64,6 @@ class Main extends React.Component {
       }
     })
   }
-  // componentDidUpdate=(prevProps, prevState)=> {
-  //   if (prevProps.user !== this.props.user) {
-  //     console.log('componentDidUpdate Cabinet');
-  //     this.props.dispatch(fetchCity());
-  //     this.changeCity(this.props.user && this.props.user.city_id)
-  //     this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token, this.state.page));
-  //   }else{}
-  // }
   handleLoadMore=()=>{
     console.log('more')
     this.setState({
@@ -127,18 +119,18 @@ class Main extends React.Component {
           text: language[this.props.langId].cabinet.delete,
           onPress: () => {
             try {
-              this.props.dispatch(deleteAnnouncementId(idAnnouncements,this.props.login.token));
+              this.props.dispatch(deleteAnnouncementId(idAnnouncements,this.props.login.token))
+              this.props.dispatch(fetchAnnouncementsId(this.props.user.id,this.props.login.token,1));
               Toast.show(language[this.props.langId].cabinet.delete_success);
-              this.props.dispatch(fetchAnnouncementsId(this.props.user.id,this.props.login.token));
             } catch (error) {
               console.log(error);
             }
           },
+          style: 'cancel',
         },
         {
           text: language[this.props.langId].cabinet.otmena,
           onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
         },
       ],
       {cancelable: false},

@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#fff',
         bottom: 0,
+        //height: '20%'
       }
 })
 export default styles

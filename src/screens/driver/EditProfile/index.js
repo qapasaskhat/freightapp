@@ -24,6 +24,8 @@ import Toast from 'react-native-simple-toast';
 import {Gilroy_Medium} from '../../../const/fonts';
 import firebase from 'react-native-firebase'
 import { language } from '../../../const/const'
+import Modal from 'react-native-modal';
+import { WebView } from 'react-native-webview';
 const {height, width} = Dimensions.get('screen');
 
 const InputView = ({data}) => {
@@ -76,7 +78,12 @@ class EditDriver extends React.Component {
   signOut = async () => {
     //AsyncStorage.clear()
     this.props.dispatch({ type: "LOG_OUT" });
-    firebase.messaging().unsubscribeFromTopic('gruzz')
+    firebase.messaging().unsubscribeFromTopic('gruzz').then((res)=>{
+      console.log('Уведомление отключено')
+    }).catch((error)=>{
+     console.log('error')
+      console.log(error)
+    })
     const resetAction = StackActions.reset({
       index: 0,
       actions: [NavigationActions.navigate({routeName: 'Screen'})],
@@ -124,14 +131,14 @@ class EditDriver extends React.Component {
                 borderRadius: 10,
                 paddingHorizontal:30,
                 shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 2,
-},
-shadowOpacity: 0.25,
-shadowRadius: 3.84,
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
 
-elevation: 5,
+                elevation: 5,
                 }}>
                 <Text style={{
                   fontSize: 15,
@@ -165,6 +172,55 @@ elevation: 5,
                     <Text style={{color:this.props.langId===1?'#fff':'#000'}}>Қаз</Text>
                   </TouchableOpacity>
                 </View>
+              </View>
+              <View>
+              <TouchableOpacity style={{
+                backgroundColor: '#fff',
+                shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5,
+                  marginTop:6,
+                  marginHorizontal:20,
+                  paddingVertical:10
+              }} onPress={()=>{ this.setState({termModal: true}) }}>
+              <Text style={{
+                textAlign: 'center',
+                color:'#007BED',
+                fontWeight:'bold',
+                fontFamily: Gilroy_Medium
+              }}>{language[this.props.langId].register.view_agreement}</Text>
+            </TouchableOpacity>
+            <Modal isVisible={this.state.termModal}>
+              <View style={{
+                width:'100%',
+                height:'90%',
+                backgroundColor: '#fff',
+                borderRadius: 30,
+                padding: 30
+              }}>
+                {this.state.load?
+                <ActivityIndicator />:
+                <WebView 
+                  originWhitelist={['*']}
+                  source={{ html: `<h1>Пользовательское соглашение сервисов Яндекса</h1> 
+                                    <h1>1. Общие положения
+                                    1.1. ООО «ЯНДЕКС» (далее — «Яндекс») предлагает пользователю сети Интернет (далее – Пользователь) - использовать свои сервисы на условиях, изложенных в настоящем Пользовательском соглашении (далее — «Соглашение», «ПС»). Соглашение вступает в силу с момента выражения Пользователем согласия с его условиями в порядке, предусмотренном п. 1.4 Соглашения.
+                                    1.2. Яндекс предлагает Пользователям доступ к широкому спектру сервисов, включая средства навигации, коммуникации, поиска, размещения и хранения разного рода информации и материалов (контента), персонализации контента, совершения покупок и т. д. Все существующие на данный момент сервисы ООО «ЯНДЕКС» и других компаний, условия использования которых ссылаются на данное Соглашение, а также любое развитие их и/или добавление новых является предметом настоящего Соглашения.</h1>` }} />
+                }
+                <TouchableOpacity style={{
+                  backgroundColor:'#007BED',
+                  padding:10,
+                  borderRadius: 30
+                }} onPress={()=>{this.setState({termModal: false})}}>
+                  <Text style={{textAlign:'center',color:'#fff'}}>Закрыть</Text>
+                </TouchableOpacity>                    
+              </View> 
+            </Modal>
               </View>
             <View
               style={{

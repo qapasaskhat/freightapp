@@ -2,7 +2,7 @@
   const initialState = {
     statusNotification: true,
     muteNotification: true,
-    langId:1
+    langId:0
   };
   
   export default function appReducer(state = initialState, action) {

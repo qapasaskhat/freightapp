@@ -6,6 +6,7 @@ import {
   StatusBar,
   Image,
   Dimensions,
+  Alert
 } from 'react-native';
 import styles from './styles';
 import Button from '../../components/Button';
@@ -16,11 +17,18 @@ import {connect} from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage';
 import {language} from '../../const/const'
 
+import {
+  getBadgeCount,
+  setBadgeCount,
+  getNotificationBadgeSetting,
+} from 'react-native-notification-badge';
+
 const width = Dimensions.get('window').width;
 
 class Screen extends React.Component {
   
    componentDidMount=async()=> {
+     
     console.log('role',this.props.role)
     const {navigation} = this.props;
      if(this.props.role === 0){
@@ -64,7 +72,7 @@ class Screen extends React.Component {
       content: notify._body,
       sound: 'default',
       channel: channel,
-      data: {},
+      data: notify._data,
       color: '#007BED',
       largeIcon: 'ic_launcher',
       smallIcon: 'ic_launcher',
@@ -76,7 +84,19 @@ class Screen extends React.Component {
   };
   onOpenNotification = notify => {
     console.log('onOpenNotification ', notify);
-    alert(notify._body);
+    Alert.alert(language[this.props.langId].cabinet.notify,notify._title,[
+      {
+        text:  language[this.props.langId].cabinet.cancel,
+        onPress: () => console.log("Cancel Pressed"),
+      },
+      { 
+        text: language[this.props.langId].cabinet.open, 
+        onPress: () => this.props.navigation.navigate('OrderDriver',{ id: notify._data.announcement_id}),
+        style: "cancel"
+       }
+    ],
+    { cancelable: false })
+    //alert(notify._data.announcement_id);
   };
 
   _goTo = async () => {

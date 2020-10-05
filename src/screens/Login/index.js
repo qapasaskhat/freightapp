@@ -125,7 +125,7 @@ class Login extends React.Component {
             }}>
             {error_message}
           </Text>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => this.props.navigation.navigate('ResetPassword')}>
             <Text
               style={{
@@ -137,10 +137,10 @@ class Login extends React.Component {
               }}>
               {language[this.props.langId].login.forgot}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           { 
-          loginLoad?
-          <ActivityIndicator color=''/>:
+          // loginLoad?
+          // <ActivityIndicator color=''/>:
             <Button
             active
             text={language[this.props.langId].login.bnt}

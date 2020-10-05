@@ -33,7 +33,7 @@ export function postRegister(user, navigationPress) {
         console.log(response.data);
         dispatch(post_success_register(response.data));
         Alert.alert(
-          'Регистрация прошла успешно! ',
+          'На ваш номер отправлен код! ',
           '',
           [
             {
@@ -52,7 +52,7 @@ export function postRegister(user, navigationPress) {
           // that falls out of the range of 2xx
           console.log(error.response.data);
           if (error.response.data.error.phone) {
-            Alert.alert('Ошибка', error.response.data.error.phone.toString());
+            Alert.alert('Ошибка', 'Этот номер уже зарегестрирован');
           }
 
           console.log(error.response.status);

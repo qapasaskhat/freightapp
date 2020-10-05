@@ -14,6 +14,7 @@ import {img} from '../../../const/images';
 import Txt from '../../../components/Text';
 import CodeInput from 'react-native-confirmation-code-input';
 import {Gilroy_Medium} from '../../../const/fonts';
+import {connect} from 'react-redux'
 
 const width = Dimensions.get('window').width;
 
@@ -42,11 +43,37 @@ class CodeInputClass extends React.Component {
     return this.setState({timeLeft: timeLeft, timer: timer});
   };
   _codeInput=(code)=>{
-    const smsCode = '0000'
-    this.setState({
-      activeBtn: code===smsCode,
-      error: code===smsCode?'':'error'
+    console.log(code)
+    var axios = require('axios');
+
+    var FormData = require('form-data');
+    var data = new FormData();
+    data.append('code', code);
+
+    var config = {
+      method: 'post',
+      url: 'http://gruz.sport-market.kz/api/sanctum/verify',
+      headers: { 
+        'Authorization': `Bearer ${this.props.login.token}`, 
+      },
+      data : data
+    };
+
+    axios(config)
+    .then( (response) => {
+      if (response.status = 200){
+        this.setState({
+          activeBtn: true
+        })
+      }
+      console.log(JSON.stringify(response.data));
     })
+    .catch( (error) => {
+      this.setState({
+        error: 'Ошибка кода',
+      })
+      console.log(error);
+    });
   }
   render() {
     const {time, timeLeft, activeBtn, error} = this.state;
@@ -151,4 +178,7 @@ class CodeInputClass extends React.Component {
     );
   }
 }
-export default CodeInputClass;
+const mapStateToProps = state => ({
+  login: state.login,
+});
+export default connect(mapStateToProps) (CodeInputClass);
