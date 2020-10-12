@@ -8,6 +8,7 @@ import {
   ImageBackground,
   ScrollView,
   Alert,
+  ActivityIndicator
 } from 'react-native';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -23,6 +24,8 @@ import { language } from '../../const/const'
 
 import Modal from 'react-native-modal';
 import { WebView } from 'react-native-webview';
+import AutoHeightWebView from 'react-native-autoheight-webview'
+
 
 const InputView = ({data}) => {
   return (
@@ -48,6 +51,8 @@ class EditClient extends React.Component {
     login: '',
     number: '',
     password: '',
+    termHtml: '',
+    load: false
   };
   signOut = async () => {
     Alert.alert(
@@ -96,6 +101,31 @@ class EditClient extends React.Component {
     this.setState({
       login: this.props.user.name
     })
+  }
+  getTerm=()=>{
+    this.setState({
+      termModal: true,
+      load: true
+    })
+    var axios = require('axios');
+
+    var config = {
+      method: 'get',
+      url: 'http://gruz.sport-market.kz/api/terms',
+      headers: { }
+    };
+
+    axios(config)
+    .then( (response) => {
+      this.setState({
+        load: false,
+        termHtml: response.data.terms
+      })
+      console.log(response.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
   render() {
     this.list = [
@@ -185,7 +215,9 @@ elevation: 5,
                   marginTop:6,
                   marginHorizontal:20,
                   paddingVertical:10
-              }} onPress={()=>{ this.setState({termModal: true}) }}>
+              }} onPress={()=>{ 
+                this.getTerm()
+                this.setState({termModal: true}) }}>
               <Text style={{
                 textAlign: 'center',
                 color:'#007BED',
@@ -203,12 +235,21 @@ elevation: 5,
               }}>
                 {this.state.load?
                 <ActivityIndicator />:
-                <WebView 
+                <ScrollView horizontal style={{width: '100%', height: '100%'}}>
+                <AutoHeightWebView 
                   originWhitelist={['*']}
-                  source={{ html: `<h1>Пользовательское соглашение сервисов Яндекса</h1> 
-                                    <h1>1. Общие положения
-                                    1.1. ООО «ЯНДЕКС» (далее — «Яндекс») предлагает пользователю сети Интернет (далее – Пользователь) - использовать свои сервисы на условиях, изложенных в настоящем Пользовательском соглашении (далее — «Соглашение», «ПС»). Соглашение вступает в силу с момента выражения Пользователем согласия с его условиями в порядке, предусмотренном п. 1.4 Соглашения.
-                                    1.2. Яндекс предлагает Пользователям доступ к широкому спектру сервисов, включая средства навигации, коммуникации, поиска, размещения и хранения разного рода информации и материалов (контента), персонализации контента, совершения покупок и т. д. Все существующие на данный момент сервисы ООО «ЯНДЕКС» и других компаний, условия использования которых ссылаются на данное Соглашение, а также любое развитие их и/или добавление новых является предметом настоящего Соглашения.</h1>` }} />
+                  customStyle={`
+                            * {
+                              font-family: 'Times New Roman';
+                            }
+                            p {
+                              font-size: 14px;
+                            }
+                          `}
+                  //viewportContent={'width=device-width, user-scalable=no'}
+                  scalesPageToFit={true}
+                  source={{ html: `${this.state.termHtml}` }} />
+                  </ScrollView>               
                 }
                 <TouchableOpacity style={{
                   backgroundColor:'#007BED',

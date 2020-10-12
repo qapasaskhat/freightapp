@@ -27,6 +27,7 @@ import {getBrand, getDeviceId} from 'react-native-device-info';
 import { language } from '../../const/const'
 import Modal from 'react-native-modal';
 import { WebView } from 'react-native-webview';
+import AutoHeightWebView from 'react-native-autoheight-webview'
 
 const InputView = ({data}) => {
   return (
@@ -144,7 +145,7 @@ class Register extends React.Component {
     .then( (response) => {
       this.setState({
         load: false,
-        termHtml: response.data.term
+        termHtml: response.data.terms
       })
       console.log(response.data)
     })
@@ -366,12 +367,21 @@ class Register extends React.Component {
               }}>
                 {this.state.load?
                 <ActivityIndicator />:
-                <WebView 
+                <ScrollView horizontal style={{width: '100%', height: '100%'}}>
+                <AutoHeightWebView 
                   originWhitelist={['*']}
-                  source={{ html: `<h1>Пользовательское соглашение сервисов Яндекса</h1> 
-                                    <h1>1. Общие положения
-                                    1.1. ООО «ЯНДЕКС» (далее — «Яндекс») предлагает пользователю сети Интернет (далее – Пользователь) - использовать свои сервисы на условиях, изложенных в настоящем Пользовательском соглашении (далее — «Соглашение», «ПС»). Соглашение вступает в силу с момента выражения Пользователем согласия с его условиями в порядке, предусмотренном п. 1.4 Соглашения.
-                                    1.2. Яндекс предлагает Пользователям доступ к широкому спектру сервисов, включая средства навигации, коммуникации, поиска, размещения и хранения разного рода информации и материалов (контента), персонализации контента, совершения покупок и т. д. Все существующие на данный момент сервисы ООО «ЯНДЕКС» и других компаний, условия использования которых ссылаются на данное Соглашение, а также любое развитие их и/или добавление новых является предметом настоящего Соглашения.</h1>` }} />
+                  customStyle={`
+                            * {
+                              font-family: 'Times New Roman';
+                            }
+                            p {
+                              font-size: 14px;
+                            }
+                          `}
+                  //viewportContent={'width=device-width, user-scalable=no'}
+                  scalesPageToFit={true}
+                  source={{ html: `${this.state.termHtml}` }} />
+                  </ScrollView>               
                 }
                 <TouchableOpacity style={{
                   backgroundColor:'#007BED',
