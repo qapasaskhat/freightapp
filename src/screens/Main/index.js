@@ -53,6 +53,7 @@ class Main extends React.Component {
           text={language[this.props.langId].add_new_order.phone}
           value={this.state.phone_number}
           placeholder={'+7'}
+          keyboardType={'numeric'}
           onchange={text => this.setState({phone_number: text})}
         />
         {phone_err ? (
@@ -147,7 +148,7 @@ class Main extends React.Component {
         try {
           this.props.postAnnouncements(formdata,this.props.login.token);
           this.props.navigation.navigate('Cabinet');
-          Toast.show( language[this.props.langId].add_new_order.success);
+          Toast.show( language[this.props.langId].add_new_order.success, Toast.LONG);
         } catch (error) {}
 
       } catch (error) {}

@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
-  Alert
+  Alert,
+  AppState
 } from 'react-native';
 
 import styles from './styles';
@@ -32,6 +33,7 @@ import isEmpty from '../../../components/Empty';
 import {fetchUser} from '../../../api/users/actions';
 import firebase from 'react-native-firebase'
 import { language } from '../../../const/const'
+import { fcmService } from '../../../notification'
 
 class Main extends React.Component {
   state = {
@@ -41,23 +43,44 @@ class Main extends React.Component {
     userName: '',
     refreshing: false,
     isEnabledMute: false,
-    page: 1
+    page: 1,
+    appState: AppState.currentState
   };
-  componentDidMount = async() => {
+  componentDidMount = () => {
+    console.log(AppState.currentState)
+    AppState.addEventListener("change", this._handleAppStateChange);
+    this.props.dispatch(fetchUser(this.props.token,0))
     console.log('token', this.props.token)
-    setTimeout(() => {
-      this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page));
-    }, 1000);
+    fcmService.removeDeliveredAllNotification()
+    this.props.dispatch(fetchAnnouncements(this.props.token,1))
+    // setTimeout(() => {
+    //   this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page));
+    // }, 1000);
     console.log(this.props.data,'data')
-    this.props.dispatch(fetchUser(this.props.token))
     const { navigation } = this.props;
-    navigation.addListener ('didFocus', () =>
+    navigation.addListener ('willFocus', () =>
       { 
-        this.props.dispatch(fetchUser(this.props.token))
+        this.props.dispatch(fetchUser(this.props.token,0))
         this.props.dispatch(fetchAnnouncements(this.props.token,1)) }
     );
+    setInterval(() => {
+      //fcmService.removeDeliveredAllNotification()
+    }, 2000);
   };
-  
+  componentWillUnmount() {
+    AppState.removeEventListener("change", this._handleAppStateChange);
+  }
+  _handleAppStateChange = nextAppState => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      this.onRefresh()
+      fcmService.removeDeliveredAllNotification()
+    }
+    this.setState({ appState: nextAppState });
+  };
+
   onRefresh = () => {
     console.log('onRefresh');
     this.setState({
@@ -83,7 +106,7 @@ class Main extends React.Component {
      console.log('error')
       console.log(error)
     }) 
-    }
+  }
   renderItem = ({item}) => {
     return (
       <List
@@ -91,7 +114,7 @@ class Main extends React.Component {
         date={moment(item.created_at).local('ru',localization_ru).format('lll')}
         phone_number={item.phone}
         from={item.from}
-        load ={this.props.loading}
+        //load ={this.props.loading}
         to={item.to}
         del
         line
@@ -196,7 +219,8 @@ class Main extends React.Component {
           <ImageBackground
             source={img_bg}
             style={{  width: '100%',height: '100%',resizeMode: 'center'  }}>
-            {loading ? (  <ActivityIndicator />  ) : (
+            {//loading ? (  <ActivityIndicator />  ) : 
+            (
               <FlatList
                 data={data }
                 refreshing={this.state.refreshing}

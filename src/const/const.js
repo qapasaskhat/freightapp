@@ -68,7 +68,7 @@ export const language = [
             address_to: 'Введите адрес отправления',
             description_placeholder: 'Опишите свой заказ',
             save: 'Сохранить изменения',
-            success: 'Объявление созданно'
+            success: 'Объявление принято. Ожидайте звонка от водителя'
         },
         menu:{
             menu:'Меню',
@@ -155,7 +155,7 @@ export const language = [
             address_to: 'Жеткізу мекенжайын енгізіңіз',
             description_placeholder: 'Тапсырысыңызды сипаттаңыз',
             save: 'Сақтау',
-            success: 'Тапсырыс қабылданды'
+            success: 'Хабарландыру қабылданады. Жүргізушіден қоңырау күтіңіз'
         },
         menu:{
             menu:'Мәзір',

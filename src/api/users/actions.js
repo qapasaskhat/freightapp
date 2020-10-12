@@ -71,7 +71,7 @@ export function fetchUser(token,role) {
         console.log(response.data);
         dispatch(fetch_success_users(response.data));
         role === 1 &&  dispatch(fetchAnnouncementsId(response.data.id,token,1))
-        role === 0 && dispatch(fetchAnnouncements(token))
+        role === 0 && dispatch(fetchAnnouncements(token,1))
       })
       .catch(function(error) {
         if (error.response) {

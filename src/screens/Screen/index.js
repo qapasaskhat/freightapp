@@ -16,7 +16,7 @@ import {fcmService} from '../../notification';
 import {connect} from 'react-redux'
 import AsyncStorage from '@react-native-community/async-storage';
 import {language} from '../../const/const'
-
+import {fetchAnnouncements} from '../../api/Announcements/actions'
 import {
   getBadgeCount,
   setBadgeCount,
@@ -27,18 +27,15 @@ const width = Dimensions.get('window').width;
 
 class Screen extends React.Component {
   
-   componentDidMount=async()=> {
+   componentDidMount=()=> {
      
-    console.log('role',this.props.role)
+    //console.log('role',this.props.role)
     const {navigation} = this.props;
      if(this.props.role === 0){
       navigation.replace('AuthDriver');
      }else if(this.props.role === 1){
       navigation.replace('AuthClient');
      }
-    AsyncStorage.getAllKeys().then(keys => {
-      console.log(keys)
-    });
     fcmService.register(
       this.onRegister,
       this.onNotification,
@@ -58,7 +55,8 @@ class Screen extends React.Component {
     console.log('device token ', token);
   };
   onNotification = notify => {
-    console.log('onNotification ', notify);
+    console.log('onNotification screen', notify);
+    this.props.dispatch(fetchAnnouncements(this.props.token,1))
     const channelObj = {
       channelId: 'freightChannelId',
       channelName: 'freightChannelName',
@@ -67,7 +65,7 @@ class Screen extends React.Component {
     const channel = fcmService.buildChannel(channelObj);
 
     const buildNotify = {
-      dataId: notify._notificationId,
+      dataId: notify._data.announcement_id,
       title: notify._title,
       content: notify._body,
       sound: 'default',
@@ -77,13 +75,16 @@ class Screen extends React.Component {
       largeIcon: 'ic_launcher',
       smallIcon: 'ic_launcher',
       vibrate: true,
+      //show_in_foreground: true,
     };
     const notification = fcmService.buildNotification(buildNotify);
     //console.log(notification)
     fcmService.displayNotify(notification);
   };
   onOpenNotification = notify => {
-    console.log('onOpenNotification ', notify);
+    console.log('onOpenNotification screen', notify);
+    console.log('tokeeeen', this.props.token)
+    this.props.dispatch(fetchAnnouncements(this.props.token,1))
     Alert.alert(language[this.props.langId].cabinet.notify,notify._title,[
       {
         text:  language[this.props.langId].cabinet.cancel,
@@ -126,6 +127,10 @@ class Screen extends React.Component {
 }
 const mapStateToProps = state => ({
   role: state.login.role,
-  langId: state.appReducer.langId
+  langId: state.appReducer.langId,
+  token: state.login.token,
 });
-export default connect(mapStateToProps)(Screen);
+const mapDispatchToProps = dispatch => ({
+  dispatch
+});
+export default connect(mapStateToProps,mapDispatchToProps)(Screen);

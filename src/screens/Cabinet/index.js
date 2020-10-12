@@ -50,7 +50,7 @@ class Main extends React.Component {
     setTimeout(() => {
       this.changeCity(user && user.city_id)
     }, 600)
-    dispatch(fetchUser(login.token))
+    dispatch(fetchUser(login.token,1))
     //dispatch(fetchAnnouncementsId(user.id,login.token))
   };
   changeCity=(id)=>{
@@ -191,7 +191,7 @@ class Main extends React.Component {
     this.setState({
       refreshing: true,
     });
-    //this.getAnnouncements()
+    this.props.dispatch(fetchUser(this.props.login.token,1))
     this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token,1));
     this.setState({
       refreshing: false,

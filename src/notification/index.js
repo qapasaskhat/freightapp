@@ -1,5 +1,7 @@
 import firebase from 'react-native-firebase';
 import {Platform} from 'react-native';
+import store from '../api/store';
+import {fetchAnnouncementsId} from '../api/Announcements/actions'
 
 class FCMService {
 
@@ -42,6 +44,7 @@ register = (onRegister, onNotification, onOpenNotification) => {
         console.log('[FCMService] GetToken rejected', error);
       });
   };
+
   requestPermission = onRegister => {
     firebase
       .messaging()
@@ -76,6 +79,7 @@ register = (onRegister, onNotification, onOpenNotification) => {
       .notifications()
       .onNotificationOpened(notificationOpen => {
         //onOpenNotification(notificationOpen);
+
         if (notificationOpen) {
           console.log('notificationOpenedListener',notificationOpen)
           const notification = notificationOpen.notification;
@@ -98,6 +102,7 @@ register = (onRegister, onNotification, onOpenNotification) => {
       });
 
     this.messageListener = firebase.messaging().onMessage(message => {
+      //console.log('message',message)
       onNotification(message);
     });
 
@@ -120,16 +125,16 @@ register = (onRegister, onNotification, onOpenNotification) => {
     const channel = new firebase.notifications.Android.Channel(
       obj.channelId,
       obj.channelName,
-      firebase.notifications.Android.Importance.Low,
+      firebase.notifications.Android.Importance.High,
     ).setDescription(obj.channelDes);
     firebase.notifications().android.createChannel(channel);
     return channel;
   };
+  
 
   buildNotification = obj => {
     console.log(obj, 'build notification android ');
     firebase.notifications().android.createChannel(obj.channel);
-
     return new firebase.notifications.Notification()
       .setSound(obj.sound)
       .setNotificationId(obj.dataId)
@@ -142,8 +147,10 @@ register = (onRegister, onNotification, onOpenNotification) => {
       .android.setLargeIcon(obj.largeIcon)
       .android.setSmallIcon(obj.smallIcon)
       .android.setColor(obj.color)
-      .android.setGroupAlertBehaviour(firebase.notifications.Android.GroupAlert.Summary)
+      //.android.setGroupAlertBehaviour(firebase.notifications.Android.GroupAlert.Summary)
       .android.setPriority(firebase.notifications.Android.Priority.High)
+      //.android.setDefaults(firebase.notifications.Android.Defaults.Vibrate)
+      //.android.setCategory(firebase.notifications.Android.Category.Alarm)
       .android.setVibrate(obj.vibrate);
   };
 
@@ -161,6 +168,9 @@ register = (onRegister, onNotification, onOpenNotification) => {
     firebase.notifications().removeDeliveredNotification(notification.notificationId)
     //firebase.notifications().removeAllDelive redNotifications();
   };
+  removeDeliveredAllNotification = ()=>{
+    firebase.notifications().removeAllDeliveredNotifications()
+  }
   cancellAllNotification = () => {
     firebase
       .notifications()

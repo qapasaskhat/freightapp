@@ -13,6 +13,7 @@ const button = ({
   radius,
   top,
   value,
+  keyboardType
 }) => {
   return (
     <View style={styles.inputView}>
@@ -20,6 +21,7 @@ const button = ({
       <TextInput
         multiline={multiline}
         placeholderTextColor="#cecece"
+        keyboardType={keyboardType}
         secureTextEntry={password}
         value={value}
         style={[

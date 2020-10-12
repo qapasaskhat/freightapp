@@ -17,7 +17,7 @@ import Input from '../../../components/Input';
 import {img_bg} from '../../../const/images';
 import Button from '../../../components/Button';
 import AsyncStorage from '@react-native-community/async-storage';
-import {NavigationActions, StackActions} from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 import {connect} from 'react-redux';
 import {putUser,fetchUser} from '../../../api/users/actions';
 import Toast from 'react-native-simple-toast';
@@ -200,7 +200,7 @@ class EditDriver extends React.Component {
                 width:'100%',
                 height:'90%',
                 backgroundColor: '#fff',
-                borderRadius: 30,
+                borderRadius: 11,
                 padding: 30
               }}>
                 {this.state.load?

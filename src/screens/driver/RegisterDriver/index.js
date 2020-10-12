@@ -6,7 +6,7 @@ import {
   StatusBar,
   Image,
   Dimensions,
-  Alert,
+  Alert,TouchableOpacity
 } from 'react-native';
 import styles from './styles';
 import Input from '../../../components/Input';
@@ -15,7 +15,7 @@ import Txt from '../../../components/Text';
 
 import {Gilroy_Medium} from '../../../const/fonts';
 
-import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
+import { ScrollView} from 'react-native-gesture-handler';
 import Logo from '../../../components/Logo';
 import CheckBox from '../../../components/CheckBox';
 import {drop} from '../../../const/images';
@@ -40,6 +40,7 @@ const InputView = ({data}) => {
             onchange={item.change}
             password={item.password}
             key={item.text}
+            keyboardType={item.keyboardType}
           />
         );
       })}
@@ -346,7 +347,7 @@ class Register extends React.Component {
                 width:'100%',
                 height:'90%',
                 backgroundColor: '#fff',
-                borderRadius: 30,
+                borderRadius: 11,
                 padding: 30
               }}>
                 {this.state.load?

@@ -27,6 +27,7 @@ const InputView = ({data}) => {
             onchange={item.change}
             password={item.password}
             value={item.value}
+            keyboardType={item.keyboardType}
           />
         );
       })}

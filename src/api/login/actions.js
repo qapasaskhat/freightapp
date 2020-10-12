@@ -36,7 +36,8 @@ export function fetchLogin(user,role) {
     return request
       .then(async function(response) {
         console.log(response.data);
-        dispatch(fetchUser(response.data.token));
+        console.log('role', role)
+        dispatch(fetchUser(response.data.token,role));
         setTimeout(() => {
           dispatch(fetch_success_login(response.data.token,role));
         }, 500);
@@ -48,7 +49,7 @@ export function fetchLogin(user,role) {
           console.log(error.response.data);
           console.log(error.response.status);
           if(error.response.status === 401){
-            Alert.alert('Уведомление', 'Может быть вас забанили');
+            Alert.alert('Уведомление', 'Неверный логин или пароль');
           }
           console.log(error.response.headers);
         } else if (error.request) {

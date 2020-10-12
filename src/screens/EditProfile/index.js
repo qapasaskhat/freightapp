@@ -198,7 +198,7 @@ elevation: 5,
                 width:'100%',
                 height:'90%',
                 backgroundColor: '#fff',
-                borderRadius: 30,
+                borderRadius: 11,
                 padding: 30
               }}>
                 {this.state.load?

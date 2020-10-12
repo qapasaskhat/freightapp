@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView} from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import {NavigationActions, StackActions} from 'react-navigation';
 import { language } from '../../const/const'
+
 const InputView = ({data}) => {
   return (
     <View style={styles.view}>
@@ -25,6 +26,7 @@ const InputView = ({data}) => {
             onchange={item.change}
             password={item.password}
             value={item.value}
+            keyboardType={item.keyboardType}
           />
         );
       })}
@@ -87,6 +89,7 @@ class Login extends React.Component {
       <>
         <StatusBar />
         <SafeAreaView style={styles.container}>
+          <ScrollView>
           <Logo />
           <View style={{
             alignSelf:'center',
@@ -175,6 +178,7 @@ class Login extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
+          </ScrollView>
         </SafeAreaView>
       </>
     );

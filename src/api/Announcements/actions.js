@@ -103,7 +103,7 @@ export function fetchAnnouncements(token,page) {
     });
     return request
       .then(function(response) {
-        console.log('action fetchAnnouncements');
+       // console.log('action fetchAnnouncements');
         console.log(response.data);
         page === 1? dispatch(fetch_success(response.data.data, page))
         : dispatch(fetch_success_add(response.data.data))
