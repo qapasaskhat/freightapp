@@ -6,10 +6,11 @@ import {
   StatusBar,
   ImageBackground,
   Image,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
 import styles from './styles';
-import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
+import {FlatList, TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import Header from '../../components/Header';
 import {img_bg} from '../../const/images';
 import Input from '../../components/Input';
@@ -18,16 +19,19 @@ import {connect} from 'react-redux';
 import axios from 'axios'
 import {postSupportMesssages} from '../../api/supportMessages/actions';
 import {language} from '../../const/const'
+
 class Support extends React.Component {
   state = {
     text: '',
     load: false
   };
+
   componentDidMount=()=>{
     const {user,login} = this.props
     console.log(login)
   }
   sendToSupport=()=>{
+    Keyboard.dismiss()
     const {login,user} = this.props
     //console.log(access_token)
     this.setState({load: true})
@@ -63,6 +67,7 @@ class Support extends React.Component {
       <>
         <StatusBar />
         <SafeAreaView style={styles.container}>
+          <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
           <Header text={language[this.props.langId].menu.support} left />
           <ImageBackground
             source={img_bg}
@@ -73,7 +78,6 @@ class Support extends React.Component {
                 margin: 20,
                 borderRadius: 10,
               }}>
-
               <Input
                 multiline
                 top
@@ -87,6 +91,7 @@ class Support extends React.Component {
               />
             </View>
           </ImageBackground>
+          </TouchableWithoutFeedback>
           <View
             style={{
               position: 'absolute',

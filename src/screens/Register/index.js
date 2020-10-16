@@ -6,7 +6,7 @@ import {
   StatusBar,
   Image,
   Dimensions,
-  Alert, ActivityIndicator, TouchableOpacity
+  Alert, ActivityIndicator, TouchableOpacity, KeyboardAvoidingView, Platform
 } from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
@@ -80,10 +80,13 @@ class Register extends React.Component {
     allCities: {},
     termModal:false,
     termHtml: '',
-    load:false
+    load:false,
+    page: 1,
+    visibleModal: false
   };
   componentDidMount=()=> {
-    this.getAllCities()
+    this.props.fetchCity()
+    //this.getAllCities()
     console.log('fetchCity')
   }
   getAllCities=()=>{
@@ -104,10 +107,11 @@ class Register extends React.Component {
       console.log(error);
     });
   }
-  changeCity=(id)=>{
-    const { allCities } = this.state
 
-    allCities.data.map(item=>{
+  changeCity=(id)=>{
+    const { cities } = this.props
+
+    cities.data.map(item=>{
       if(item.id === id){
         this.setState({
           cityName: item.name,
@@ -201,6 +205,7 @@ class Register extends React.Component {
   };
   render() {
     const {toggleCheckBox, cityValue, allCities} = this.state;
+    const { cities, cityLoad } = this.props
     this.list = [
       {
         text: language[this.props.langId].register.name,
@@ -239,13 +244,14 @@ class Register extends React.Component {
     return (
       <>
         <StatusBar />
-        <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ?'padding': 'height'} style={styles.container}>
           <ScrollView>
+            <View style={{height: 20,}} />
             <Logo little />
             <Txt text={language[this.props.langId].register.title} />
             <View
               style={{
-                paddingVertical: 5,
+                paddingVertical: 10,
                 backgroundColor: '#fff',
               }}>
               <Text
@@ -260,7 +266,7 @@ class Register extends React.Component {
               <TouchableOpacity
                 style={styles.touch}
                 onPress={() => {
-                  this.setState({cityValue: true});
+                  this.setState({visibleModal: true});
                 }}>
                 <Text
                   style={{
@@ -280,6 +286,111 @@ class Register extends React.Component {
                   }}
                 />
               </TouchableOpacity>
+              <Modal
+              isVisible={this.state.visibleModal}
+              style={styles.modal}
+              backdropColor="#B4B3DB"
+              backdropOpacity={0.5}
+              animationIn="zoomInUp"
+              animationOut="zoomOut"
+              animationInTiming={600}
+              animationOutTiming={600}
+              backdropTransitionInTiming={600}
+              backdropTransitionOutTiming={600}>
+              <View
+                style={{
+                  backgroundColor: '#fff',
+                  height: height,
+                  alignItems: 'center',
+                  paddingTop: 50,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                    //fontFamily: Gilroy_Bold,
+                  }}>
+                  {language[this.props.langId].register.city}
+                </Text>
+                <ScrollView >
+                {
+                  
+                  cities &&
+                  cities.data &&
+                  cities.data.map((i, index) => {
+                    return (
+                      <TouchableOpacity
+                        key={index.toString()}
+                        onPress={()=>{
+                          this.changeCity(i.id)
+                          this.setState({visibleModal: false,page: 1})
+                        }}
+                        style={{
+                          paddingHorizontal: 20,
+                          paddingVertical: 10,
+                        }}>
+                        <Text style={{textAlign:'center'}} >{i.name}</Text>
+                      </TouchableOpacity>
+                    );
+                  }
+                )}
+                <View style={{
+                  flexDirection:'row',
+                  justifyContent:'space-around',
+                  width: '100%'
+                }}>
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
+                    backgroundColor: '#ececec',
+                    borderRadius: 10,
+                  }}
+                  onPress={() => {
+                    if(this.state.page===1)
+                    {}
+                    else{
+                      this.props.fetchCity(this.state.page-1)
+                      this.setState({
+                        page: this.state.page-1
+                      })
+                    }
+                  }}>
+                  <Text style={{textAlign:'center'}}> {'<<<'} </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
+                    backgroundColor: '#ececec',
+                    borderRadius: 10,
+                  }}
+                  onPress={() => { this.setState({  visibleModal: false, page: 1  });
+                  }}>
+                  <Text style={{textAlign:'center'}}>{language[this.props.langId].cabinet.otmena}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
+                    backgroundColor: '#ececec',
+                    borderRadius: 10,
+                  }}
+                  onPress={() => {
+                    if (cities && cities.data && cities.data.length===15)
+                    {
+                      this.props.fetchCity(this.state.page+1)
+                      this.setState({
+                        page: this.state.page + 1
+                      });
+                    }
+                  }}>
+                  <Text style={{textAlign:'center'}}>{'>>>'}</Text>
+                </TouchableOpacity>
+                </View>
+                </ScrollView>
+              </View>
+            </Modal>
               {cityValue && (
                 <View
                   style={{
@@ -401,7 +512,7 @@ class Register extends React.Component {
               text={language[this.props.langId].register.login} 
               onperss={() => this.props.navigation.navigate('Login')} />
           </ScrollView>
-        </SafeAreaView>
+        </KeyboardAvoidingView>
       </>
     );
   }

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
       },
       arhived:{
         color: '#007BED',
-        fontFamily: 'Gilroy-Medium',
+        //fontFamily: 'Gilroy-Medium',
         fontSize: 14,
         lineHeight: 24,
       }

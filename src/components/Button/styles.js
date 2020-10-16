@@ -39,10 +39,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 20,
     //fontWeight: 'bold',
-    fontFamily: Gilroy_Bold,
+    //fontFamily: Gilroy_Bold,
     color: '#fff',
     // marginVertical: 20,
     textAlign: 'center',
+    fontWeight: 'bold'
   },
   light_btn: {
     //backgroundColor: '#007BED',
@@ -58,8 +59,8 @@ const styles = StyleSheet.create({
   light_btnText: {
     fontSize: 18,
     lineHeight: 20,
-    //fontWeight: 'bold',
-    fontFamily: Gilroy_Bold,
+    fontWeight: 'bold',
+    //fontFamily: Gilroy_Bold,
     color: '#0B0B2A',
     //marginVertical: 20,
   },

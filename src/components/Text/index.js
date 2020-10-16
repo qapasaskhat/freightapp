@@ -6,7 +6,7 @@ const txt = ({text}) => {
     return(
         <Text style = {{
             fontSize: 24,
-            fontFamily: Gilroy_Medium,
+           // fontFamily: Gilroy_Medium,
             textAlign: 'center',
             margin: 24,
         }}>

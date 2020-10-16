@@ -10,7 +10,8 @@ import {
   ActivityIndicator,
   FlatList,
   Alert,
-  AppState
+  AppState,
+  Dimensions
 } from 'react-native';
 
 import styles from './styles';
@@ -34,8 +35,10 @@ import {fetchUser} from '../../../api/users/actions';
 import firebase from 'react-native-firebase'
 import { language } from '../../../const/const'
 import { fcmService } from '../../../notification'
+const {height} = Dimensions.get('screen')
 
 class Main extends React.Component {
+
   state = {
     isEnabled: false,
     visibleModal: false,
@@ -44,28 +47,26 @@ class Main extends React.Component {
     refreshing: false,
     isEnabledMute: false,
     page: 1,
-    appState: AppState.currentState
+    appState: AppState.currentState,
+    page: 1
   };
   componentDidMount = () => {
+
     console.log(AppState.currentState)
     AppState.addEventListener("change", this._handleAppStateChange);
+
     this.props.dispatch(fetchUser(this.props.token,0))
-    console.log('token', this.props.token)
-    fcmService.removeDeliveredAllNotification()
     this.props.dispatch(fetchAnnouncements(this.props.token,1))
-    // setTimeout(() => {
-    //   this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page));
-    // }, 1000);
+    fcmService.removeDeliveredAllNotification()
+
     console.log(this.props.data,'data')
     const { navigation } = this.props;
     navigation.addListener ('willFocus', () =>
       { 
         this.props.dispatch(fetchUser(this.props.token,0))
-        this.props.dispatch(fetchAnnouncements(this.props.token,1)) }
+        this.props.dispatch(fetchAnnouncements(this.props.token,1))
+      }
     );
-    setInterval(() => {
-      //fcmService.removeDeliveredAllNotification()
-    }, 2000);
   };
   componentWillUnmount() {
     AppState.removeEventListener("change", this._handleAppStateChange);
@@ -248,14 +249,15 @@ class Main extends React.Component {
               <View
                 style={{
                   backgroundColor: '#fff',
-                  height: '100%',
+                  height: height,
                   alignItems: 'center',
-                  paddingTop: 60,
+                  paddingTop: 30,
                 }}>
                 <Text
                   style={{
                     fontSize: 18,
-                    fontFamily: Gilroy_Bold,
+                    //fontFamily: Gilroy_Bold,
+                    fontWeight:'bold'
                   }}>
                   {language[this.props.langId].register.city}
                 </Text>
@@ -283,6 +285,30 @@ class Main extends React.Component {
                     );
                   })
                 )}
+                <View style={{
+                  flexDirection:'row',
+                  justifyContent:'space-around',
+                  width: '100%'
+                }}>
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
+                    backgroundColor: '#ececec',
+                    borderRadius: 10,
+                  }}
+                  onPress={() => {
+                    if(this.state.page===1)
+                    {}
+                    else{
+                      this.props.dispatch(fetchCity(this.state.page-1))
+                      this.setState({
+                        page: this.state.page-1
+                      })
+                    }
+                  }}>
+                  <Text style={{textAlign:'center'}}> {'<<<'} </Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                   style={{
                     paddingHorizontal: 36,
@@ -293,10 +319,30 @@ class Main extends React.Component {
                   onPress={() => {
                     this.setState({
                       visibleModal: false,
+                      page: 1
                     });
                   }}>
                   <Text>{language[this.props.langId].cabinet.otmena}</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
+                    backgroundColor: '#ececec',
+                    borderRadius: 10,
+                  }}
+                  onPress={() => {
+                    if (this.props.cities.data.length===15)
+                    {
+                      this.props.dispatch(fetchCity(this.state.page+1));
+                      this.setState({
+                        page: this.state.page + 1
+                      });
+                    }
+                  }}>
+                  <Text style={{textAlign:'center'}}>{'>>>'}</Text>
+                </TouchableOpacity>
+                </View>
               </View>
             </Modal>
           </ImageBackground>

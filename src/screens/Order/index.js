@@ -18,6 +18,9 @@ import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import {fetchArchive} from '../../api/archive/actions';
 import {connect} from 'react-redux';
+import moment from 'moment'
+import localization_ru from 'moment/locale/ru'
+import {language} from '../../const/const'
 
 class Order extends React.Component {
   state = {
@@ -38,6 +41,8 @@ class Order extends React.Component {
       <List
         onpressDelete={() => this.delete()}
         line
+        del
+        date={moment(item.created_at).local('ru',localization_ru).format('lll')}
         body={item.body}
         phone_number={item.phone}
         from={item.from}
@@ -85,7 +90,7 @@ class Order extends React.Component {
         <SafeAreaView style={styles.container}>
           <ImageBackground source={img_bg} style={styles.img_bg}>
             <Header
-              text={'Архив заказов'}
+              text={language[this.props.langId].menu.arhive}
               onpress={() => this.props.navigation.goBack()}
             />
             {loading ? (
@@ -111,5 +116,6 @@ class Order extends React.Component {
 const mapStateToProps = state => ({
   user: state.users.userData,
   dataArchive: state.archive.dataArchive,
+  langId: state.appReducer.langId
 });
 export default connect(mapStateToProps)(Order);

@@ -35,7 +35,7 @@ export const post_error_city = error => ({
   payload: {error},
 });
 
-export function fetchCity() {
+export function fetchCity(page) {
   
   return dispatch => {
     console.log('city fetch_begin_city')
@@ -43,7 +43,7 @@ export function fetchCity() {
 
     const request = axios({
       method: 'GET',
-      url: api,
+      url: api+`?page=${page}`,
     });
     return request
       .then(function(response) {

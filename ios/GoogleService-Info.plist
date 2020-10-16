@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1055821587164-c8saqkjse7bh8u2k6d4cic3j0lss1909.apps.googleusercontent.com</string>
+	<string>1055821587164-5s8u9q43bmea57c9b93igufb1absqrco.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1055821587164-c8saqkjse7bh8u2k6d4cic3j0lss1909</string>
+	<string>com.googleusercontent.apps.1055821587164-5s8u9q43bmea57c9b93igufb1absqrco</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBTeZfIOPYiGmlSqUivaPd6HVihIlWKr4o</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.freightapp</string>
+	<string>org.alux.example.freightapp</string>
 	<key>PROJECT_ID</key>
 	<string>push-freightapp</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1055821587164:ios:2bd9866226055d3eb2ca19</string>
+	<string>1:1055821587164:ios:1c18f33bf16b39c8b2ca19</string>
 	<key>DATABASE_URL</key>
 	<string>https://push-freightapp.firebaseio.com</string>
 </dict>

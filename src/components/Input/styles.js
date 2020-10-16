@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
     paddingLeft: 16,
-    fontFamily: Gilroy_Medium,
+    //fontFamily: Gilroy_Medium,
   },
   input: {
     fontSize: 14,

@@ -10,6 +10,8 @@ import {
   Alert,
   ActivityIndicator,
   FlatList,
+  Dimensions,
+  ScrollView
 } from 'react-native';
 import styles from './styles';
 import List from '../../components/List';
@@ -33,6 +35,9 @@ import AsyncStorage from '@react-native-community/async-storage'
 import {Gilroy_Bold} from '../../const/fonts';
 import Toast from 'react-native-simple-toast';
 import {language} from '../../const/const'
+
+const {height} = Dimensions.get('screen')
+
 class Main extends React.Component {
   state = {
     isEnabled: false,
@@ -42,16 +47,23 @@ class Main extends React.Component {
     items: [],
     loading: false,
     error: null,
-    page: 1
+    page: 1,
+    pageCity: 1
   }
   componentDidMount = async () => {
+
     const {user,login,dispatch,loadAnnouncements} = this.props
     console.log(user,login)
     setTimeout(() => {
       this.changeCity(user && user.city_id)
     }, 600)
     dispatch(fetchUser(login.token,1))
-    //dispatch(fetchAnnouncementsId(user.id,login.token))
+    const { navigation } = this.props;
+    navigation.addListener ('willFocus', () =>
+      { 
+        dispatch(fetchUser(login.token,1))
+       }
+    );
   };
   changeCity=(id)=>{
     this.props.cities &&
@@ -149,6 +161,7 @@ class Main extends React.Component {
               alignItems: 'center',
             }}
             onPress={() => {
+              this.props.dispatch(fetchCity());
               this.setState({
                 visibleModal: true,
               });
@@ -229,9 +242,9 @@ class Main extends React.Component {
               <View
                 style={{
                   backgroundColor: '#fff',
-                  height: '100%',
+                  height: height,
                   alignItems: 'center',
-                  paddingTop: 60,
+                  paddingTop: 30,
                 }}>
                 <Text
                   style={{
@@ -240,6 +253,7 @@ class Main extends React.Component {
                   }}>
                   {language[this.props.langId].register.city}
                 </Text>
+                <ScrollView >
                 {cityLoad ? (
                   <ActivityIndicator />
                 ) : (
@@ -251,17 +265,22 @@ class Main extends React.Component {
                         key={index.toString()}
                         onPress={()=>{
                           this.changeCity(i.id)
-                          this.setState({visibleModal: false,})
+                          this.setState({visibleModal: false,page: 1})
                         }}
                         style={{
                           paddingHorizontal: 20,
                           paddingVertical: 10,
                         }}>
-                        <Text>{i.name}</Text>
+                        <Text style={{textAlign:'center'}} >{i.name}</Text>
                       </TouchableOpacity>
                     );
                   })
                 )}
+                <View style={{
+                  flexDirection:'row',
+                  justifyContent:'space-around',
+                  width: '100%'
+                }}>
                 <TouchableOpacity
                   style={{
                     paddingHorizontal: 20,
@@ -270,12 +289,48 @@ class Main extends React.Component {
                     borderRadius: 10,
                   }}
                   onPress={() => {
-                    this.setState({
-                      visibleModal: false,
-                    });
+                    if(this.state.page===1)
+                    {}
+                    else{
+                      this.props.dispatch(fetchCity(this.state.page-1))
+                      this.setState({
+                        page: this.state.page-1
+                      })
+                    }
                   }}>
-                  <Text>{language[this.props.langId].cabinet.otmena}</Text>
+                  <Text style={{textAlign:'center'}}> {'<<<'} </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
+                    backgroundColor: '#ececec',
+                    borderRadius: 10,
+                  }}
+                  onPress={() => { this.setState({  visibleModal: false, page: 1  });
+                  }}>
+                  <Text style={{textAlign:'center'}}>{language[this.props.langId].cabinet.otmena}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 5,
+                    backgroundColor: '#ececec',
+                    borderRadius: 10,
+                  }}
+                  onPress={() => {
+                    if (this.props.cities.data.length===15)
+                    {
+                      this.props.dispatch(fetchCity(this.state.page+1));
+                      this.setState({
+                        page: this.state.page + 1
+                      });
+                    }
+                  }}>
+                  <Text style={{textAlign:'center'}}>{'>>>'}</Text>
+                </TouchableOpacity>
+                </View>
+                </ScrollView>
               </View>
             </Modal>
           </ImageBackground>

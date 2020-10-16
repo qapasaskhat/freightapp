@@ -13,6 +13,8 @@ import Order from '../screens/driver/OrderDriver'
 import EditProfile from '../screens/driver/EditProfile'
 import ResetPassword from '../screens/driver/ResetPassword'
 import Load from '../screens/driver/LoadDriver'
+import MainIcon from './menu/main'
+import SupprotIcon from './menu/support'
 
 const mainStack = createStackNavigator({
     CabinetStack:{
@@ -33,13 +35,8 @@ const tabs = createBottomTabNavigator({
     tabDriver:{
         screen: mainStack,
         navigationOptions:{
-            tabBarIcon: ({tintColor})=><View style={{justifyContent:'center', alignItems: 'center',marginRight: -20}}>
-                <Image source={menu} style={{width: 20,height: 20, tintColor: tintColor, resizeMode: 'contain'}}/>
-                <Text style={{
-                    color: tintColor,
-                    marginTop: 3
-                }} >Меню</Text>
-            </View>
+            tabBarIcon: ({tintColor})=>
+            <MainIcon tintColor={tintColor} />
         },
     },
     Empty:{
@@ -55,13 +52,8 @@ const tabs = createBottomTabNavigator({
         screen: Support,
         screen: Support,
         navigationOptions:{
-            tabBarIcon: ({tintColor})=><View style={{ justifyContent:'center', alignItems: 'center',marginLeft: -20}}>
-                <Image source={support} style={{width: 20,height: 20, tintColor: tintColor, resizeMode: 'contain'}}/>
-                <Text style={{
-                    color: tintColor,
-                    marginTop: 3
-                }} >Поддержка</Text>
-            </View>
+            tabBarIcon: ({tintColor})=>
+            <SupprotIcon tintColor={tintColor} />
         }
     }
 },{

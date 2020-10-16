@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -88,7 +88,7 @@ class Login extends React.Component {
     return (
       <>
         <StatusBar />
-        <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios'? 'padding':'height'} style={styles.container}>
           <ScrollView>
           <Logo />
           <View style={{
@@ -179,7 +179,7 @@ class Login extends React.Component {
             </TouchableOpacity>
           </View>
           </ScrollView>
-        </SafeAreaView>
+        </KeyboardAvoidingView>
       </>
     );
   }

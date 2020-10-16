@@ -72,13 +72,17 @@ register = (onRegister, onNotification, onOpenNotification) => {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
+        // const badgeCount = firebase.notifications().getBadge()
+        // firebase.notifications().setBadge(badgeCount + 1); 
         onNotification(notification);
       });
 
     this.notificationOpenedListener = firebase
       .notifications()
-      .onNotificationOpened(notificationOpen => {
+      .onNotificationOpened(async notificationOpen => {
         //onOpenNotification(notificationOpen);
+        // const badgeCount = await firebase.notifications().getBadge();
+        // firebase.notifications().setBadge(badgeCount - 1);
 
         if (notificationOpen) {
           console.log('notificationOpenedListener',notificationOpen)
@@ -130,10 +134,10 @@ register = (onRegister, onNotification, onOpenNotification) => {
     firebase.notifications().android.createChannel(channel);
     return channel;
   };
-  
 
-  buildNotification = obj => {
+  buildNotification = async obj => {
     console.log(obj, 'build notification android ');
+    //const badgeCount = await firebase.notifications().getBadge();
     firebase.notifications().android.createChannel(obj.channel);
     return new firebase.notifications.Notification()
       .setSound(obj.sound)

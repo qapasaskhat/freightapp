@@ -149,7 +149,8 @@ class EditDriver extends React.Component {
           <ImageBackground
             source={img_bg}
             style={{width: '100%', height: '100%'}}>
-              <View style={{
+              <View 
+              style={{
                 flexDirection:'row', 
                 justifyContent:'space-between',
                 marginHorizontal:20,
@@ -166,15 +167,15 @@ class EditDriver extends React.Component {
                 },
                 shadowOpacity: 0.25,
                 shadowRadius: 3.84,
-
                 elevation: 5,
                 }}>
                 <Text style={{
                   fontSize: 15,
-                  fontFamily: Gilroy_Medium,
-                  fontWeight: '600',
+                  //fontFamily: Gilroy_Medium,
+                  fontWeight: '400',
                 }}>{language[this.props.langId].edit.lang}</Text>
-                <View style={{
+                <View 
+                style={{
                   alignSelf:'center',
                   flexDirection:'row',
                   width:80,
@@ -203,7 +204,8 @@ class EditDriver extends React.Component {
                 </View>
               </View>
               <View>
-              <TouchableOpacity style={{
+              <TouchableOpacity 
+              style={{
                 backgroundColor: '#fff',
                 shadowColor: "#000",
                   shadowOffset: {
@@ -223,7 +225,7 @@ class EditDriver extends React.Component {
                 textAlign: 'center',
                 color:'#007BED',
                 fontWeight:'bold',
-                fontFamily: Gilroy_Medium
+                //fontFamily: Gilroy_Medium
               }}>{language[this.props.langId].register.view_agreement}</Text>
             </TouchableOpacity>
             <Modal isVisible={this.state.termModal}>
@@ -287,8 +289,9 @@ class EditDriver extends React.Component {
                 this.signOut();
               }}
             />
+            <Button text={language[this.props.langId].edit.save} active onpress={this.saveChange} />
           </ImageBackground>
-          <View
+          {/* <View
             style={{
               position: 'absolute',
               width: '100%',
@@ -296,7 +299,7 @@ class EditDriver extends React.Component {
               bottom: 0,
             }}>
             <Button text={language[this.props.langId].edit.save} active onpress={this.saveChange} />
-          </View>
+          </View> */}
         </SafeAreaView>
       </>
     );

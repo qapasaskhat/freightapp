@@ -20,6 +20,9 @@ import { createBottomTabNavigator } from 'react-navigation-tabs'
 
 import { menu, support, logo_1 } from '../const/images'
 
+import MainIcon from './menu/main'
+import SupportIcon from './menu/support'
+
 const mainStack = createStackNavigator({
     Main: {
         screen: MainScreen
@@ -50,13 +53,8 @@ const tabs = createBottomTabNavigator({
     MainTab:{
         screen: mainStack,
         navigationOptions:{
-            tabBarIcon: ({tintColor})=><View style={{justifyContent:'center', alignItems: 'center',marginRight: -20}}>
-                <Image source={menu} style={{width: 20,height: 20, tintColor: tintColor, resizeMode: 'contain'}}/>
-                <Text style={{
-                    color: tintColor,
-                    marginTop: 3
-                }} >Меню</Text>
-            </View>
+            tabBarIcon: ({tintColor})=>
+            <MainIcon tintColor={tintColor} />
         },
     },
     Empty:{
@@ -71,13 +69,8 @@ const tabs = createBottomTabNavigator({
     SupportTab:{
         screen: Support,
         navigationOptions:{
-            tabBarIcon: ({tintColor})=><View style={{justifyContent:'center', alignItems: 'center',marginLeft: -20}}>
-                <Image source={support} style={{width: 20,height: 20, tintColor: tintColor, resizeMode: 'contain'}}/>
-                <Text style={{
-                    color: tintColor,
-                    marginTop: 3
-                }} >Поддержка</Text>
-            </View>
+            tabBarIcon: ({tintColor})=>
+            <SupportIcon tintColor={tintColor} />
         }
     }
 },{

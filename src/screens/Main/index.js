@@ -5,11 +5,14 @@ import {
   Text,
   StatusBar,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import styles from './styles';
 import Header from '../../components/Header';
 import {img_bg} from '../../const/images';
 //import OrderInput from '../../components/OrderInput'
+
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import {ScrollView, FlatList} from 'react-native-gesture-handler';
@@ -32,7 +35,7 @@ class Main extends React.Component {
   renderItem = () => {
     const {phone_err, address_from_err, address_to_err, desc_err} = this.state;
     return (
-      <View
+      <KeyboardAvoidingView behavior='position'
         style={{
           backgroundColor: '#fff',
           marginHorizontal: 16,
@@ -53,13 +56,12 @@ class Main extends React.Component {
           text={language[this.props.langId].add_new_order.phone}
           value={this.state.phone_number}
           placeholder={'+7'}
-          keyboardType={'numeric'}
+          //keyboardType={'numeric'}
           onchange={text => this.setState({phone_number: text})}
         />
         {phone_err ? (
           <Text style={styles.errorText}>invalid number</Text>
         ) : null}
-
         <Input
           text={language[this.props.langId].add_new_order.from}
           placeholder={language[this.props.langId].add_new_order.address_from}
@@ -87,12 +89,12 @@ class Main extends React.Component {
           onchange={text => this.setState({desc: text})}
         />
         {desc_err ? <Text style={styles.errorText}>{desc_err}</Text> : null}
-      </View>
+      </KeyboardAvoidingView>
     );
   };
   footer = () => {
     return (
-      <View style={styles.footer}>
+      <View style={{}}>
         <Button
           text={language[this.props.langId].add_new_order.btn}
           active
@@ -174,19 +176,22 @@ class Main extends React.Component {
     return (
       <>
         <StatusBar />
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={{flex:1}}>
+        <KeyboardAvoidingView behavior='height' style={styles.container}>
         <ImageBackground
-              style={{width: '100%', height: '100%'}}
-              source={img_bg}>
+            style={{width: '100%', height: '100%'}}
+            source={img_bg}>
+          
           <Header
             text={language[this.props.langId].add_new_order.title}
             onpress={() => this.props.navigation.goBack()}
           />
-          <ScrollView>
+         <ScrollView style={{flexGrow: 0}}>
               <this.renderItem />
-          </ScrollView>
-          {this.footer()}
-          </ImageBackground>
+              {this.footer()}
+              </ScrollView>
+        </ImageBackground>
+        </KeyboardAvoidingView>
         </SafeAreaView>
       </>
     );

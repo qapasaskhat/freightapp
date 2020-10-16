@@ -41,7 +41,8 @@ const header = ({text, onpress, left})=>{
                 <Text style={{
                     fontSize: 18,
                     textAlign: 'center',
-                    fontFamily: Gilroy_Medium
+                    //fontFamily: Gilroy_Medium,
+                    //fontWeight: 'bold'
                 }}>
                     {text}
                 </Text>

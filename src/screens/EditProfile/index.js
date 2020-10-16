@@ -8,7 +8,8 @@ import {
   ImageBackground,
   ScrollView,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  KeyboardAvoidingView
 } from 'react-native';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -127,6 +128,7 @@ class EditClient extends React.Component {
       console.log(error);
     });
   }
+
   render() {
     this.list = [
       {
@@ -160,14 +162,14 @@ class EditClient extends React.Component {
                 borderRadius: 10,
                 paddingHorizontal:30,
                 shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 2,
-},
-shadowOpacity: 0.25,
-shadowRadius: 3.84,
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
 
-elevation: 5,
+                elevation: 5,
                 }}>
                 <Text style={{
                   fontSize: 15,
@@ -202,7 +204,8 @@ elevation: 5,
                 </View>
               </View>
               <View>
-              <TouchableOpacity style={{
+              <TouchableOpacity 
+              style={{
                 backgroundColor: '#fff',
                 shadowColor: "#000",
                   shadowOffset: {
@@ -267,41 +270,41 @@ elevation: 5,
                 margin: 20,
                 borderRadius: 10,
                 shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 2,
-},
-shadowOpacity: 0.25,
-shadowRadius: 3.84,
-
-elevation: 5,
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5,
               }}>
               <InputView data={this.list} />
             </View>
-            {/* <Button text='Изменить пароль' active onpress={()=>{}}/> */}
             <Button
               text={language[this.props.langId].edit.logout}
               active
-              onpress={() => {
-                this.signOut();
-              }}
+              onpress={() => { this.signOut() }}
+            />
+            <Button
+              text={language[this.props.langId].edit.save}
+              active
+              onpress={() => { this.saveChange() }}
             />
           </ImageBackground>
-          <View
+          
+          {/* <View
             style={{
-              position: 'absolute',
-              width: '100%',
+              //position: 'absolute',
+              //width: '100%',
               backgroundColor: '#fff',
-              bottom: 0,
+              //bottom: 0,
             }}>
             <Button
               text={language[this.props.langId].edit.save}
               active
-              onpress={() => {
-                this.saveChange();
-              }}
+              onpress={() => { this.saveChange() }}
             />
-          </View>
+          </View> */}
         </SafeAreaView>
       </>
     );

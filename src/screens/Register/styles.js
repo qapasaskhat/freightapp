@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
           elevation: 5,
           flexDirection: 'row',
           alignItems: 'center',
-          marginBottom: 20
+          marginBottom: 20,
+          paddingTop: 8,
         }
 })
 export default styles
