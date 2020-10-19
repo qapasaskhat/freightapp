@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 1,
     shadowRadius: 4,
-
     elevation: 5,
     marginBottom:5,
-    zIndex: 1001
+    zIndex: 1001,
+    marginBottom: 12
   },
   btnText: {
     fontSize: 18,

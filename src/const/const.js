@@ -85,6 +85,16 @@ export const language = [
             save: 'Сохранить',
             logout_text: 'Действительно ли вы хотите выйти из аккаунта?'
 
+        },
+        support:{
+            title: 'Поддержка',
+            message: 'Сообщение',
+            email: 'Введите ваш e-mail',
+            emailError: 'Введите email',
+            messageError: 'Введите сообщение',
+            btn: 'Отправить',
+            success: 'Успешно',
+            text: 'Сообшение отправлено'
         }
     },
     {
@@ -172,6 +182,16 @@ export const language = [
             name: 'Атыңызды енгізіңіз',
             save: 'Сақтау',
             logout_text: 'Шыгуды растайсыз ба?'
+        },
+        support:{
+            title: 'Қолдау қызметі',
+            message: 'Хабарлама',
+            email: 'Е-mail енгізіңіз',
+            emailError: 'Е-mail енгізіңіз',
+            messageError: 'Хабарламаны енгізіңіз',
+            btn: 'Жіберу',
+            success: '',
+            text: 'Хабарлама жіберілді'
         }
     }
 ]

@@ -98,7 +98,9 @@ class OrderDriver extends React.Component {
            <ScrollView>
               <List
                 name={data.user && data.user.name}
-                desc={data.body}
+                body={data.body}
+                visibleName
+                visiblePhone
                 line
                 phone_number={data.phone}
                 del

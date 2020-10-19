@@ -9,8 +9,9 @@ import {
 import styles from './styles';
 import {trash, right} from '../../const/images';
 
-const List = ({ load, date,phone_number,name,onpressOrder,desc,line,del,onpressDelete,body,from,to,
-}) => {
+const List = ({ load, date,phone_number,name,
+  onpressOrder,desc,line,del,onpressDelete,
+  body,from,to,numberOfLines, visibleName, visiblePhone}) => {
   const formatPhoneNumber = phoneNumberString => {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
     let match = cleaned.match(/^(\d{1}|)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
@@ -35,8 +36,8 @@ const List = ({ load, date,phone_number,name,onpressOrder,desc,line,del,onpressD
     <ActivityIndicator />:
     <TouchableHighlight style={{
         marginHorizontal: 16,
-        marginBottom: 10,
-        marginTop: 10
+        marginBottom: 4,
+        marginTop: 6
     }} onPress={onpressOrder} underlayColor="#eee">
       <View style={styles.view}>
         <View style={styles.row}>
@@ -50,11 +51,11 @@ const List = ({ load, date,phone_number,name,onpressOrder,desc,line,del,onpressD
           )}
         </View>
         <View style={styles.text_view}>
-          <Text style={styles.name_style}>{name}</Text>
+          {visibleName? <Text style={styles.name_style}>{name}</Text>: null}
           {line ? <View style={styles.line} /> : null}
-          <Text style={styles.desc_text}>{body}</Text>
+          <Text numberOfLines={numberOfLines}  style={styles.desc_text}>{body}</Text>
           {desc ? <Text style={styles.desc_text}>{desc}</Text> : null}
-          {phone_number ? (
+          {visiblePhone ? (
             <Text style={styles.phone_number}>
               {formatPhoneNumber(phone_number)}
             </Text>

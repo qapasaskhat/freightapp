@@ -48,7 +48,7 @@ class Main extends React.Component {
     isEnabledMute: false,
     page: 1,
     appState: AppState.currentState,
-    page: 1
+    pageCount: 1
   };
   componentDidMount = () => {
 
@@ -61,7 +61,7 @@ class Main extends React.Component {
 
     console.log(this.props.data,'data')
     const { navigation } = this.props;
-    navigation.addListener ('willFocus', () =>
+    navigation.addListener ('didFocus', () =>
       { 
         this.props.dispatch(fetchUser(this.props.token,0))
         this.props.dispatch(fetchAnnouncements(this.props.token,1))
@@ -115,6 +115,8 @@ class Main extends React.Component {
         date={moment(item.created_at).local('ru',localization_ru).format('lll')}
         phone_number={item.phone}
         from={item.from}
+        numberOfLines={1}
+        //visiblePhone
         //load ={this.props.loading}
         to={item.to}
         del
@@ -134,6 +136,14 @@ class Main extends React.Component {
     }, () => {
       this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page))
     });
+  }
+  componentDidUpdate=(prevProps)=>{
+    if(!this.props.user.id){
+      console.log('success')
+      this.props.dispatch(fetchUser(this.props.token,0))
+    }else{
+      console.log('error')
+    }
   }
   formatPhoneNumber(phoneNumberString) {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
@@ -169,7 +179,7 @@ class Main extends React.Component {
           <Text
             style={{
               fontSize: 12,
-              lineHeight: 24,
+              lineHeight: 16,
               color: '#B1B9C0',
               textAlign: 'center',
               fontFamily: 'Gilroy-Medium',
@@ -183,7 +193,7 @@ class Main extends React.Component {
               style={{
                 color: '#007BED',
                 fontSize: 18,
-                lineHeight: 24,
+                lineHeight: 20,
                 fontFamily: 'Gilroy-Medium',
                 textAlign: 'center',
               }}>
@@ -208,9 +218,7 @@ class Main extends React.Component {
       </View>
     );
   };
-  onChangeMute=()=>{
-    this.props.dispatch({ type: "CHANGE_MUTE_NOTIFICATION" });
-  }
+  onChangeMute=()=>{  this.props.dispatch({ type: "CHANGE_MUTE_NOTIFICATION" }) }
   render() {
     const {loading, data, cities, cityLoad} = this.props;
     return (
@@ -232,7 +240,7 @@ class Main extends React.Component {
                 ListEmptyComponent={isEmpty(language[this.props.langId].cabinet.empty_driver)}
                 renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
-                keyExtractor={(item, index) => String(index)}
+                keyExtractor={(item) => item.id.toString()}
               />
             )}
             <Modal
@@ -251,13 +259,14 @@ class Main extends React.Component {
                   backgroundColor: '#fff',
                   height: height,
                   alignItems: 'center',
-                  paddingTop: 30,
+                  paddingVertical: 30,
                 }}>
                 <Text
                   style={{
                     fontSize: 18,
-                    //fontFamily: Gilroy_Bold,
-                    fontWeight:'bold'
+                    fontWeight:'bold',
+                    lineHeight: 22,
+                    paddingBottom: 10
                   }}>
                   {language[this.props.langId].register.city}
                 </Text>
@@ -272,7 +281,10 @@ class Main extends React.Component {
                         key={index.toString()}
                         style={{
                           paddingHorizontal: 20,
-                          paddingVertical: 12,
+                          paddingVertical: 7,
+                          //borderBottomWidth: 0.6,
+                          borderTopWidth: 0.6,
+                          width: '100%'
                         }}
                         onPress={() =>
                           this.setState({
@@ -287,8 +299,10 @@ class Main extends React.Component {
                 )}
                 <View style={{
                   flexDirection:'row',
-                  justifyContent:'space-around',
-                  width: '100%'
+                  justifyContent:'space-evenly',
+                  width: '100%',
+                  borderTopWidth: 0.6,
+                  paddingTop: 6
                 }}>
                 <TouchableOpacity
                   style={{
@@ -298,12 +312,12 @@ class Main extends React.Component {
                     borderRadius: 10,
                   }}
                   onPress={() => {
-                    if(this.state.page===1)
+                    if(this.state.pageCount===1)
                     {}
                     else{
-                      this.props.dispatch(fetchCity(this.state.page-1))
+                      this.props.dispatch(fetchCity(this.state.pageCount-1))
                       this.setState({
-                        page: this.state.page-1
+                        pageCount: this.state.pageCount-1
                       })
                     }
                   }}>
@@ -319,7 +333,7 @@ class Main extends React.Component {
                   onPress={() => {
                     this.setState({
                       visibleModal: false,
-                      page: 1
+                      pageCount: 1
                     });
                   }}>
                   <Text>{language[this.props.langId].cabinet.otmena}</Text>
@@ -334,9 +348,9 @@ class Main extends React.Component {
                   onPress={() => {
                     if (this.props.cities.data.length===15)
                     {
-                      this.props.dispatch(fetchCity(this.state.page+1));
+                      this.props.dispatch(fetchCity(this.state.pageCount+1));
                       this.setState({
-                        page: this.state.page + 1
+                        pageCount: this.state.pageCount + 1
                       });
                     }
                   }}>

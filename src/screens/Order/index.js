@@ -40,6 +40,8 @@ class Order extends React.Component {
     return (
       <List
         onpressDelete={() => this.delete()}
+        visibleName
+        visiblePhone
         line
         del
         date={moment(item.created_at).local('ru',localization_ru).format('lll')}
@@ -101,6 +103,7 @@ class Order extends React.Component {
               <FlatList
                 data={this.props.dataArchive.data}
                 renderItem={this.renderItem}
+                keyExtractor={(item)=>item.id.toString()}
                 ListEmptyComponent={isEmpty('У вас нет архива')}
                 refreshing={refreshing}
                 onRefresh={this.onRefresh}

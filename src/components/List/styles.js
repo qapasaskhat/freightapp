@@ -19,20 +19,21 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.35,
         shadowRadius: 3.84,
-
         elevation: 5,
     },
     row:{
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 20
+        paddingHorizontal: 20,
+        paddingTop: 12,
+        paddingBottom: 5
     },
     empty:{
         backgroundColor: '#F7F8F9',
         //marginTop:10,
         //height:100,
         paddingHorizontal: 20,
-        paddingVertical: 14,
+        paddingVertical: 5,
         flexDirection: 'row',
         borderRadius: 10,
         alignItems:'center',
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     desc_text:{
         fontSize: 16,
         lineHeight: 21,
-        fontFamily: Gilroy_Light
+        fontFamily: Gilroy_Light,
     },
     text_view:{
         paddingHorizontal: 20,
@@ -67,8 +68,11 @@ const styles = StyleSheet.create({
     },
     text_address:{
         fontSize: 12,
-        lineHeight: 24,
-        fontFamily: Gilroy_Light
+        lineHeight: 12,
+        fontFamily: Gilroy_Light,
+        maxWidth:'45%',
+        //backgroundColor: 'red',
+        marginVertical: 5
     },
     phone_number:{
         fontSize: 16,
@@ -79,7 +83,7 @@ const styles = StyleSheet.create({
     line:{
         height:1,
         backgroundColor: '#ececec',
-        marginVertical: 12
+        marginVertical: 8
     }
 })
 export default styles

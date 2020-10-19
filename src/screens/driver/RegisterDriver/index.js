@@ -288,7 +288,7 @@ class Register extends React.Component {
                   style={{
                     fontSize: 16,
                     fontFamily: Gilroy_Medium,
-                    lineHeight: 14,
+                    lineHeight: 16,
                     color: '#0B0B2A',
                   }}>
                   {this.state.cityName}
@@ -323,7 +323,8 @@ class Register extends React.Component {
                 <Text
                   style={{
                     fontSize: 18,
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    paddingBottom: 10
                     //fontFamily: Gilroy_Bold,
                   }}>
                   {language[this.props.langId].register.city}
@@ -343,17 +344,20 @@ class Register extends React.Component {
                         }}
                         style={{
                           paddingHorizontal: 20,
-                          paddingVertical: 10,
+                          paddingVertical: 7,
+                          borderTopWidth: 0.6,
                         }}>
-                        <Text style={{textAlign:'center'}} >{i.name}</Text>
+                        <Text style={{lineHeight:20}}> {i.name}</Text>
                       </TouchableOpacity>
                     );
                   }
                 )}
                 <View style={{
                   flexDirection:'row',
-                  justifyContent:'space-around',
-                  width: '100%'
+                  justifyContent:'space-evenly',
+                  width: '100%',
+                  borderTopWidth: 0.6,
+                  paddingTop: 6
                 }}>
                 <TouchableOpacity
                   style={{

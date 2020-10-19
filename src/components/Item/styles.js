@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 15,
         backgroundColor: '#F3F9FF',
+        height: 64
       },
     change: {
         //position: 'absolute',

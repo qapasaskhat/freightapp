@@ -60,8 +60,9 @@ const tabs = createBottomTabNavigator({
     tabBarOptions:{
         showLabel: false,
         style:{
-            height: 104,
-            borderTopColor:'#fff'
+            height: 90,
+            borderTopColor:'#fff',
+            paddingTop: 30
         },
         adaptive: true,
     }

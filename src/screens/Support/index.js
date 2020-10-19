@@ -23,40 +23,57 @@ import {language} from '../../const/const'
 class Support extends React.Component {
   state = {
     text: '',
-    load: false
+    load: false,
+    email: ''
   };
 
   componentDidMount=()=>{
     const {user,login} = this.props
     console.log(login)
   }
+  validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
   sendToSupport=()=>{
     Keyboard.dismiss()
     const {login,user} = this.props
-    //console.log(access_token)
+    if(!this.validateEmail(this.state.email)){
+      Alert.alert(language[this.props.langId].support.emailError)
+      return
+    }
+    if(this.state.text===''){
+      Alert.alert(language[this.props.langId].support.messageError)
+      return
+    }
     this.setState({load: true})
     var axios = require('axios');
     var FormData = require('form-data');
     var data = new FormData();
     data.append('text', this.state.text);
     data.append('user_id', user.id);
+    data.append('email',this.state.email);
+
     var config = {
       method: 'post',
       url: 'http://gruz.sport-market.kz/api/supportMessages',
       headers: { 
         'Authorization': `Bearer ${login.token}`,
-        'Accept': 'application/json', 
+        'Accept': 'application/json',
       },
       data : data
     };
     axios(config)
     .then( (response)=> {
-      this.setState({load: false,text:''})
-      console.log(JSON.stringify(response.data));
-      Alert.alert('Успешно!','Сообшение отправлено')
+      if(response.status===201){
+        this.setState({load: false,text:''})
+        console.log(JSON.stringify(response.data));
+        Alert.alert(language[this.props.langId].support.success,language[this.props.langId].support.text)
+      }
     })
     .catch( (error)=> {
       this.setState({load: false})
+      Alert.alert('Ошибка отправки сообщение')
       console.log(error);
     });
 
@@ -71,24 +88,37 @@ class Support extends React.Component {
           <Header text={language[this.props.langId].menu.support} left />
           <ImageBackground
             source={img_bg}
-            style={{  width: '100%',  height: '100%',  }}>
+            style={{  width: '100%',  height: '100%',marginTop:2  }}>
             <View
               style={{
                 backgroundColor: '#fff',
                 margin: 20,
                 borderRadius: 10,
+                shadowColor: "#000",
+                shadowOffset: {
+                    width: 0,
+                    height: 1,
+                },
+                shadowOpacity: 0.18,
+                shadowRadius: 1.00,
+                elevation: 1,
               }}>
-              <Input
-                multiline
-                top
-                height={300}
-                radius={14}
-                value={this.state.text}
-                placeholder={language[this.props.langId].menu.text}
-                onchange={text => {
-                  this.setState({text: text});
-                }}
-              />
+                <Input 
+                  placeholder={language[this.props.langId].support.email}
+                  value={this.state.email}
+                  onchange={text=>{ this.setState({ email: text }) }}
+                   />
+                   <View style={{marginTop:-22, marginBottom: 10}}>
+                <Input
+                  multiline
+                  top
+                  height={300}
+                  radius={14}
+                  value={this.state.text}
+                  placeholder={language[this.props.langId].menu.text}
+                  onchange={text => { this.setState({text: text}) }}
+                />
+              </View>
             </View>
           </ImageBackground>
           </TouchableWithoutFeedback>

@@ -108,7 +108,12 @@ export function fetchAnnouncements(token,page) {
         page === 1? dispatch(fetch_success(response.data.data, page))
         : dispatch(fetch_success_add(response.data.data))
       })
-      .catch(function(error) {
+      .catch((error)=> {
+        if(error.response.status === 429){
+          setTimeout(() => {
+            fetchAnnouncements(token,page)
+          }, 500);
+        }
         console.log(error);
         dispatch(fetch_error(error));
       });

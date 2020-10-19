@@ -63,6 +63,8 @@ class CodeInputClass extends React.Component {
               name={language[this.props.langId].cabinet.name}
               body={item.body}
               line
+              visibleName
+              visiblePhone
               from={item.from}
               to={item.to}
               date={moment(item.created_at).format('DD MM YYYY')}

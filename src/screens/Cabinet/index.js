@@ -51,7 +51,6 @@ class Main extends React.Component {
     pageCity: 1
   }
   componentDidMount = async () => {
-
     const {user,login,dispatch,loadAnnouncements} = this.props
     console.log(user,login)
     setTimeout(() => {
@@ -82,6 +81,12 @@ class Main extends React.Component {
       page: this.state.page + 1
     }, () => {  this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token, this.state.page))  })
   }
+  componentDidUpdate=(prevProps)=>{
+    console.log('prevProps',prevProps)
+    if(!this.props.user.id){
+      this.props.dispatch(fetchUser(this.props.login.token,1))
+    }
+  }
   onChange = () => {
     this.setState({
       isEnabled: !this.state.isEnabled,
@@ -93,6 +98,9 @@ class Main extends React.Component {
         onpressDelete={() => this.arhived(item.id)}
         name={language[this.props.langId].cabinet.name}
         load={this.props.loadAnnouncements}
+        //numberOfLines={1}
+        visibleName
+        visiblePhone
         trash={false}
         onpressOrder={() => this.props.navigation.navigate('OpenOrder', {param: item})}
         body={item.body}
@@ -226,7 +234,7 @@ class Main extends React.Component {
                 renderItem={item => this.renderItem(item)}
                 onEndReached={()=>this.handleLoadMore}
                 ListHeaderComponent={this.headerComp()}
-                keyExtractor={(item, index) => String(index)}
+                keyExtractor={(item) => item.id.toString()}
                 style={{marginBottom: 64}}  />
             <Modal
               isVisible={this.state.visibleModal}
@@ -244,12 +252,14 @@ class Main extends React.Component {
                   backgroundColor: '#fff',
                   height: height,
                   alignItems: 'center',
-                  paddingTop: 30,
+                  paddingVertical: 30,
                 }}>
                 <Text
                   style={{
                     fontSize: 18,
                     fontFamily: Gilroy_Bold,
+                    lineHeight: 22,
+                    paddingBottom: 10
                   }}>
                   {language[this.props.langId].register.city}
                 </Text>
@@ -269,17 +279,22 @@ class Main extends React.Component {
                         }}
                         style={{
                           paddingHorizontal: 20,
-                          paddingVertical: 10,
+                          paddingVertical: 7,
+                          //borderBottomWidth: 0.6,
+                          borderTopWidth: 0.6,
+                          width: '100%'
                         }}>
-                        <Text style={{textAlign:'center'}} >{i.name}</Text>
+                        <Text >{i.name}</Text>
                       </TouchableOpacity>
                     );
                   })
                 )}
                 <View style={{
                   flexDirection:'row',
-                  justifyContent:'space-around',
-                  width: '100%'
+                  justifyContent:'space-evenly',
+                  width: '100%',
+                  borderTopWidth: 0.6,
+                  paddingTop: 6
                 }}>
                 <TouchableOpacity
                   style={{

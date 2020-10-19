@@ -16,14 +16,13 @@ const header = ({text, onpress, left})=>{
             justifyContent: 'center',
             height: 70,
             shadowColor: "#000",
-    shadowOffset: {
-        width: 0,
-        height: 1,
-    },
-    shadowOpacity: 0.18,
-    shadowRadius: 1.00,
-
-    elevation: 1,
+            shadowOffset: {
+                width: 0,
+                height: 1,
+            },
+            shadowOpacity: 0.18,
+            shadowRadius: 1.00,
+            elevation: 1,
 
         }}>
             <View style={{flexDirection: 'row',justifyContent: left?'center':'space-between', alignItems:"center"}}>
