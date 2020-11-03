@@ -67,6 +67,10 @@ class EditClient extends React.Component {
             setTimeout(async() => {
               //AsyncStorage.clear();
               this.props.dispatch({ type: "LOG_OUT" });
+              this.props.dispatch({ type: "GET_CITY_NAME", payload: {
+                id: 0,
+                name: 'Алматы'
+              } });
               const resetAction = StackActions.reset({
                 index: 0,
                 actions: [NavigationActions.navigate({routeName: 'Screen'})],
@@ -87,11 +91,12 @@ class EditClient extends React.Component {
     const {login, phone} = this.state;
     let formData = new FormData();
     formData.append('name', login ? login : this.props.user.name);
+    //formData.append('city_id',1)
     formData.append('_method','PUT')
-    //formData.append('phone', phone ? phone : this.props.user.phone);
     try {
+      
       this.props.dispatch(putUser(this.props.user.id, formData, this.props.token));
-      this.props.dispatch(fetchUser(this.props.token))
+      this.props.dispatch(fetchUser(this.props.token,1));
       this.props.navigation.goBack();
       Toast.show('Сохранено');
     } catch (error) {

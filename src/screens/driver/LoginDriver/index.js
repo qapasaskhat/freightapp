@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView} from 'react-native';
+import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView, Platform, KeyboardAvoidingView} from 'react-native';
 import styles from './styles';
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import {fetchLogin} from '../../../api/login/actions';
 import firebase from 'react-native-firebase'
+import {NavigationActions, StackActions} from 'react-navigation';
 
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import { language } from '../../../const/const'
@@ -62,7 +63,9 @@ class Login extends React.Component {
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
     try {
       this.props.dispatch(fetchLogin(formData,0));
-      this.props.loginError ? null : this.navigate();
+      setTimeout(() => {
+        this.props.loginError ? null : this.navigate();
+      }, 1000)
       
     } catch (error) {
       console.log('LoginDriver ', error);
@@ -70,13 +73,21 @@ class Login extends React.Component {
   }
 
   navigate=()=>{
-    this.props.navigation.navigate('CabinetStack');
-    firebase.messaging().subscribeToTopic('gruzz').then((res)=>{
-      console.log('Уведомление включено')
-    }).catch((error)=>{
-     console.log('error')
-      console.log(error)
-    }) 
+    
+    // firebase.messaging().subscribeToTopic(`gruzz${1}`).then((res)=>{
+    //   console.log('Уведомление включено')
+    // }).catch((error)=>{
+    //   console.log('./././././././././././././././././././././././././././')
+    //   console.log('error')
+    //   console.log(error)
+    //   console.log('./././././././././././././././././././././././././././')
+    // }) 
+    
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({routeName: 'Screen'})],
+    });
+    this.props.navigation.dispatch(resetAction);
   }
   render() {
     const {phone_number, password, error_message} = this.state;
@@ -103,9 +114,9 @@ class Login extends React.Component {
     ];
     return (
       <>
-        <StatusBar />
-        <SafeAreaView style={styles.container}>
-          <ScrollView>
+        <StatusBar barStyle='dark-content'/>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios'? 'padding':'height'} style={styles.container}>
+          <ScrollView keyboardShouldPersistTaps='handled'>
           <Logo />
           <View style={{
             alignSelf:'center',
@@ -195,7 +206,7 @@ class Login extends React.Component {
             </TouchableOpacity>
           </View>
           </ScrollView>
-        </SafeAreaView>
+        </KeyboardAvoidingView>
       </>
     );
   }

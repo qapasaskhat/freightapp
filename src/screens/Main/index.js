@@ -6,7 +6,10 @@ import {
   StatusBar,
   ImageBackground,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Dimensions,
+  Keyboard,
+  AppState
 } from 'react-native';
 import styles from './styles';
 import Header from '../../components/Header';
@@ -21,6 +24,7 @@ import {postAnnouncements} from '../../api/Announcements/actions';
 import {connect} from 'react-redux';
 import {language} from '../../const/const';
 
+const {height, width} = Dimensions.get('screen')
 class Main extends React.Component {
   state = {
     phone_number: '',
@@ -31,11 +35,12 @@ class Main extends React.Component {
     address_from_err: null,
     address_to_err: null,
     desc_err: null,
+    appState: AppState.currentState,
   };
   renderItem = () => {
     const {phone_err, address_from_err, address_to_err, desc_err} = this.state;
     return (
-      <KeyboardAvoidingView behavior='position'
+      <View 
         style={{
           backgroundColor: '#fff',
           marginHorizontal: 16,
@@ -89,18 +94,17 @@ class Main extends React.Component {
           onchange={text => this.setState({desc: text})}
         />
         {desc_err ? <Text style={styles.errorText}>{desc_err}</Text> : null}
-      </KeyboardAvoidingView>
+        
+      </View>
     );
   };
   footer = () => {
     return (
-      <View style={{}}>
         <Button
           text={language[this.props.langId].add_new_order.btn}
           active
           onpress={() => this.addNewOrders()}
         />
-      </View>
     );
   };
   validatePhone = number => {
@@ -108,6 +112,7 @@ class Main extends React.Component {
     return val.test(String(number));
   };
   addNewOrders = () => {
+    Keyboard.dismiss()
     const {phone_number, address_from, address_to, desc} = this.state;
     let formdata = new FormData();
 
@@ -160,6 +165,7 @@ class Main extends React.Component {
     //TO DO
   };
   componentDidMount=()=>{
+    AppState.addEventListener("change", this._handleAppStateChange);
     console.log(this.props.cities.data)
     // this.props.cities && this.props.cities.data.map(item=>{
     //   if(item.id === this.props.user.city_id){
@@ -172,27 +178,46 @@ class Main extends React.Component {
       phone_number: this.props.user.phone
     })
   }
+  componentWillUnmount() {
+    Keyboard.dismiss()
+    AppState.removeEventListener("change", this._handleAppStateChange);
+  }
+  _handleAppStateChange = nextAppState => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      Keyboard.dismiss()
+    }
+    this.setState({ appState: nextAppState });
+  };
   render() {
     return (
       <>
-        <StatusBar />
-        <SafeAreaView style={{flex:1}}>
+        <StatusBar barStyle='dark-content'/>
         <KeyboardAvoidingView behavior='height' style={styles.container}>
+        <SafeAreaView style={{flex:1}}>
+        
+          <ScrollView  keyboardShouldPersistTaps='handled'>
         <ImageBackground
-            style={{width: '100%', height: '100%'}}
+            style={{width: '100%', height: height-70-90}}
             source={img_bg}>
-          
           <Header
             text={language[this.props.langId].add_new_order.title}
             onpress={() => this.props.navigation.goBack()}
           />
-         <ScrollView style={{flexGrow: 0}}>
+          {/* <KeyboardAvoidingView behavior='padding' style={{height: '100%'}}> */}
+          <ScrollView keyboardShouldPersistTaps='handled' style={{flexGrow: 0}}>
               <this.renderItem />
               {this.footer()}
-              </ScrollView>
+            </ScrollView>
+            {/* </KeyboardAvoidingView> */}
         </ImageBackground>
-        </KeyboardAvoidingView>
+        </ScrollView>
+       
         </SafeAreaView>
+        </KeyboardAvoidingView>
+        
       </>
     );
   }

@@ -91,12 +91,16 @@ export const delete_error = error => ({
   payload: {error},
 });
 
-export function fetchAnnouncements(token,page) {
+export function fetchAnnouncements(token,page,city_id) {
+  console.log('fetchAnnouncements', city_id)
+  var url = ''
+  city_id ? url = `http://gruz.sport-market.kz/api/announcements?page=${page}&city_id=${city_id}`
+  : url = `http://gruz.sport-market.kz/api/announcements?page=${page}`
   return dispatch => {
     page === 1 && dispatch(fetch_begin());
     const request = axios({
       method: 'GET',
-      url: `http://gruz.sport-market.kz/api/announcements?page=${page}` ,
+      url:  url,
       headers: {
         Authorization: `Bearer ${token}`,
       },

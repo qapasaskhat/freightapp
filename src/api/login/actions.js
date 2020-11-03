@@ -2,6 +2,8 @@ import axios from 'axios';
 import React from 'react';
 import {Alert} from 'react-native';
 import {fetchUser} from '../users/actions';
+import {fetchCity} from '../city/actions'
+
 import AsyncStorage from '@react-native-community/async-storage';
 
 const api = 'http://gruz.sport-market.kz/api/sanctum/token';
@@ -27,6 +29,7 @@ export const fetch_error_login = error => ({
 
 export function fetchLogin(user,role) {
   return dispatch => {
+    dispatch(fetchCity())
     dispatch(fetch_begin_login());
     const request = axios({
       method: 'POST',
@@ -37,10 +40,8 @@ export function fetchLogin(user,role) {
       .then(async function(response) {
         console.log(response.data);
         console.log('role', role)
+        dispatch(fetch_success_login(response.data.token,role));
         dispatch(fetchUser(response.data.token,role));
-        setTimeout(() => {
-          dispatch(fetch_success_login(response.data.token,role));
-        }, 500);
       })
       .catch(function(error) {
         if (error.response) {
@@ -62,7 +63,7 @@ export function fetchLogin(user,role) {
           console.log('Error', error.message);
         }
         console.log(error.config);
-        Alert.alert('Ошибка', error.toString());
+        Alert.alert('Ошибка', 'Неверный логин или пароль');
         dispatch(fetch_error_login(error));
       });
   };

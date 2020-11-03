@@ -58,10 +58,18 @@ class Login extends React.Component {
       this.props.dispatch(fetchLogin(formData,1));
       setTimeout(() => {
         this.props.loginError ? null :
-        this.props.navigation.navigate('Cabinet');
+        this.navigateApp()
+        //this.props.navigation.navigate('Cabinet');
       }, 1000);
     } catch (error) {}
   };
+  navigateApp=()=>{
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({routeName: 'Screen'})],
+    });
+    this.props.navigation.dispatch(resetAction);
+  }
   render() {
     const {phone_number, password, error_message} = this.state;
     const {loginError,loginLoad} = this.props
@@ -87,9 +95,9 @@ class Login extends React.Component {
     ];
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios'? 'padding':'height'} style={styles.container}>
-          <ScrollView>
+          <ScrollView keyboardShouldPersistTaps='handled'>
           <Logo />
           <View style={{
             alignSelf:'center',
@@ -145,11 +153,11 @@ class Login extends React.Component {
           // loginLoad?
           // <ActivityIndicator color=''/>:
             <Button
-            active
-            text={language[this.props.langId].login.bnt}
-            onpress={() => {
-              this._signIn(phone_number, password)
-            }}
+              active
+              text={language[this.props.langId].login.bnt}
+              onpress={() => {
+                this._signIn(phone_number, password)
+              }}
           />
           }
           <View

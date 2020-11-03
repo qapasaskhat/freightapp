@@ -8,3 +8,4 @@ export const support = require('../assets/icons/chat.png')
 
 export const img = require('../assets/img/img.png')
 export const img_bg = require('../assets/img/img_bg.png')
+export const edit = require('../assets/icons/entypo_edit.png')

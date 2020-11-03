@@ -6,6 +6,7 @@ import {
   StatusBar,
   Image,
   Dimensions,
+  Alert
 } from 'react-native';
 import styles from './styles';
 import Button from '../../components/Button';
@@ -51,6 +52,7 @@ class CodeInputClass extends React.Component {
   };
   _codeInput=(code)=>{
     console.log(code)
+    console.log(this.props.login)
     var axios = require('axios');
 
     var FormData = require('form-data');
@@ -72,37 +74,27 @@ class CodeInputClass extends React.Component {
         this.setState({
           activeBtn: true
         })
+        //this.props.navigation.replace('Login')
       }
       console.log(JSON.stringify(response.data));
     })
     .catch( (error) => {
       this.setState({
-        error: 'Ошибка кода',
+        error: 'error',
       })
       console.log(error);
     });
   }
   success=()=>{
-    this.props.navigation.replace('Login')
-    Alert.alert(
-      'Регистрация прошла успешно! ',
-      '',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            navigationPress();
-          },
-        },
-      ],
-      {cancelable: false},
-    );
+    this.props.navigation.goBack()
+    //this.props.navigation.replace('Screen')
+    Alert.alert('Регистрация прошла успешно! ')
   }
   render() {
     const {time, timeLeft, activeBtn, error} = this.state;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
           <Logo little />
           <Txt text={'Код из СМС'} />
@@ -204,6 +196,7 @@ class CodeInputClass extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  login: state.login,
+  login: state.register.user,
+  
 });
 export default connect(mapStateToProps)(CodeInputClass);

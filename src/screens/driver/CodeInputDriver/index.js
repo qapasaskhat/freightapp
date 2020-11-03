@@ -79,7 +79,7 @@ class CodeInputClass extends React.Component {
     const {time, timeLeft, activeBtn, error} = this.state;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
           <Logo little />
           <Txt text={'Код из СМС'} />
@@ -98,7 +98,7 @@ class CodeInputClass extends React.Component {
               inactiveColor={'#B1B9C0'}
               autoFocus={true}
               keyboardType={'numeric'}
-              size={70}
+              size={65}
               ref={'codeInput'}
               className={'border-box'}
               onFulfill={(code)=>{this._codeInput(code)}}
@@ -155,7 +155,7 @@ class CodeInputClass extends React.Component {
           <Button
             text="Далее"
             active={activeBtn}
-            onpress={() => activeBtn? this.props.navigation.replace('MainDriver'):{}}
+            onpress={() => activeBtn? this.props.navigation.goBack():{}}
           />
           <View
             style={{
@@ -179,6 +179,7 @@ class CodeInputClass extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  login: state.login,
+  login: state.register.user,
+
 });
 export default connect(mapStateToProps) (CodeInputClass);

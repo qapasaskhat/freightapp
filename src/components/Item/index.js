@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import styles from './styles'
 import { Gilroy_Medium } from '../../const/fonts'
-import { right } from '../../const/images'
+import { right, edit } from '../../const/images'
 
 const Item = ({
   name,
@@ -38,7 +38,7 @@ const Item = ({
         </View>
         <View
           style={styles.change}>
-          <Image source={right} style={{width:16, resizeMode: 'contain'}} />
+          <Image source={edit} style={{width:16, resizeMode: 'contain'}} />
         </View>
       </TouchableOpacity>
     );

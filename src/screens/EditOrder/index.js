@@ -7,6 +7,9 @@ import {
   Image,
   Dimensions,
   ImageBackground,
+  KeyboardAvoidingView,
+  AppState,
+  Keyboard
 } from 'react-native';
 import styles from './styles';
 import Header from '../../components/Header';
@@ -17,7 +20,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {putAnnouncementId} from '../../api/Announcements/actions';
 import {connect} from 'react-redux';
 import { language } from '../../const/const'
-const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
 class CodeInputClass extends React.Component {
   state = {
@@ -27,11 +30,26 @@ class CodeInputClass extends React.Component {
     address_from: this.props.navigation.getParam('param').from,
     desc: this.props.navigation.getParam('param').body,
     items: this.props.navigation.getParam('param'),
+    appState: AppState.currentState,
+
   };
   componentDidMount = () => {
+    AppState.addEventListener("change", this._handleAppStateChange);
     console.log('param', this.props.navigation.getParam('param'));
   };
-
+  componentWillUnmount() {
+    Keyboard.dismiss()
+    AppState.removeEventListener("change", this._handleAppStateChange);
+  }
+  _handleAppStateChange = nextAppState => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      Keyboard.dismiss()
+    }
+    this.setState({ appState: nextAppState });
+  };
   saveUpdatedOrder = () => {
     const {
       items,
@@ -59,15 +77,17 @@ class CodeInputClass extends React.Component {
     const {items, phone_number, address_from, address_to, desc} = this.state;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
+        <KeyboardAvoidingView  behavior='height' style={styles.container} >
         <SafeAreaView style={styles.container}>
+          <ScrollView  keyboardShouldPersistTaps='handled'>
           <Header
             text={language[this.props.langId].view_orders.edit_btn}
             onpress={() => this.props.navigation.goBack()}
           />
-          <ScrollView>
+          <ScrollView keyboardShouldPersistTaps='handled' style={{flexGrow: 0}}>
             <ImageBackground
-              style={{width: '100%', height: '100%'}}
+              style={{width: '100%', height: height-70-90}}
               source={img_bg}>
               <View
                 style={{
@@ -114,23 +134,16 @@ class CodeInputClass extends React.Component {
                   onchange={text => this.setState({desc: text})}
                 />
               </View>
-            </ImageBackground>
-          </ScrollView>
-          <View
-            style={{
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: '#fff',
-              bottom: 0,
-              paddingBottom: 5,
-            }}>
-            <Button
+              <Button
               text={language[this.props.langId].add_new_order.save}
               active
               onpress={this.saveUpdatedOrder}
             />
-          </View>
+            </ImageBackground>
+          </ScrollView>
+          </ScrollView>
         </SafeAreaView>
+        </KeyboardAvoidingView>
       </>
     );
   }

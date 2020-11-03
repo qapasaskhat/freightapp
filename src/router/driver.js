@@ -27,6 +27,7 @@ const mainStack = createStackNavigator({
         screen: EditProfile
     }
 },{
+   // initialRouteName: 'CabinetStack',
     headerMode: 'none',
     mode: 'modal',
 })

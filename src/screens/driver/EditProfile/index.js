@@ -9,7 +9,8 @@ import {
   Dimensions,
   Image,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import styles from './styles';
 import {drop} from '../../../const/images';
@@ -103,11 +104,10 @@ class EditDriver extends React.Component {
       console.log(error);
     });
   }
-
-  signOut = async () => {
-    //AsyncStorage.clear()
+  out=()=>{
     this.props.dispatch({ type: "LOG_OUT" });
-    firebase.messaging().unsubscribeFromTopic('gruzz').then((res)=>{
+
+    firebase.messaging().unsubscribeFromTopic(`gruzz${this.props.city_id}`).then((res)=>{
       console.log('Уведомление отключено')
     }).catch((error)=>{
      console.log('error')
@@ -118,6 +118,28 @@ class EditDriver extends React.Component {
       actions: [NavigationActions.navigate({routeName: 'Screen'})],
     });
     this.props.navigation.dispatch(resetAction);
+  }
+  signOut = async () => {
+    Alert.alert(
+      language[this.props.langId].edit.logout,
+      language[this.props.langId].edit.logout_text,
+      [
+        {
+          text: language[this.props.langId].edit.logout,
+          style: 'cancel',
+          onPress: async () => {
+            setTimeout(async() => {
+              this.out()
+            }, 1000)
+          },
+        },
+        {
+          text: language[this.props.langId].cabinet.otmena,
+          onPress: () => console.log('Cancel Pressed'),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   componentDidMount=()=>{
@@ -179,7 +201,7 @@ class EditDriver extends React.Component {
                   alignSelf:'center',
                   flexDirection:'row',
                   width:80,
-                  height:30,
+                  height:32,
                   borderRadius:30,
                   backgroundColor: '#fff',
                   shadowColor: "#000",
@@ -193,12 +215,12 @@ class EditDriver extends React.Component {
                   }}>
                   <TouchableOpacity onPress={()=>{
                     this.props.dispatch({ type: "CHANGE_LANG", payload: 0 })
-                  }} style={{backgroundColor: this.props.langId===0? '#007BED':'#fff', height: 30, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
+                  }} style={{backgroundColor: this.props.langId===0? '#007BED':'#fff', height: 32, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
                     <Text style={{color:this.props.langId===0?'#fff':'#000'}}>Рус</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={()=>{
                     this.props.dispatch({ type: "CHANGE_LANG", payload: 1 })
-                  }} style={{backgroundColor:this.props.langId===1? '#007BED':'#fff', height: 30, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
+                  }} style={{backgroundColor:this.props.langId===1? '#007BED':'#fff', height: 32, width:40, justifyContent:'center', alignItems:'center',borderRadius:20}}>
                     <Text style={{color:this.props.langId===1?'#fff':'#000'}}>Қаз</Text>
                   </TouchableOpacity>
                 </View>
@@ -309,7 +331,9 @@ const mapStateToProps = state => ({
   user: state.users.userData,
   cities: state.cities.cityData,
   token: state.login.token,
-  langId: state.appReducer.langId
+  langId: state.appReducer.langId,
+  city_id: state.appReducer.city_id
+
 });
 const mapDispatchToProps = dispatch => ({
   dispatch

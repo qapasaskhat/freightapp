@@ -56,11 +56,11 @@ class Screen extends React.Component {
   };
   onNotification = notify => {
     console.log('onNotification screen', notify);
-    this.props.dispatch(fetchAnnouncements(this.props.token,1))
     const channelObj = {
       channelId: 'freightChannelId',
       channelName: 'freightChannelName',
       channelDes: 'freightChannelDes',
+     // sound: this.props.muteNotification? 'music': 'default',
     };
     const channel = fcmService.buildChannel(channelObj);
 
@@ -68,7 +68,7 @@ class Screen extends React.Component {
       dataId: notify._data.announcement_id,
       title: notify._title,
       content: notify._body,
-      sound: 'default',
+     // sound: this.props.muteNotification? 'music': 'default',
       channel: channel,
       data: notify._data,
       color: '#007BED',
@@ -77,14 +77,19 @@ class Screen extends React.Component {
       vibrate: true,
       //show_in_foreground: true,
     };
+    console.log('buildNotify' ,buildNotify)
     const notification = fcmService.buildNotification(buildNotify);
-    //console.log(notification)
+    console.log('onNotification' ,notification)
     fcmService.displayNotify(notification);
+    this.props.dispatch(fetchAnnouncements(this.props.token, 1, this.props.city_id))
   };
   onOpenNotification = notify => {
+
     console.log('onOpenNotification screen', notify);
     console.log('tokeeeen', this.props.token)
-    this.props.dispatch(fetchAnnouncements(this.props.token,1))
+    
+    this.props.dispatch(fetchAnnouncements(this.props.token,1, this.props.city_id))
+    //firebase.notifications().setBadge(0)
     Alert.alert(language[this.props.langId].cabinet.notify,notify._title,[
       {
         text:  language[this.props.langId].cabinet.cancel,
@@ -108,10 +113,9 @@ class Screen extends React.Component {
     this.props.navigation.navigate('AuthDriver');
   };
   render() {
-
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
           <Logo />
           <View style={{position: 'absolute',bottom: -10,}}>
@@ -129,6 +133,8 @@ const mapStateToProps = state => ({
   role: state.login.role,
   langId: state.appReducer.langId,
   token: state.login.token,
+  city_id: state.appReducer.city_id,
+  muteNotification: state.appReducer.muteNotification,
 });
 const mapDispatchToProps = dispatch => ({
   dispatch

@@ -17,6 +17,11 @@ import List from '../../components/List';
 import moment from 'moment';
 import {language} from '../../const/const'
 import {connect} from 'react-redux'
+import {
+  fetchAnnouncementsId,
+  deleteAnnouncementId,
+} from '../../api/Announcements/actions';
+import Toast from 'react-native-simple-toast';
 
 const width = Dimensions.get('window').width;
 
@@ -27,7 +32,7 @@ class CodeInputClass extends React.Component {
   componentDidMount = () => {
     console.log(this.props.navigation.getParam('param'));
   };
-  arhived = () => {
+  arhived = (idAnnouncements) => {
     Alert.alert(
       language[this.props.langId].cabinet.delete,
       language[this.props.langId].cabinet.delete_text,
@@ -35,12 +40,21 @@ class CodeInputClass extends React.Component {
         {
           text: language[this.props.langId].cabinet.delete,
           onPress: async () => {
-            console.log('delete');
+            try {
+              this.props.dispatch(deleteAnnouncementId(idAnnouncements,this.props.login.token))
+              this.props.dispatch(fetchAnnouncementsId(this.props.user.id,this.props.login.token,1));
+              this.props.navigation.goBack()
+              Toast.show(language[this.props.langId].cabinet.delete_success);
+            } catch (error) {
+              console.log(error);
+            }
           },
         },
         {
           text: language[this.props.langId].cabinet.otmena,
-          onPress: () => console.log('Cancel Pressed'),
+          onPress: () => {
+            console.log('log')
+          },
           style: 'cancel',
         },
       ],
@@ -51,7 +65,7 @@ class CodeInputClass extends React.Component {
     const {item} = this.state;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
           <Header
             text={language[this.props.langId].view_orders.title}
@@ -59,7 +73,7 @@ class CodeInputClass extends React.Component {
           />
           <ImageBackground style={styles.img_bg} source={img_bg}>
             <List
-              onpressDelete={() => this.arhived()}
+              onpressDelete={() => this.arhived(item.id)}
               name={language[this.props.langId].cabinet.name}
               body={item.body}
               line
@@ -75,9 +89,7 @@ class CodeInputClass extends React.Component {
             <Button
               text={language[this.props.langId].view_orders.edit_btn}
               active
-              onpress={() =>
-                this.props.navigation.navigate('EditOrder', {param: item})
-              }
+              onpress={() => this.props.navigation.navigate('EditOrder', {param: item}) }
             />
           </View>
         </SafeAreaView>
@@ -86,6 +98,9 @@ class CodeInputClass extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  langId: state.appReducer.langId
+  langId: state.appReducer.langId,
+  user: state.users.userData,
+  login: state.login,
 })
+
 export default connect(mapStateToProps)(CodeInputClass);

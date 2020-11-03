@@ -7,6 +7,8 @@ import {Alert} from 'react-native';
 import axios from 'axios';
 import store from '../../api/store';
 import {fetchAnnouncementsId,fetchAnnouncements} from '../Announcements/actions'
+import {fetchCity} from '../city/actions'
+import firebase from 'react-native-firebase'
 
 export const FETCH_BEGIN_USERS = 'FETCH_BEGIN_USERS';
 export const FETCH_SUCCESS_USERS = 'FETCH_SUCCESS_USERS';
@@ -55,7 +57,10 @@ export const put_error_users = error => ({
 });
 
 
-export function fetchUser(token,role) {
+export function fetchUser(token,role, city_id) {
+  const {
+    cities: {cityData},
+  } = store.getState();
   return dispatch => {
     dispatch(fetch_begin_users());
     const request = axios({
@@ -66,12 +71,36 @@ export function fetchUser(token,role) {
       },
     });
     return request
-      .then(function(response) {
+      .then((response) => {
         console.log('action fetchUser');
         console.log(response.data);
-        dispatch(fetch_success_users(response.data));
-        role === 1 &&  dispatch(fetchAnnouncementsId(response.data.id,token,1))
-        role === 0 && dispatch(fetchAnnouncements(token,1))
+        if(response.status === 200){
+          dispatch(fetch_success_users(response.data))
+          
+          console.log('cityData', cityData)
+
+          // cityData.data.map(item=>{
+          //   if(item.id === id){
+          //     console.log(item.name,'cityid')
+          //     dispatch({ type: "GET_CITY_NAME", payload: {
+          //       id: id,
+          //       name: item.name
+          //     } })
+          //   }
+          // })
+
+          role === 1 &&  dispatch(fetchAnnouncementsId(response.data.id,token,1))
+          role === 0 && dispatch(fetchAnnouncements(token,1, city_id ? city_id : response.data.city_id))
+          role ===0 && 
+          firebase.messaging().subscribeToTopic(`gruzz${response.data.city_id}`).then((res)=>{
+            console.log('Уведомление включено')
+          }).catch((error)=>{
+            console.log('./././././././././././././././././././././././././././')
+            console.log('error')
+            console.log(error)
+            console.log('./././././././././././././././././././././././././././')
+          }) 
+        }
       })
       .catch(function(error) {
         if (error.response) {

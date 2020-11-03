@@ -75,7 +75,7 @@ class Register extends React.Component {
     repeatPassword: '',
     toggleCheckBox: false,
     cityValue: false,
-    cityName: '',
+    cityName: 'Выберите город',
     cityId: 1,
     allCities: {},
     termModal:false,
@@ -196,7 +196,7 @@ class Register extends React.Component {
 
     try {
       this.props.postRegister(formData, () =>
-        this.props.navigation.navigate('CodeInput'),
+        this.props.navigation.replace('CodeInput'),
       );
       //this.props.navigation.navigate('CodeInput');
     } catch (error) {
@@ -243,7 +243,7 @@ class Register extends React.Component {
 
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ?'padding': 'height'} style={styles.container}>
           <ScrollView>
             <View style={{height: 20,}} />

@@ -4,7 +4,6 @@ import store from '../api/store';
 import {fetchAnnouncementsId} from '../api/Announcements/actions'
 
 class FCMService {
-
 register = (onRegister, onNotification, onOpenNotification) => {
     this.checkPermission(onRegister);
     this.createNotificationListeners(
@@ -72,8 +71,6 @@ register = (onRegister, onNotification, onOpenNotification) => {
     this.notificationListener = firebase
       .notifications()
       .onNotification(notification => {
-        // const badgeCount = firebase.notifications().getBadge()
-        // firebase.notifications().setBadge(badgeCount + 1); 
         onNotification(notification);
       });
 
@@ -81,8 +78,6 @@ register = (onRegister, onNotification, onOpenNotification) => {
       .notifications()
       .onNotificationOpened(async notificationOpen => {
         //onOpenNotification(notificationOpen);
-        // const badgeCount = await firebase.notifications().getBadge();
-        // firebase.notifications().setBadge(badgeCount - 1);
 
         if (notificationOpen) {
           console.log('notificationOpenedListener',notificationOpen)
@@ -99,14 +94,28 @@ register = (onRegister, onNotification, onOpenNotification) => {
       .then(notificationOpen => {
         if (notificationOpen) {
           const notification = notificationOpen.notification;
+          console.log('notificationOpen ', notificationOpen);
           console.log('getInitialNotification ', notification);
           onOpenNotification(notification);
           this.removeDeliveredNotification(notification);
         }
       });
+    
+      this.notificationDisplayedListener = firebase
+      .notifications()
+      .onNotificationDisplayed((notificationOpen) => {
+        if (notificationOpen) {
+          const notification = notificationOpen.notification;
+          console.log('onNotificationDisplayed ', notification);
+          onOpenNotification(notification);
+          this.removeDeliveredNotification(notification);
+        }
+        // Process your notification as required
+        // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+      });
 
     this.messageListener = firebase.messaging().onMessage(message => {
-      //console.log('message',message)
+      console.log('message',message)
       onNotification(message);
     });
 
@@ -117,6 +126,7 @@ register = (onRegister, onNotification, onOpenNotification) => {
         onRegister(fcmToken);
       });
   };
+
   unRegister = () => {
     this.messageListener();
     this.onTokenRefreshListener();
@@ -130,22 +140,28 @@ register = (onRegister, onNotification, onOpenNotification) => {
       obj.channelId,
       obj.channelName,
       firebase.notifications.Android.Importance.High,
-    ).setDescription(obj.channelDes);
+    ).setDescription(obj.channelDes)
+    //.setSound(obj.sound);
     firebase.notifications().android.createChannel(channel);
     return channel;
   };
 
-  buildNotification = async obj => {
+  buildNotification = obj => {
     console.log(obj, 'build notification android ');
-    //const badgeCount = await firebase.notifications().getBadge();
+    let badge_count = 0
+    firebase.notifications().getBadge().then(res=>{
+      badge_count = res
+    })
+    //firebase.notifications().setBadge(badge_count + 1)
+    
     firebase.notifications().android.createChannel(obj.channel);
     return new firebase.notifications.Notification()
-      .setSound(obj.sound)
+     // .setSound(obj.sound)
       .setNotificationId(obj.dataId)
       .setTitle(obj.title)
       .setBody(obj.content)
       .setData(obj.data)
-      .ios.setBadge(1)
+      .ios.setBadge(badge_count + 1)
       // for android
       .android.setChannelId(obj.channel.channelId)
       .android.setLargeIcon(obj.largeIcon)
@@ -153,8 +169,6 @@ register = (onRegister, onNotification, onOpenNotification) => {
       .android.setColor(obj.color)
       //.android.setGroupAlertBehaviour(firebase.notifications.Android.GroupAlert.Summary)
       .android.setPriority(firebase.notifications.Android.Priority.High)
-      //.android.setDefaults(firebase.notifications.Android.Defaults.Vibrate)
-      //.android.setCategory(firebase.notifications.Android.Category.Alarm)
       .android.setVibrate(obj.vibrate);
   };
 
@@ -172,9 +186,11 @@ register = (onRegister, onNotification, onOpenNotification) => {
     firebase.notifications().removeDeliveredNotification(notification.notificationId)
     //firebase.notifications().removeAllDelive redNotifications();
   };
+
   removeDeliveredAllNotification = ()=>{
     firebase.notifications().removeAllDeliveredNotifications()
   }
+
   cancellAllNotification = () => {
     firebase
       .notifications()

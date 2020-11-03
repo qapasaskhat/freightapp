@@ -7,7 +7,8 @@ import {
   ImageBackground,
   Image,
   Alert,
-  Keyboard
+  Keyboard,
+  AppState
 } from 'react-native';
 import styles from './styles';
 import {FlatList, TouchableWithoutFeedback} from 'react-native-gesture-handler';
@@ -24,15 +25,31 @@ class Support extends React.Component {
   state = {
     text: '',
     load: false,
-    email: ''
+    email: '',
+    appState: AppState.currentState,
   };
 
   componentDidMount=()=>{
     const {user,login} = this.props
     console.log(login)
+    AppState.addEventListener("change", this._handleAppStateChange);
   }
+  componentWillUnmount() {
+    Keyboard.dismiss()
+    AppState.removeEventListener("change", this._handleAppStateChange);
+  }
+  _handleAppStateChange = nextAppState => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      Keyboard.dismiss()
+    }
+    this.setState({ appState: nextAppState });
+  };
   validateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    email = email.replace(/ +/g, ' ').trim();
     return re.test(String(email).toLowerCase());
   }
   sendToSupport=()=>{
@@ -66,9 +83,11 @@ class Support extends React.Component {
     axios(config)
     .then( (response)=> {
       if(response.status===201){
-        this.setState({load: false,text:''})
+        this.setState({load: false,text:'', email: ''})
         console.log(JSON.stringify(response.data));
         Alert.alert(language[this.props.langId].support.success,language[this.props.langId].support.text)
+        this.props.login.role === 0 && this.props.navigation.navigate('tabDriver')
+        this.props.login.role === 1 && this.props.navigation.navigate('MainTab')
       }
     })
     .catch( (error)=> {
@@ -82,7 +101,7 @@ class Support extends React.Component {
   render() {
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
           <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
           <Header text={language[this.props.langId].menu.support} left />
@@ -106,7 +125,7 @@ class Support extends React.Component {
                 <Input 
                   placeholder={language[this.props.langId].support.email}
                   value={this.state.email}
-                  onchange={text=>{ this.setState({ email: text }) }}
+                  onchange={text=>{ this.setState({ email: text.replace(/ +/g, ' ').trim() }) }}
                    />
                    <View style={{marginTop:-22, marginBottom: 10}}>
                 <Input

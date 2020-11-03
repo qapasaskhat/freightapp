@@ -31,10 +31,11 @@ import {fetchAnnouncements} from '../../../api/Announcements/actions';
 import {fetchCity} from '../../../api/city/actions';
 import {Gilroy_Bold} from '../../../const/fonts';
 import isEmpty from '../../../components/Empty';
-import {fetchUser} from '../../../api/users/actions';
+import {fetchUser, putUser} from '../../../api/users/actions';
 import firebase from 'react-native-firebase'
 import { language } from '../../../const/const'
 import { fcmService } from '../../../notification'
+
 const {height} = Dimensions.get('screen')
 
 class Main extends React.Component {
@@ -52,23 +53,54 @@ class Main extends React.Component {
   };
   componentDidMount = () => {
 
+    this.props.dispatch(fetchCity());
+    firebase.notifications().setBadge(0)
+    this.props.city_name === 'almaty' && 
+    setTimeout(() => {
+      this.props.user && this.getUserCity(this.props.user.city_id)
+    }, 1000);
+    
     console.log(AppState.currentState)
+    
     AppState.addEventListener("change", this._handleAppStateChange);
 
     this.props.dispatch(fetchUser(this.props.token,0))
-    this.props.dispatch(fetchAnnouncements(this.props.token,1))
+    this.props.dispatch(fetchAnnouncements(this.props.token,1,this.props.user.city_id))
     fcmService.removeDeliveredAllNotification()
-
-    console.log(this.props.data,'data')
     const { navigation } = this.props;
     navigation.addListener ('didFocus', () =>
       { 
-        this.props.dispatch(fetchUser(this.props.token,0))
-        this.props.dispatch(fetchAnnouncements(this.props.token,1))
+        firebase.notifications().setBadge(0)
+        console.log('this.props.city_id', this.props.city_id)
+        this.props.dispatch(fetchUser(this.props.token,0, this.props.city_id))
+        this.props.dispatch(fetchAnnouncements(this.props.token,1,this.props.user.city_id))
+        //this.props.user && this.getUserCity(this.props.user.city_id)
       }
     );
+    console.log(this.props.user,'data')
+    this.props.user && this.getUserCity(this.props.user.city_id)
   };
+
+  getUserCity=(id)=>{
+
+    console.log('city',this.props.cities)
+    this.props.cities &&
+    this.props.cities.data &&
+    this.props.cities.data.map(item=>{
+      if(item.id === id){
+        console.log(item.name,'cityid')
+        this.props.dispatch({ type: "GET_CITY_NAME", payload: {
+          id: id,
+          name: item.name
+        } })
+        this.setState({
+          cityName: item.name
+        })
+      }
+    })
+  }
   componentWillUnmount() {
+    firebase.notifications().setBadge(0)
     AppState.removeEventListener("change", this._handleAppStateChange);
   }
   _handleAppStateChange = nextAppState => {
@@ -87,7 +119,8 @@ class Main extends React.Component {
     this.setState({
       refreshing: true,
     });
-    this.props.dispatch(fetchAnnouncements(this.props.token,1));
+    this.props.dispatch(fetchAnnouncements(this.props.token,1,this.props.user.city_id));
+    this.props.user && this.getUserCity(this.props.user.city_id)
     this.setState({
       refreshing: false,
     });
@@ -95,13 +128,13 @@ class Main extends React.Component {
   onChange = () => {  
     this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" })
     this.props.statusNotification ? 
-    firebase.messaging().unsubscribeFromTopic('gruzz').then((res)=>{
+    firebase.messaging().unsubscribeFromTopic(`gruzz${this.props.city_id}`).then((res)=>{
       Alert.alert('','Уведомление отключено')
     }).catch((error)=>{
      console.log('error')
       console.log(error)
     }):
-    firebase.messaging().subscribeToTopic('gruzz').then((res)=>{
+    firebase.messaging().subscribeToTopic(`gruzz${this.props.city_id}`).then((res)=>{
       Alert.alert('','Уведомление включено')
     }).catch((error)=>{
      console.log('error')
@@ -140,7 +173,7 @@ class Main extends React.Component {
   componentDidUpdate=(prevProps)=>{
     if(!this.props.user.id){
       console.log('success')
-      this.props.dispatch(fetchUser(this.props.token,0))
+      //this.props.dispatch(fetchUser(this.props.token,0))
     }else{
       console.log('error')
     }
@@ -197,7 +230,7 @@ class Main extends React.Component {
                 fontFamily: 'Gilroy-Medium',
                 textAlign: 'center',
               }}>
-              {this.state.cityName}
+              {this.props.city_name}
             </Text>
             <Image source={drop}  style={{marginLeft: 6, width: 12, resizeMode: 'contain'}}  />
           </TouchableOpacity>
@@ -223,11 +256,11 @@ class Main extends React.Component {
     const {loading, data, cities, cityLoad} = this.props;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
-          <ImageBackground
+          {/* <ImageBackground
             source={img_bg}
-            style={{  width: '100%',height: '100%',resizeMode: 'center'  }}>
+            style={{  width: '100%',height: '100%',resizeMode: 'center'  }}> */}
             {//loading ? (  <ActivityIndicator />  ) : 
             (
               <FlatList
@@ -284,13 +317,42 @@ class Main extends React.Component {
                           paddingVertical: 7,
                           //borderBottomWidth: 0.6,
                           borderTopWidth: 0.6,
-                          width: '100%'
+                          width: '100%',
+                         // backgroundColor: 'red',
                         }}
-                        onPress={() =>
+                        onPress={() =>{
+
+                          firebase.messaging().unsubscribeFromTopic(`gruzz${this.props.city_id}`).then((res)=>{
+                            console.log('Уведомление отключено')
+                          }).catch((error)=>{
+                           console.log('error')
+                            console.log(error)
+                          })
+
+                          firebase.messaging().subscribeToTopic(`gruzz${i.id}`).then((res)=>{
+                            console.log('Уведомление включено')
+                          }).catch((error)=>{
+                            console.log('./././././././././././././././././././././././././././')
+                            console.log('error')
+                            console.log(error)
+                            console.log('./././././././././././././././././././././././././././')
+                          })
+
+                          let formData = new FormData();
+                          formData.append('city_id',i.id)
+                          formData.append('_method','PUT')
+                          this.props.dispatch(putUser(this.props.user.id, formData, this.props.token));
+                          this.props.dispatch(fetchUser(this.props.token,0));
+
+                          this.props.dispatch(fetchAnnouncements(this.props.token,1,i.id))
+                          this.props.dispatch({ type: "GET_CITY_NAME", payload: {
+                            id: i.id,
+                            name: i.name
+                          } })
                           this.setState({
                             cityName: i.name,
                             visibleModal: false,
-                          })
+                          })}
                         }>
                         <Text>{i.name}</Text>
                       </TouchableOpacity>
@@ -359,7 +421,7 @@ class Main extends React.Component {
                 </View>
               </View>
             </Modal>
-          </ImageBackground>
+          {/* </ImageBackground> */}
         </SafeAreaView>
       </>
     );
@@ -377,7 +439,9 @@ const mapStateToProps = state => ({
   token: state.login.token,
   statusNotification: state.appReducer.statusNotification,
   muteNotification: state.appReducer.muteNotification,
-  langId: state.appReducer.langId
+  langId: state.appReducer.langId,
+  city_name: state.appReducer.city_name,
+  city_id: state.appReducer.city_id
 });
 const mapDispatchToProps = dispatch => ({
   dispatch

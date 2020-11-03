@@ -26,7 +26,7 @@ import localization_ru from 'moment/locale/ru'
 
 import {connect} from 'react-redux';
 import {fetchCity} from '../../api/city/actions';
-import {fetchUser} from '../../api/users/actions';
+import {fetchUser, putUser} from '../../api/users/actions';
 import {
   fetchAnnouncementsId,
   deleteAnnouncementId,
@@ -53,22 +53,60 @@ class Main extends React.Component {
   componentDidMount = async () => {
     const {user,login,dispatch,loadAnnouncements} = this.props
     console.log(user,login)
+    console.log(this.props.login.token,'componentDidMount')
+    this.props.dispatch(fetchUser(this.props.login.token,1))
+    this.props.city_name === 'almaty' && 
     setTimeout(() => {
       this.changeCity(user && user.city_id)
-    }, 600)
-    dispatch(fetchUser(login.token,1))
-    const { navigation } = this.props;
-    navigation.addListener ('willFocus', () =>
+      //this.props.user && this.getUserCity(this.props.user.city_id)
+    }, 1000);
+    
+    this.props.navigation.addListener ('didFocus', () =>
       { 
-        dispatch(fetchUser(login.token,1))
+        //this.onRefresh()
+        console.log('didFocus',user)
+        this.props.dispatch(fetchUser(this.props.token,1))
+        //this.changeCity(user && user.city_id)
        }
     );
+    this.changeCity(user && user.city_id)
   };
   changeCity=(id)=>{
+    console.log(this.state.cityName,'cityid')
     this.props.cities &&
     this.props.cities.data &&
     this.props.cities.data.map(item=>{
       if(item.id === id){
+        console.log(item.name,'cityid')
+
+        this.props.dispatch({ type: "GET_CITY_NAME", payload: {
+          id: id,
+          name: item.name
+        } })
+
+        this.setState({
+          cityName: item.name
+        })
+      }
+    })
+  }
+  changeCityCabinet=(id)=>{
+    console.log(id)
+    let formData = new FormData();
+    //formData.append('name', login ? login : this.props.user.name);
+    formData.append('city_id',id)
+    formData.append('_method','PUT')
+    this.props.dispatch(putUser(this.props.user.id, formData, this.props.token));
+    this.props.dispatch(fetchUser(this.props.token,1));
+    this.props.cities &&
+    this.props.cities.data &&
+    this.props.cities.data.map(item=>{
+      if(item.id === id){
+        console.log(item.name,'cityid')
+        this.props.dispatch({ type: "GET_CITY_NAME", payload: {
+          id: id,
+          name: item.name
+        } })
         this.setState({
           cityName: item.name
         })
@@ -84,7 +122,7 @@ class Main extends React.Component {
   componentDidUpdate=(prevProps)=>{
     console.log('prevProps',prevProps)
     if(!this.props.user.id){
-      this.props.dispatch(fetchUser(this.props.login.token,1))
+      //this.props.dispatch(fetchUser(this.props.login.token,1))
     }
   }
   onChange = () => {
@@ -138,6 +176,7 @@ class Main extends React.Component {
         {
           text: language[this.props.langId].cabinet.delete,
           onPress: () => {
+            
             try {
               this.props.dispatch(deleteAnnouncementId(idAnnouncements,this.props.login.token))
               this.props.dispatch(fetchAnnouncementsId(this.props.user.id,this.props.login.token,1));
@@ -174,7 +213,7 @@ class Main extends React.Component {
                 visibleModal: true,
               });
             }}>
-            <Text style={styles.cityName}>{this.state.cityName}</Text>
+            <Text style={styles.cityName}>{this.props.city_name}</Text>
             <Image
               source={drop}
               style={{marginLeft: 6, width: 12, resizeMode: 'contain'}}
@@ -213,6 +252,7 @@ class Main extends React.Component {
       refreshing: true,
     });
     this.props.dispatch(fetchUser(this.props.login.token,1))
+    this.changeCity(this.props.user && this.props.user.city_id)
     this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token,1));
     this.setState({
       refreshing: false,
@@ -223,9 +263,9 @@ class Main extends React.Component {
     const {cities, cityLoad, announcements, loadAnnouncements} = this.props;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
-          <ImageBackground source={img_bg} style={styles.img_bg}>
+          {/* <ImageBackground source={img_bg} style={styles.img_bg}> */}
               <FlatList
                 data={announcements.data}
                 refreshing={this.state.refreshing}
@@ -263,7 +303,10 @@ class Main extends React.Component {
                   }}>
                   {language[this.props.langId].register.city}
                 </Text>
-                <ScrollView >
+                <ScrollView  style={{
+                  paddingTop: 12,
+                 // backgroundColor: 'blue'
+                }}>
                 {cityLoad ? (
                   <ActivityIndicator />
                 ) : (
@@ -274,7 +317,7 @@ class Main extends React.Component {
                       <TouchableOpacity
                         key={index.toString()}
                         onPress={()=>{
-                          this.changeCity(i.id)
+                          this.changeCityCabinet(i.id)
                           this.setState({visibleModal: false,page: 1})
                         }}
                         style={{
@@ -282,7 +325,8 @@ class Main extends React.Component {
                           paddingVertical: 7,
                           //borderBottomWidth: 0.6,
                           borderTopWidth: 0.6,
-                          width: '100%'
+                          width: '100%',
+                          //backgroundColor: 'red'
                         }}>
                         <Text >{i.name}</Text>
                       </TouchableOpacity>
@@ -348,7 +392,7 @@ class Main extends React.Component {
                 </ScrollView>
               </View>
             </Modal>
-          </ImageBackground>
+          {/* </ImageBackground> */}
           <View
             style={{  position: 'absolute',width: '100%',backgroundColor: '#fff',bottom: 0, }}>
             <Button
@@ -369,8 +413,14 @@ const mapStateToProps = state => ({
   cityLoad: state.cities.loading,
   announcements: state.announcements.dataAnnouncementsUser,
   login: state.login,
+  token: state.login.token,
   loadAnnouncements: state.announcements.loading,
   errorAnnouncements: state.announcements.error,
-  langId: state.appReducer.langId
+  langId: state.appReducer.langId,
+  city_id: state.appReducer.city_id,
+  city_name: state.appReducer.city_name
 })
-export default connect(mapStateToProps)(Main);
+const mapDispatchToProps = dispatch => ({
+  dispatch
+});
+export default connect(mapStateToProps,mapDispatchToProps)(Main);

@@ -43,7 +43,7 @@ class OrderDriver extends React.Component {
       method: 'get',
       url: `http://gruz.sport-market.kz/api/announcements/${id}`,
       headers: { 
-        'Authorization': 'Bearer 390|l36MS2SOVLuoTevgzR5gCwmgsdZuzRVLeLDeGSqZarvSoeSocXHLHX6L94sNvFtprUzfVAE42iTzeknl'
+        'Authorization': `Bearer ${this.props.login.token}`
       }
     };
 
@@ -85,7 +85,7 @@ class OrderDriver extends React.Component {
     const {item,data} = this.state;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
           <ImageBackground
             source={img_bg}
@@ -141,6 +141,7 @@ class OrderDriver extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  langId: state.appReducer.langId
+  langId: state.appReducer.langId,
+  login: state.login,
 });
 export default connect(mapStateToProps)(OrderDriver);

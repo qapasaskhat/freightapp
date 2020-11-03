@@ -88,7 +88,7 @@ class Order extends React.Component {
     const {items, loading, error, refreshing} = this.state;
     return (
       <>
-        <StatusBar />
+        <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
           <ImageBackground source={img_bg} style={styles.img_bg}>
             <Header

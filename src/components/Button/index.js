@@ -4,8 +4,8 @@ import styles from './styles';
 
 const button = ({text, onpress, light, active, load}) => {
   return (
-    <View>
-      {light ? (
+    
+      light ? (
         <TouchableOpacity style={styles.light_btn} onPress={onpress}>
           <Text style={styles.light_btnText}>{text}</Text>
         </TouchableOpacity>
@@ -14,8 +14,8 @@ const button = ({text, onpress, light, active, load}) => {
          {load? <ActivityIndicator color='#fff' />:
           <Text style={styles.btnText}>{text}</Text>}
         </TouchableOpacity>
-      )}
-    </View>
+      )
+    
   );
 };
 export default button;
