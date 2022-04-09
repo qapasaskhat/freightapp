@@ -15,7 +15,7 @@
     "@react-native-community/checkbox": "^0.4.2",
     "@react-native-community/masked-view": "^0.1.10",
     "axios": "^0.19.2",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-native-autoheight-webview": "^1.5.4",
