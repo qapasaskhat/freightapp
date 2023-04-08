@@ -28,7 +28,7 @@ const button = ({
           styles.input,
           {
             color: '#1A1A1A',
-            height: height ? height : h * 0.06,
+            height: height ? height : h * 0.05,
             borderRadius: radius ? radius : 60,
             paddingTop: top ? 10 : 0,
             textAlignVertical: top ? 'top' : 'center',

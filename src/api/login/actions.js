@@ -6,8 +6,8 @@ import {fetchCity} from '../city/actions'
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-const api = 'http://gruz.sport-market.kz/api/sanctum/token';
-//const api = 'http://gruz.sport-market.kz/api/check';
+const api = 'http://gruz.viker.kz/api/sanctum/token';
+//const api = 'http://gruz.viker.kz/api/check';
 
 //11|DhLwiMg7r4AqSgnbbRYdYqMz1PVSpH5NK8o8yCOIGr7wotYLP2r4NtmiUj5fprY8LWyJ0lV3pPkXmxTv
 
@@ -50,7 +50,7 @@ export function fetchLogin(user,role) {
           console.log(error.response.data);
           console.log(error.response.status);
           if(error.response.status === 401){
-            Alert.alert('Уведомление', 'Неверный логин или пароль');
+            // Alert.alert('Уведомление', 'Неверный логин или пароль');
           }
           console.log(error.response.headers);
         } else if (error.request) {

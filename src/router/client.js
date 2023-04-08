@@ -14,6 +14,7 @@ import OpenOrder from '../screens/OpenOrder'
 import EditProfile from '../screens/EditProfile'
 import Reset from '../screens/ResetPassword'
 import Load from '../screens/LoadScreen'
+import CodeInputLogin from '../screens/CodeInputLogin'
 
 import { createStackNavigator } from 'react-navigation-stack'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
@@ -93,6 +94,9 @@ const tabs = createBottomTabNavigator({
     },
     CodeInput:{
         screen: CodeInputScreen,
+    },
+    CodeInputLogin: {
+        screen: CodeInputLogin,
     },
     MainClient:{
         screen: tabs,

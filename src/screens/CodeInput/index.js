@@ -27,16 +27,13 @@ class CodeInputClass extends React.Component {
     activeBtn: false,
     error: ''
   };
-  componentDidMount = () => {
-    this.startTimer(this.state.time);
-    console.log(this.props.login)
-  };
-  _goTo = () => {
-    this.props.navigation.replace('AuthClient');
-  };
-  _goToDriver = () => {
-    this.props.navigation.replace('AuthDriver');
-  };
+
+  componentDidMount = () =>  this.startTimer(this.state.time);
+
+  _goTo = () => this.props.navigation.replace('AuthClient')
+
+  _goToDriver = () => this.props.navigation.replace('AuthDriver')
+
   startTimer = timeLeft => {
     clearInterval(this.state.timer);
     let timer = setInterval(() => {
@@ -44,15 +41,17 @@ class CodeInputClass extends React.Component {
       if (timeLeft === 0) {
         clearInterval(timer);
       }
-      this.setState({
-        timeLeft: timeLeft,
-      });
+      this.setState({ timeLeft: timeLeft });
     }, 1000);
     return this.setState({timeLeft: timeLeft, timer: timer});
   };
+
   _codeInput=(code)=>{
     console.log(code)
-    console.log(this.props.login)
+    console.log(this.props.login, this.props.token)
+
+    const token  = this.props.login.token
+
     var axios = require('axios');
 
     var FormData = require('form-data');
@@ -61,34 +60,28 @@ class CodeInputClass extends React.Component {
 
     var config = {
       method: 'post',
-      url: 'http://gruz.sport-market.kz/api/sanctum/verify',
-      headers: { 
-        'Authorization': `Bearer ${this.props.login.token}`, 
-      },
+      url: 'http://gruz.viker.kz/api/sanctum/verify',
+      headers: {  'Authorization': `Bearer ${token}` },
       data : data
     };
 
     axios(config)
     .then( (response) => {
       if (response.status = 200){
-        this.setState({
-          activeBtn: true
-        })
+        this.setState({ activeBtn: true })
         //this.props.navigation.replace('Login')
       }
       console.log(JSON.stringify(response.data));
     })
     .catch( (error) => {
-      this.setState({
-        error: 'error',
-      })
+      this.setState({ error: 'error'})
       console.log(error);
     });
   }
   success=()=>{
-    this.props.navigation.goBack()
-    //this.props.navigation.replace('Screen')
-    Alert.alert('Регистрация прошла успешно! ')
+    // this.props.navigation.goBack()
+    this.props.navigation.replace('Screen')
+    // Alert.alert('Регистрация прошла успешно! ')
   }
   render() {
     const {time, timeLeft, activeBtn, error} = this.state;
@@ -98,12 +91,7 @@ class CodeInputClass extends React.Component {
         <SafeAreaView style={styles.container}>
           <Logo little />
           <Txt text={'Код из СМС'} />
-          <View
-            style={{
-              height: 200,
-              backgroundColor: '#fff',
-              paddingTop: 30,
-            }}>
+          <View style={{ height: 200, backgroundColor: '#fff',paddingTop: 30, }}>
             <CodeInput
               codeLength={4}
               inputPosition={'center'}
@@ -133,10 +121,7 @@ class CodeInputClass extends React.Component {
             color: 'red',
             textAlign:'center'
           }}>Ошибка кода</Text>}
-          <View
-            style={{
-              alignItems: 'center',
-            }}>
+          <View style={{ alignItems: 'center' }}>
             <Text
               style={{
                 fontSize: 16,
@@ -154,10 +139,7 @@ class CodeInputClass extends React.Component {
               Отправить заново можно через {timeLeft} сек
             </Text>}
             {timeLeft === 0 ? (
-              <View
-                style={{
-                  width: '100%',
-                }}>
+              <View style={{ width: '100%' }}>
                 <Button
                   text={'Отправить заново'}
                   active
@@ -197,6 +179,6 @@ class CodeInputClass extends React.Component {
 }
 const mapStateToProps = state => ({
   login: state.register.user,
-  
+  token: state.login.token
 });
 export default connect(mapStateToProps)(CodeInputClass);

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 60,
     marginHorizontal: 38,
-    height: height*0.06,
+    height: height*0.05,
     shadowColor: 'rgba(0, 123, 237, 0.4)',
     shadowOffset: {
       width: 0,
@@ -38,15 +38,11 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 18,
     lineHeight: 20,
-    //fontWeight: 'bold',
-    //fontFamily: Gilroy_Bold,
     color: '#fff',
-    // marginVertical: 20,
     textAlign: 'center',
     fontWeight: 'bold'
   },
   light_btn: {
-    //backgroundColor: '#007BED',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 16,
@@ -54,15 +50,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 38,
     borderColor: '#007BED',
     borderWidth: 1,
-    height: height*0.06,
+    height: height*0.05,
   },
   light_btnText: {
     fontSize: 18,
     lineHeight: 20,
     fontWeight: 'bold',
-    //fontFamily: Gilroy_Bold,
     color: '#0B0B2A',
-    //marginVertical: 20,
   },
 });
 export default styles;

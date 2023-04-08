@@ -1,7 +1,9 @@
-const api = 'http://gruz.sport-market.kz/api/announcements';
+const api = 'http://gruz.viker.kz/api/announcements';
 
 import axios from 'axios';
 import React from 'react';
+import firebase from 'react-native-firebase'
+
 import {Alert} from 'react-native';
 export const FETCH_BEGIN = 'FETCH_BEGIN';
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';
@@ -92,10 +94,11 @@ export const delete_error = error => ({
 });
 
 export function fetchAnnouncements(token,page,city_id) {
+  firebase.notifications().setBadge(0)
   console.log('fetchAnnouncements', city_id)
   var url = ''
-  city_id ? url = `http://gruz.sport-market.kz/api/announcements?page=${page}&city_id=${city_id}`
-  : url = `http://gruz.sport-market.kz/api/announcements?page=${page}`
+  city_id ? url = `http://gruz.viker.kz/api/announcements?page=${page}&city_id=${city_id}`
+  : url = `http://gruz.viker.kz/api/announcements?page=${page}`
   return dispatch => {
     page === 1 && dispatch(fetch_begin());
     const request = axios({

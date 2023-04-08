@@ -26,9 +26,11 @@ import Toast from 'react-native-simple-toast';
 const width = Dimensions.get('window').width;
 
 class CodeInputClass extends React.Component {
+
   state = {
     item: this.props.navigation.getParam('param'),
   };
+  
   componentDidMount = () => {
     console.log(this.props.navigation.getParam('param'));
   };
@@ -37,6 +39,13 @@ class CodeInputClass extends React.Component {
       language[this.props.langId].cabinet.delete,
       language[this.props.langId].cabinet.delete_text,
       [
+        {
+          text: language[this.props.langId].cabinet.otmena,
+          onPress: () => {
+            console.log('log')
+          },
+          
+        },
         {
           text: language[this.props.langId].cabinet.delete,
           onPress: async () => {
@@ -49,14 +58,9 @@ class CodeInputClass extends React.Component {
               console.log(error);
             }
           },
-        },
-        {
-          text: language[this.props.langId].cabinet.otmena,
-          onPress: () => {
-            console.log('log')
-          },
           style: 'cancel',
         },
+        
       ],
       {cancelable: false},
     );

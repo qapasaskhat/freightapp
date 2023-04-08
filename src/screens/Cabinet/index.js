@@ -11,7 +11,8 @@ import {
   ActivityIndicator,
   FlatList,
   Dimensions,
-  ScrollView
+  ScrollView,
+  Share
 } from 'react-native';
 import styles from './styles';
 import List from '../../components/List';
@@ -20,7 +21,6 @@ import {img_bg, drop} from '../../const/images';
 import Button from '../../components/Button';
 import Modal from 'react-native-modal';
 import isEmpty from '../../components/Empty';
-import axios from 'axios';
 import moment from 'moment';
 import localization_ru from 'moment/locale/ru'
 
@@ -31,17 +31,19 @@ import {
   fetchAnnouncementsId,
   deleteAnnouncementId,
 } from '../../api/Announcements/actions';
-import AsyncStorage from '@react-native-community/async-storage'
-import {Gilroy_Bold} from '../../const/fonts';
+
 import Toast from 'react-native-simple-toast';
 import {language} from '../../const/const'
+import firebase from 'react-native-firebase'
 
 const {height} = Dimensions.get('screen')
+const share = require('../../assets/icons/bi_share.png')
 
 class Main extends React.Component {
+
   state = {
     isEnabled: false,
-    cityName: 'Алматы',
+    cityName: '',
     visibleModal: false,
     refreshing: false,
     items: [],
@@ -50,46 +52,38 @@ class Main extends React.Component {
     page: 1,
     pageCity: 1
   }
+
   componentDidMount = async () => {
-    const {user,login,dispatch,loadAnnouncements} = this.props
-    console.log(user,login)
-    console.log(this.props.login.token,'componentDidMount')
-    this.props.dispatch(fetchUser(this.props.login.token,1))
-    this.props.city_name === 'almaty' && 
-    setTimeout(() => {
-      this.changeCity(user && user.city_id)
-      //this.props.user && this.getUserCity(this.props.user.city_id)
-    }, 1000);
+    const { user, login, dispatch, loadAnnouncements, city_name, navigation, token } = this.props
+
+    firebase.analytics().logEvent('clientUsingApp',{
+      client_id: user.id,
+      client_name: user.name,
+      client_phone: user.phone,
+      client_city_id: user.city_id
+    })
+
+    dispatch(fetchUser( token, 1))
+    // city_name === 'Алматы' && 
+    // setTimeout(() => { this.changeCity(user && user.city_id) }, 1000);
     
-    this.props.navigation.addListener ('didFocus', () =>
-      { 
-        //this.onRefresh()
-        console.log('didFocus',user)
-        this.props.dispatch(fetchUser(this.props.token,1))
-        //this.changeCity(user && user.city_id)
-       }
-    );
+    navigation.addListener ('didFocus', () => dispatch(fetchUser(token, 1)) );
     this.changeCity(user && user.city_id)
   };
+
   changeCity=(id)=>{
-    console.log(this.state.cityName,'cityid')
-    this.props.cities &&
-    this.props.cities.data &&
-    this.props.cities.data.map(item=>{
+    const { cities, dispatch } = this.props;
+    
+    cities &&
+    cities.data &&
+    cities.data.map(item=>{
       if(item.id === id){
-        console.log(item.name,'cityid')
-
-        this.props.dispatch({ type: "GET_CITY_NAME", payload: {
-          id: id,
-          name: item.name
-        } })
-
-        this.setState({
-          cityName: item.name
-        })
+        dispatch({ type: "GET_CITY_NAME", payload: { id: id, name: item.name } })
+        this.setState({ cityName: item.name })
       }
     })
   }
+
   changeCityCabinet=(id)=>{
     console.log(id)
     let formData = new FormData();
@@ -102,45 +96,37 @@ class Main extends React.Component {
     this.props.cities.data &&
     this.props.cities.data.map(item=>{
       if(item.id === id){
-        console.log(item.name,'cityid')
+        console.log(item.name, 'cityId')
         this.props.dispatch({ type: "GET_CITY_NAME", payload: {
           id: id,
           name: item.name
         } })
-        this.setState({
-          cityName: item.name
-        })
+        this.setState({ cityName: item.name })
       }
     })
   }
+
   handleLoadMore=()=>{
-    console.log('more')
+    const { page } = this.state
+    const { dispatch, user, login } = this.props
     this.setState({
-      page: this.state.page + 1
-    }, () => {  this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token, this.state.page))  })
+      page: page + 1
+    }, () => {  dispatch(fetchAnnouncementsId(user.id, login.token, page))  })
   }
-  componentDidUpdate=(prevProps)=>{
-    console.log('prevProps',prevProps)
-    if(!this.props.user.id){
-      //this.props.dispatch(fetchUser(this.props.login.token,1))
-    }
-  }
-  onChange = () => {
-    this.setState({
-      isEnabled: !this.state.isEnabled,
-    });
-  };
+
+  onChange = () => this.setState({ isEnabled: !this.state.isEnabled });
+
   renderItem = ({item}) => {
+    const { langId, navigation, loadAnnouncements } = this.props
     return (
       <List
         onpressDelete={() => this.arhived(item.id)}
-        name={language[this.props.langId].cabinet.name}
-        load={this.props.loadAnnouncements}
-        //numberOfLines={1}
+        name={language[langId].cabinet.name}
+        load={loadAnnouncements}
         visibleName
         visiblePhone
         trash={false}
-        onpressOrder={() => this.props.navigation.navigate('OpenOrder', {param: item})}
+        onpressOrder={() => navigation.navigate('OpenOrder', { param: item })}
         body={item.body}
         phone_number={item.phone}
         from={item.from}
@@ -150,6 +136,7 @@ class Main extends React.Component {
       />
     );
   };
+
   formatPhoneNumber(phoneNumberString) {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
     let match = cleaned.match(/^(\d{1}|)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
@@ -168,19 +155,20 @@ class Main extends React.Component {
       ].join('');
     }
   }
+
   arhived = idAnnouncements => {
+    const { langId, dispatch, login, user } = this.props
     Alert.alert(
-      language[this.props.langId].cabinet.delete,
-      language[this.props.langId].cabinet.delete_text,
+      language[langId].cabinet.delete,
+      language[langId].cabinet.delete_text,
       [
         {
-          text: language[this.props.langId].cabinet.delete,
+          text: language[langId].cabinet.delete,
           onPress: () => {
-            
             try {
-              this.props.dispatch(deleteAnnouncementId(idAnnouncements,this.props.login.token))
-              this.props.dispatch(fetchAnnouncementsId(this.props.user.id,this.props.login.token,1));
-              Toast.show(language[this.props.langId].cabinet.delete_success);
+              dispatch(deleteAnnouncementId(idAnnouncements, login.token))
+              dispatch(fetchAnnouncementsId(user.id, login.token,1));
+              Toast.show(language[langId].cabinet.delete_success);
             } catch (error) {
               console.log(error);
             }
@@ -188,96 +176,103 @@ class Main extends React.Component {
           style: 'cancel',
         },
         {
-          text: language[this.props.langId].cabinet.otmena,
+          text: language[langId].cabinet.otmena,
           onPress: () => console.log('Cancel Pressed'),
         },
       ],
       {cancelable: false},
     );
   };
+
+  onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Скачайте приложении Грузоперевозки 
+        в Play Market https://play.google.com/store/apps/details?id=com.freightapp&hl=ru и 
+        в App Store https://apps.apple.com/us/app/%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D1%81%D0%BA%D0%B8%D0%B5-%D0%B3%D1%80%D1%83%D0%B7%D0%BE%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B8/id1535763331`
+      })
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
   headerComp = () => {
+    const { langId, dispatch, navigation, userLoad, user } = this.props
     return (
       <View style={{backgroundColor: '#fff'}}>
-        <Text style={styles.cabinet}>{language[this.props.langId].cabinet.title}</Text>
+        <TouchableOpacity style={styles.shareBtn} onPress={()=>{this.onShare()}}>
+          <Image source={share} style={styles.shareIcon} />
+        </TouchableOpacity>
+        <Text style={styles.cabinet}>{language[langId].cabinet.title}</Text>
         <View>
-          <Text style={styles.city}>{language[this.props.langId].cabinet.city}</Text>
+          <Text style={styles.city}>{language[langId].cabinet.city}</Text>
           <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+            style={styles.findCityBtn}
             onPress={() => {
-              this.props.dispatch(fetchCity());
-              this.setState({
-                visibleModal: true,
-              });
+              dispatch(fetchCity());
+              this.setState({ visibleModal: true });
             }}>
             <Text style={styles.cityName}>{this.props.city_name}</Text>
-            <Image
-              source={drop}
-              style={{marginLeft: 6, width: 12, resizeMode: 'contain'}}
-            />
+            <Image source={drop} style={styles.dropIconStl} />
           </TouchableOpacity>
         </View>
         <Item
-          onpress={() => this.props.navigation.navigate('EditProfileClient')}
-          load={this.props.userLoad}
-          name={this.props.user ? this.props.user.name : ''}
-          phone_number={
-            this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''
-          }
+          onpress={() => navigation.navigate('EditProfileClient')}
+          load={userLoad}
+          name={user ? user.name : ''}
+          phone_number={ user ? this.formatPhoneNumber(user.phone) : '' }
         />
         <View style={styles.orders}>
           <Text
-            style={{
-              fontSize: 12,
-              textTransform: 'uppercase',
-              color: '#B1B9C0',
-              lineHeight: 24,
-              fontFamily: 'Gilroy-Medium',
-            }}>
-            {language[this.props.langId].cabinet.orders}
+            style={styles.orderTitle}>
+            {language[langId].cabinet.orders}
           </Text>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Order')}>
-            <Text style={styles.arhived}>{language[this.props.langId].cabinet.arhive}</Text>
+            onPress={() => navigation.navigate('Order')}>
+            <Text style={styles.arhived}>{language[langId].cabinet.arhive}</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   };
+
   onRefresh = () => {
-    this.setState({
-      refreshing: true,
-    });
-    this.props.dispatch(fetchUser(this.props.login.token,1))
-    this.changeCity(this.props.user && this.props.user.city_id)
-    this.props.dispatch(fetchAnnouncementsId(this.props.user.id, this.props.login.token,1));
-    this.setState({
-      refreshing: false,
-    });
+    const { dispatch, login, user } = this.props
+    this.setState({ refreshing: true });
+    dispatch(fetchUser(login.token,1))
+    this.changeCity(user && user.city_id)
+    dispatch(fetchAnnouncementsId(user.id, login.token,1));
+    this.setState({ refreshing: false });
   };
 
   render() {
-    const {cities, cityLoad, announcements, loadAnnouncements} = this.props;
+    const { cities, cityLoad, announcements, loadAnnouncements, langId, dispatch, navigation } = this.props;
+    const { refreshing, visibleModal, page } = this.state;
     return (
       <>
         <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
-          {/* <ImageBackground source={img_bg} style={styles.img_bg}> */}
               <FlatList
                 data={announcements.data}
-                refreshing={this.state.refreshing}
+                refreshing={refreshing}
                 onRefresh={() => this.onRefresh()}
-                ListEmptyComponent={isEmpty(language[this.props.langId].cabinet.empty)}
+                ListEmptyComponent={isEmpty(language[langId].cabinet.empty)}
                 renderItem={item => this.renderItem(item)}
                 onEndReached={()=>this.handleLoadMore}
                 ListHeaderComponent={this.headerComp()}
                 keyExtractor={(item) => item.id.toString()}
                 style={{marginBottom: 64}}  />
             <Modal
-              isVisible={this.state.visibleModal}
+              isVisible={visibleModal}
               style={styles.modal}
               backdropColor="#B4B3DB"
               backdropOpacity={0.5}
@@ -287,26 +282,11 @@ class Main extends React.Component {
               animationOutTiming={600}
               backdropTransitionInTiming={600}
               backdropTransitionOutTiming={600}>
-              <View
-                style={{
-                  backgroundColor: '#fff',
-                  height: height,
-                  alignItems: 'center',
-                  paddingVertical: 30,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontFamily: Gilroy_Bold,
-                    lineHeight: 22,
-                    paddingBottom: 10
-                  }}>
-                  {language[this.props.langId].register.city}
+              <View style={styles.modalStyle}>
+                <Text style={styles.modalTitle}>
+                  {language[langId].register.city}
                 </Text>
-                <ScrollView  style={{
-                  paddingTop: 12,
-                 // backgroundColor: 'blue'
-                }}>
+                <ScrollView  style={{ paddingTop: 12 }}>
                 {cityLoad ? (
                   <ActivityIndicator />
                 ) : (
@@ -314,76 +294,41 @@ class Main extends React.Component {
                   cities.data &&
                   cities.data.map((i, index) => {
                     return (
-                      <TouchableOpacity
-                        key={index.toString()}
+                      <TouchableOpacity key={index.toString()} style={styles.cityItem}
                         onPress={()=>{
                           this.changeCityCabinet(i.id)
-                          this.setState({visibleModal: false,page: 1})
-                        }}
-                        style={{
-                          paddingHorizontal: 20,
-                          paddingVertical: 7,
-                          //borderBottomWidth: 0.6,
-                          borderTopWidth: 0.6,
-                          width: '100%',
-                          //backgroundColor: 'red'
-                        }}>
-                        <Text >{i.name}</Text>
+                          this.setState({visibleModal: false, page: 1})
+                        }} >
+                        <Text>{i.name}</Text>
                       </TouchableOpacity>
                     );
                   })
                 )}
-                <View style={{
-                  flexDirection:'row',
-                  justifyContent:'space-evenly',
-                  width: '100%',
-                  borderTopWidth: 0.6,
-                  paddingTop: 6
-                }}>
+                <View style={styles.modalRow}>
                 <TouchableOpacity
-                  style={{
-                    paddingHorizontal: 20,
-                    paddingVertical: 5,
-                    backgroundColor: '#ececec',
-                    borderRadius: 10,
-                  }}
+                  style={styles.nextPrevBtn}
                   onPress={() => {
-                    if(this.state.page===1)
-                    {}
+                    if(page===1){}
                     else{
-                      this.props.dispatch(fetchCity(this.state.page-1))
-                      this.setState({
-                        page: this.state.page-1
-                      })
+                      dispatch(fetchCity(page - 1))
+                      this.setState({ page: page - 1 })
                     }
                   }}>
                   <Text style={{textAlign:'center'}}> {'<<<'} </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={{
-                    paddingHorizontal: 20,
-                    paddingVertical: 5,
-                    backgroundColor: '#ececec',
-                    borderRadius: 10,
-                  }}
+                  style={styles.nextPrevBtn}
                   onPress={() => { this.setState({  visibleModal: false, page: 1  });
                   }}>
-                  <Text style={{textAlign:'center'}}>{language[this.props.langId].cabinet.otmena}</Text>
+                  <Text style={{textAlign:'center'}}>{language[langId].cabinet.otmena}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={{
-                    paddingHorizontal: 20,
-                    paddingVertical: 5,
-                    backgroundColor: '#ececec',
-                    borderRadius: 10,
-                  }}
+                  style={styles.nextPrevBtn}
                   onPress={() => {
-                    if (this.props.cities.data.length===15)
+                    if (cities.data.length === 15)
                     {
-                      this.props.dispatch(fetchCity(this.state.page+1));
-                      this.setState({
-                        page: this.state.page + 1
-                      });
+                      dispatch(fetchCity(page + 1));
+                      this.setState({ page: page + 1 });
                     }
                   }}>
                   <Text style={{textAlign:'center'}}>{'>>>'}</Text>
@@ -392,14 +337,8 @@ class Main extends React.Component {
                 </ScrollView>
               </View>
             </Modal>
-          {/* </ImageBackground> */}
-          <View
-            style={{  position: 'absolute',width: '100%',backgroundColor: '#fff',bottom: 0, }}>
-            <Button
-              text={language[this.props.langId].cabinet.btn}
-              active
-              onpress={() => this.props.navigation.navigate('Main')}
-            />
+          <View style={styles.bottomView}>
+            <Button text={language[langId].cabinet.btn} active onpress={() => navigation.navigate('Main')} />
           </View>
         </SafeAreaView>
       </>

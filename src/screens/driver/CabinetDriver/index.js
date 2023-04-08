@@ -4,32 +4,29 @@ import {
   View,
   Text,
   StatusBar,
-  ImageBackground,
   Image,
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
   Alert,
   AppState,
-  Dimensions
+  Dimensions,
+  Share,
+  Platform
 } from 'react-native';
 
 import styles from './styles';
 import List from '../../../components/List';
 import Item from '../../../components/Item';
-import {img_bg} from '../../../const/images';
 import {drop} from '../../../const/images';
-import Button from '../../../components/Button';
 import Push from '../../../components/Push';
 import Modal from 'react-native-modal';
-import axios from 'axios';
 import moment from 'moment';
 import localization_ru from 'moment/locale/ru'
 
 import {connect} from 'react-redux';
 import {fetchAnnouncements} from '../../../api/Announcements/actions';
 import {fetchCity} from '../../../api/city/actions';
-import {Gilroy_Bold} from '../../../const/fonts';
 import isEmpty from '../../../components/Empty';
 import {fetchUser, putUser} from '../../../api/users/actions';
 import firebase from 'react-native-firebase'
@@ -37,7 +34,7 @@ import { language } from '../../../const/const'
 import { fcmService } from '../../../notification'
 
 const {height} = Dimensions.get('screen')
-
+const share = require('../../../assets/icons/bi_share.png')
 class Main extends React.Component {
 
   state = {
@@ -52,57 +49,139 @@ class Main extends React.Component {
     pageCount: 1
   };
   componentDidMount = () => {
+    const { dispatch, user, token, navigation, city_name, city_id } = this.props
 
-    this.props.dispatch(fetchCity());
+    if(Platform.OS === 'ios'){
+      firebase.analytics().logEvent('driverUsingAppIOS',{
+        driver_id: user.id,
+        driver_name: user.name,
+        driver_phone: user.phone,
+        driver_city_id: user.city_id
+      })
+    } else {
+      firebase.analytics().logEvent('driverUsingApp',{
+        driver_id: user.id,
+        driver_name: user.name,
+        driver_phone: user.phone,
+        driver_city_id: user.city_id
+      })
+    }
+
+    fcmService.register(
+      this.onRegister,
+      this.onNotification,
+      this.onOpenNotification,
+    )
+
+    dispatch(fetchCity());
     firebase.notifications().setBadge(0)
-    this.props.city_name === 'almaty' && 
-    setTimeout(() => {
-      this.props.user && this.getUserCity(this.props.user.city_id)
-    }, 1000);
+    city_name === 'Алматы' && 
+    setTimeout(() => { user && this.getUserCity(user.city_id) }, 1000);
     
     console.log(AppState.currentState)
     
     AppState.addEventListener("change", this._handleAppStateChange);
 
-    this.props.dispatch(fetchUser(this.props.token,0))
-    this.props.dispatch(fetchAnnouncements(this.props.token,1,this.props.user.city_id))
+    dispatch(fetchUser( token,0 ))
+    dispatch(fetchAnnouncements( token, 1, user.city_id))
     fcmService.removeDeliveredAllNotification()
-    const { navigation } = this.props;
+
     navigation.addListener ('didFocus', () =>
       { 
         firebase.notifications().setBadge(0)
-        console.log('this.props.city_id', this.props.city_id)
-        this.props.dispatch(fetchUser(this.props.token,0, this.props.city_id))
-        this.props.dispatch(fetchAnnouncements(this.props.token,1,this.props.user.city_id))
+        console.log('this.props.city_id', city_id)
+        dispatch(fetchUser( token, 0, city_id))
+        dispatch(fetchAnnouncements(token, 1, user.city_id))
         //this.props.user && this.getUserCity(this.props.user.city_id)
       }
     );
-    console.log(this.props.user,'data')
-    this.props.user && this.getUserCity(this.props.user.city_id)
+    console.log(user,'data')
+    user && this.getUserCity(user.city_id)
+  };
+
+  onRegister = token => {
+    console.log('device token ', token);
+  };
+
+  onNotification = notify => {
+    console.log('onNotification screen', notify);
+    const channelObj = {
+      channelId: 'freightChannelId',
+      channelName: 'freightChannelName',
+      channelDes: 'freightChannelDes',
+     // sound: this.props.muteNotification? 'music': 'default',
+    };
+    const channel = fcmService.buildChannel(channelObj);
+
+    const buildNotify = {
+      dataId: notify._data.announcement_id,
+      title: notify._title,
+      content: notify._body,
+     // sound: this.props.muteNotification? 'music': 'default',
+      channel: channel,
+      data: notify._data,
+      color: '#007BED',
+      largeIcon: 'ic_launcher',
+      smallIcon: 'ic_launcher',
+      vibrate: true,
+      //show_in_foreground: true,
+    };
+    console.log('buildNotify' ,buildNotify)
+    const notification = fcmService.buildNotification(buildNotify);
+    console.log('onNotification' ,notification)
+    fcmService.displayNotify(notification);
+    this.props.dispatch(fetchAnnouncements(this.props.token, 1, this.props.city_id))
+  };
+
+  onOpenNotification = notify => {
+
+    const { token, dispatch, navigation, city_id, langId } = this.props;
+
+    console.log('onOpenNotification screen', notify);
+    console.log('tokeeeen', token)
+    
+    dispatch(fetchAnnouncements(token, 1, city_id))
+    //firebase.notifications().setBadge(0)
+    Alert.alert(language[langId].cabinet.notify,notify._title,[
+      {
+        text:  language[langId].cabinet.cancel,
+        onPress: () => console.log("Cancel Pressed"),
+      },
+      { 
+        text: language[langId].cabinet.open, 
+        onPress: () => navigation.navigate('OrderDriver',{ id: notify._data.announcement_id}),
+        style: "cancel"
+       }
+    ],
+    { cancelable: false })
+    //alert(notify._data.announcement_id);
   };
 
   getUserCity=(id)=>{
+    const {
+      cities, dispatch
+    } = this.props
 
-    console.log('city',this.props.cities)
-    this.props.cities &&
-    this.props.cities.data &&
-    this.props.cities.data.map(item=>{
+    console.log('city', cities)
+    cities &&
+    cities.data &&
+    cities.data.map(item=>{
       if(item.id === id){
         console.log(item.name,'cityid')
-        this.props.dispatch({ type: "GET_CITY_NAME", payload: {
+        dispatch({ type: "GET_CITY_NAME", payload: {
           id: id,
           name: item.name
         } })
-        this.setState({
-          cityName: item.name
-        })
+        this.setState({ cityName: item.name })
       }
     })
   }
+
   componentWillUnmount() {
     firebase.notifications().setBadge(0)
     AppState.removeEventListener("change", this._handleAppStateChange);
   }
+
   _handleAppStateChange = nextAppState => {
     if (
       this.state.appState.match(/inactive|background/) &&
@@ -115,32 +194,33 @@ class Main extends React.Component {
   };
 
   onRefresh = () => {
+    const { token, dispatch, user } = this.props
     console.log('onRefresh');
-    this.setState({
-      refreshing: true,
-    });
-    this.props.dispatch(fetchAnnouncements(this.props.token,1,this.props.user.city_id));
-    this.props.user && this.getUserCity(this.props.user.city_id)
-    this.setState({
-      refreshing: false,
-    });
+    this.setState({ refreshing: true });
+    dispatch(fetchAnnouncements( token, 1, user.city_id));
+    user && this.getUserCity(user.city_id)
+    this.setState({ refreshing: false });
   };
+
   onChange = () => {  
-    this.props.dispatch({ type: "CHANGE_STATUS_NOTIFICATION" })
-    this.props.statusNotification ? 
-    firebase.messaging().unsubscribeFromTopic(`gruzz${this.props.city_id}`).then((res)=>{
+    const { dispatch, statusNotification, city_id } = this.props
+
+    dispatch({ type: "CHANGE_STATUS_NOTIFICATION" })
+    statusNotification ? 
+    firebase.messaging().unsubscribeFromTopic(`gruzz${city_id}`).then((res)=>{
       Alert.alert('','Уведомление отключено')
     }).catch((error)=>{
      console.log('error')
       console.log(error)
     }):
-    firebase.messaging().subscribeToTopic(`gruzz${this.props.city_id}`).then((res)=>{
+    firebase.messaging().subscribeToTopic(`gruzz${city_id}`).then((res)=>{
       Alert.alert('','Уведомление включено')
     }).catch((error)=>{
      console.log('error')
       console.log(error)
     }) 
   }
+
   renderItem = ({item}) => {
     return (
       <List
@@ -149,27 +229,29 @@ class Main extends React.Component {
         phone_number={item.phone}
         from={item.from}
         numberOfLines={1}
-        //visiblePhone
-        //load ={this.props.loading}
         to={item.to}
         del
         line
         name={item.user && item.user.name}
         onpressOrder={() => this.onPressList(item)} />  )
   }
+
   onPressList = item => { this.props.navigation.navigate('OrderDriver', {id: item.id}) };
+
   city = () => {
     this.props.dispatch(fetchCity());
     this.setState({ visibleModal: true });
   };
 
   handleLoadMore=()=>{
+    const { dispatch, token } = this.props
     this.setState({
       page: this.state.page + 1
     }, () => {
-      this.props.dispatch(fetchAnnouncements(this.props.token,this.state.page))
+      dispatch(fetchAnnouncements(token, this.state.page))
     });
   }
+
   componentDidUpdate=(prevProps)=>{
     if(!this.props.user.id){
       console.log('success')
@@ -178,6 +260,7 @@ class Main extends React.Component {
       console.log('error')
     }
   }
+
   formatPhoneNumber(phoneNumberString) {
     let cleaned = ('' + phoneNumberString).replace(/\D/g, '');
     let match = cleaned.match(/^(\d{1}|)?(\d{3})(\d{3})(\d{2})(\d{2})$/);
@@ -196,86 +279,81 @@ class Main extends React.Component {
       ].join('');
     }
   }
+
+  onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Скачайте приложение Городские Грузоперевозки в Play Market https://play.google.com/store/apps/details?id=com.freightapp&hl=ru и в App Store https://apps.apple.com/us/app/%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D1%81%D0%BA%D0%B8%D0%B5-%D0%B3%D1%80%D1%83%D0%B7%D0%BE%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B8/id1535763331`
+      })
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
   headerComp = () => {
+    const { langId, navigation, city_name, user, statusNotification } = this.props
     return (
-      <View style={{backgroundColor: '#fff'}}>
-        <Text
-          style={{
-            textAlign: 'center',
-            marginTop: 18,
-            fontSize: 20,
-            fontFamily: 'Gilroy-Medium',
-          }}>
-          {language[this.props.langId].cabinet.title}
+      <View style={{ backgroundColor: '#fff' }}>
+        <TouchableOpacity style={styles.shareView} onPress={this.onShare}>
+          <Image source={share} style={styles.shareIcon} />
+        </TouchableOpacity>
+        <Text style={styles.titleStyle}>
+          {language[langId].cabinet.title}
         </Text>
         <View>
-          <Text
-            style={{
-              fontSize: 12,
-              lineHeight: 16,
-              color: '#B1B9C0',
-              textAlign: 'center',
-              fontFamily: 'Gilroy-Medium',
-            }}>
-            {language[this.props.langId].cabinet.city}
+          <Text style={styles.citySubTitle}>
+            {language[langId].cabinet.city}
           </Text>
           <TouchableOpacity
             style={{  flexDirection: 'row',justifyContent: 'center',alignItems: 'center' }}
-            onPress={() => this.city()}>
-            <Text
-              style={{
-                color: '#007BED',
-                fontSize: 18,
-                lineHeight: 20,
-                fontFamily: 'Gilroy-Medium',
-                textAlign: 'center',
-              }}>
-              {this.props.city_name}
+            onPress={this.city}>
+            <Text style={styles.cityName}>
+              {city_name}
             </Text>
             <Image source={drop}  style={{marginLeft: 6, width: 12, resizeMode: 'contain'}}  />
           </TouchableOpacity>
         </View>
         <Item
-          onpress={() => this.props.navigation.navigate('EditProfileDriver')}
+          onpress={() => navigation.navigate('EditProfileDriver')}
           load={this.props.userLaod}
-          name={this.props.user ? this.props.user.name : ''}
-          phone_number={this.props.user ? this.formatPhoneNumber(this.props.user.phone) : ''}/>
+          name={user ? user.name : ''}
+          phone_number={user ? this.formatPhoneNumber(user.phone) : ''}/>
         <Push
-          text={language[this.props.langId].cabinet.notification}
-          isEnabled={this.props.statusNotification}
+          text={language[langId].cabinet.notification}
+          isEnabled={statusNotification}
           onChange={() => this.onChange()}/>
-        <Push
-          text={language[this.props.langId].cabinet.mute}
-          isEnabled={this.props.muteNotification}
-          onChange={() => this.onChangeMute()}/>
       </View>
     );
   };
   onChangeMute=()=>{  this.props.dispatch({ type: "CHANGE_MUTE_NOTIFICATION" }) }
+
+  
   render() {
-    const {loading, data, cities, cityLoad} = this.props;
+    const {loading, data, cities, cityLoad, langId} = this.props;
+    
     return (
       <>
         <StatusBar barStyle='dark-content' />
         <SafeAreaView style={styles.container}>
-          {/* <ImageBackground
-            source={img_bg}
-            style={{  width: '100%',height: '100%',resizeMode: 'center'  }}> */}
-            {//loading ? (  <ActivityIndicator />  ) : 
-            (
               <FlatList
                 data={data }
                 refreshing={this.state.refreshing}
-                onEndReached={()=>{
-                  this.handleLoadMore() 
-                }}
+                onEndReached={()=>{ this.handleLoadMore() }}
                 onRefresh={this.onRefresh}
-                ListEmptyComponent={isEmpty(language[this.props.langId].cabinet.empty_driver)}
+                ListEmptyComponent={isEmpty(language[langId].cabinet.empty_driver)}
                 renderItem={item => this.renderItem(item)}
                 ListHeaderComponent={this.headerComp()}
                 keyExtractor={(item) => item.id.toString()}
               />
-            )}
             <Modal
               style={styles.modal}
               isVisible={this.state.visibleModal}
@@ -287,21 +365,9 @@ class Main extends React.Component {
               animationOutTiming={600}
               backdropTransitionInTiming={600}
               backdropTransitionOutTiming={600}>
-              <View
-                style={{
-                  backgroundColor: '#fff',
-                  height: height,
-                  alignItems: 'center',
-                  paddingVertical: 30,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight:'bold',
-                    lineHeight: 22,
-                    paddingBottom: 10
-                  }}>
-                  {language[this.props.langId].register.city}
+              <View style={styles.modalView}>
+                <Text style={styles.cityTitle}>
+                  {language[langId].register.city}
                 </Text>
                 {cityLoad ? (
                   <ActivityIndicator />
@@ -312,14 +378,7 @@ class Main extends React.Component {
                     return (
                       <TouchableOpacity
                         key={index.toString()}
-                        style={{
-                          paddingHorizontal: 20,
-                          paddingVertical: 7,
-                          //borderBottomWidth: 0.6,
-                          borderTopWidth: 0.6,
-                          width: '100%',
-                         // backgroundColor: 'red',
-                        }}
+                        style={styles.cityBtn}
                         onPress={() =>{
 
                           firebase.messaging().unsubscribeFromTopic(`gruzz${this.props.city_id}`).then((res)=>{
@@ -349,10 +408,7 @@ class Main extends React.Component {
                             id: i.id,
                             name: i.name
                           } })
-                          this.setState({
-                            cityName: i.name,
-                            visibleModal: false,
-                          })}
+                          this.setState({ cityName: i.name, visibleModal: false })}
                         }>
                         <Text>{i.name}</Text>
                       </TouchableOpacity>
@@ -378,9 +434,7 @@ class Main extends React.Component {
                     {}
                     else{
                       this.props.dispatch(fetchCity(this.state.pageCount-1))
-                      this.setState({
-                        pageCount: this.state.pageCount-1
-                      })
+                      this.setState({ pageCount: this.state.pageCount-1 })
                     }
                   }}>
                   <Text style={{textAlign:'center'}}> {'<<<'} </Text>
@@ -398,7 +452,7 @@ class Main extends React.Component {
                       pageCount: 1
                     });
                   }}>
-                  <Text>{language[this.props.langId].cabinet.otmena}</Text>
+                  <Text>{language[langId].cabinet.otmena}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{
@@ -411,9 +465,7 @@ class Main extends React.Component {
                     if (this.props.cities.data.length===15)
                     {
                       this.props.dispatch(fetchCity(this.state.pageCount+1));
-                      this.setState({
-                        pageCount: this.state.pageCount + 1
-                      });
+                      this.setState({ pageCount: this.state.pageCount + 1 });
                     }
                   }}>
                   <Text style={{textAlign:'center'}}>{'>>>'}</Text>
@@ -421,7 +473,6 @@ class Main extends React.Component {
                 </View>
               </View>
             </Modal>
-          {/* </ImageBackground> */}
         </SafeAreaView>
       </>
     );

@@ -20,6 +20,7 @@ import localization_ru from 'moment/locale/ru'
 import {ScrollView} from 'react-native-gesture-handler';
 import { connect } from 'react-redux'
 import { language } from '../../../const/const'
+import firebase from 'react-native-firebase';
 
 class OrderDriver extends React.Component {
   constructor(props) {
@@ -41,7 +42,7 @@ class OrderDriver extends React.Component {
     var axios = require('axios');
     var config = {
       method: 'get',
-      url: `http://gruz.sport-market.kz/api/announcements/${id}`,
+      url: `http://gruz.viker.kz/api/announcements/${id}`,
       headers: { 
         'Authorization': `Bearer ${this.props.login.token}`
       }
@@ -52,15 +53,37 @@ class OrderDriver extends React.Component {
       this.setState({
         data: response.data.data
       })
+      if(!response.data.data.user){
+        this.props.navigation.goBack()
+      }
+      console.log('/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/')
       console.log(JSON.stringify(response.data));
+      console.log('/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/')
     })
     .catch( (error)=> {
-      console.log(error);
+      this.props.navigation.goBack()
+      console.log("error" ,error);
     });
 
   }
 
   callNumber = phone => {
+
+    if(Platform.OS === 'ios'){
+      firebase.analytics().logEvent('callTheClientIOS',{
+        clientPhone: phone,
+        driver: this.props.user.name,
+        driverPhone: this.props.user.phone
+      })
+    } else {
+      firebase.analytics().logEvent('callTheClient',{
+        clientPhone: phone,
+        driver: this.props.user.name,
+        driverPhone: this.props.user.phone
+      })
+    }
+    
+    
     console.log('callNumber ----> ', phone);
     let phoneNumber = phone;
     if (Platform.OS === 'android') {
@@ -94,45 +117,25 @@ class OrderDriver extends React.Component {
               text={language[this.props.langId].view_orders.title}
               onpress={() => this.props.navigation.goBack()}
             />
-           { //this.state.type?
            <ScrollView>
               <List
-                name={data.user && data.user.name}
-                body={data.body}
+                name={data?.user && data.user.name}
+                body={data?.body}
                 visibleName
                 visiblePhone
                 line
-                phone_number={data.phone}
+                phone_number={data?.phone}
                 del
-                date={moment(data.created_at).local('ru',localization_ru).format('lll')}
-                from={data.from}
-                to={data.to}
+                date={moment(data?.created_at).local('ru',localization_ru).format('lll')}
+                from={data?.from}
+                to={data?.to}
               />
             </ScrollView>
-            // :<ScrollView>
-            //   <List
-            //     name={item.user && item.user.name}
-            //     desc={item.body}
-            //     line
-            //     phone_number={item.phone}
-            //     del
-            //     date={moment(item.created_at).local('ru',localization_ru).format('lll')}
-            //     from={item.from}
-            //     to={item.to}
-            //   />
-            // </ScrollView>
-            }
+
           </ImageBackground>
-          <View
-            style={{
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: '#fff',
-              bottom: 0,
-            }}>
+          <View style={styles.bottomView}>
             <Button
-              text={language[this.props.langId].view_orders.call}
-              active
+              text={language[this.props.langId].view_orders.call} active
               onpress={() => this.callNumber(data.phone)}  />
           </View>
         </SafeAreaView>
@@ -143,5 +146,6 @@ class OrderDriver extends React.Component {
 const mapStateToProps = state => ({
   langId: state.appReducer.langId,
   login: state.login,
+  user: state.users.userData
 });
 export default connect(mapStateToProps)(OrderDriver);

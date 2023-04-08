@@ -52,7 +52,7 @@ class CodeInputClass extends React.Component {
 
     var config = {
       method: 'post',
-      url: 'http://gruz.sport-market.kz/api/sanctum/verify',
+      url: 'http://gruz.viker.kz/api/sanctum/verify',
       headers: { 
         'Authorization': `Bearer ${this.props.login.token}`, 
       },
@@ -108,6 +108,7 @@ class CodeInputClass extends React.Component {
                 height: 89,
                 backgroundColor: '#B1B9C0',
                 opacity: 0.5,
+                fontSize: 20,
               }}
             />
           </View>

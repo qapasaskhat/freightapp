@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; // <-- Add this line
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage; // <-- Add this line
-
+import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage; // <-- Add this line
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -32,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
             packages.add(new RNFirebaseMessagingPackage()); // <-- Add this line
             packages.add(new RNFirebaseNotificationsPackage()); // <-- Add this line
+            packages.add(new RNFirebaseAnalyticsPackage()); // <-- Add this line
           return packages;
         }
 

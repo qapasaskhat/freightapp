@@ -1,4 +1,4 @@
-const api = 'http://gruz.sport-market.kz/api/announcements/user/';
+const api = 'http://gruz.viker.kz/api/announcements/user/';
 
 import axios from 'axios';
 import React from 'react';

@@ -6,7 +6,8 @@ import {
   StatusBar,
   Image,
   Dimensions,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import styles from './styles';
 import Button from '../../components/Button';
@@ -14,7 +15,6 @@ import Logo from '../../components/Logo';
 import {img} from '../../const/images';
 import {fcmService} from '../../notification';
 import {connect} from 'react-redux'
-import AsyncStorage from '@react-native-community/async-storage';
 import {language} from '../../const/const'
 import {fetchAnnouncements} from '../../api/Announcements/actions'
 import {
@@ -22,6 +22,7 @@ import {
   setBadgeCount,
   getNotificationBadgeSetting,
 } from 'react-native-notification-badge';
+import firebase from 'react-native-firebase';
 
 const width = Dimensions.get('window').width;
 
@@ -30,18 +31,30 @@ class Screen extends React.Component {
    componentDidMount=()=> {
      
     //console.log('role',this.props.role)
-    const {navigation} = this.props;
+    const {navigation, first_opened} = this.props;
+
+    if(first_opened){
+      if(Platform.OS === 'android'){
+        firebase.analytics().logEvent('firstOpenAndroid',{})
+        console.log('android')
+      } else {
+        firebase.analytics().logEvent('firstOpenIOS',{})
+        console.log('ios')
+      }
+      this.props.dispatch({ type: 'CHANGE_OPENED_STATUS' })
+    }
+
      if(this.props.role === 0){
       navigation.replace('AuthDriver');
      }else if(this.props.role === 1){
       navigation.replace('AuthClient');
      }
-    fcmService.register(
-      this.onRegister,
-      this.onNotification,
-      this.onOpenNotification,
-    )
-    this.props.navigation.addListener ('willFocus', () =>
+    // fcmService.register(
+    //   this.onRegister,
+    //   this.onNotification,
+    //   this.onOpenNotification,
+    // )
+    navigation.addListener ('willFocus', () =>
       {
         if(this.props.role === 0){
           navigation.replace('AuthDriver');
@@ -129,12 +142,14 @@ class Screen extends React.Component {
     );
   }
 }
+
 const mapStateToProps = state => ({
   role: state.login.role,
   langId: state.appReducer.langId,
   token: state.login.token,
   city_id: state.appReducer.city_id,
   muteNotification: state.appReducer.muteNotification,
+  first_opened: state.appReducer.first_opened
 });
 const mapDispatchToProps = dispatch => ({
   dispatch

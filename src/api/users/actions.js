@@ -1,6 +1,6 @@
-//const api = 'http://gruz.sport-market.kz/api/users';
-const api = 'http://gruz.sport-market.kz/api/check';
-const apiPut = 'http://gruz.sport-market.kz/api/users';
+//const api = 'http://gruz.viker.kz/api/users';
+const api = 'http://gruz.viker.kz/api/check';
+const apiPut = 'http://gruz.viker.kz/api/users';
 
 import React from 'react';
 import {Alert} from 'react-native';
@@ -56,11 +56,9 @@ export const put_error_users = error => ({
   payload: {error},
 });
 
+export function fetchUser(token, role, city_id) {
+  const { cities: { cityData } } = store.getState();
 
-export function fetchUser(token,role, city_id) {
-  const {
-    cities: {cityData},
-  } = store.getState();
   return dispatch => {
     dispatch(fetch_begin_users());
     const request = axios({
@@ -76,25 +74,26 @@ export function fetchUser(token,role, city_id) {
         console.log(response.data);
         if(response.status === 200){
           dispatch(fetch_success_users(response.data))
-          
           console.log('cityData', cityData)
 
-          // cityData.data.map(item=>{
-          //   if(item.id === id){
-          //     console.log(item.name,'cityid')
-          //     dispatch({ type: "GET_CITY_NAME", payload: {
-          //       id: id,
-          //       name: item.name
-          //     } })
-          //   }
-          // })
+          cityData && cityData.data && cityData.data.map(item=>{
+            if(item.id === response.data.city_id){
+              console.log(item.name,'cityid')
+              dispatch({ type: "GET_CITY_NAME", payload: {
+                id: item.id,
+                name: item.name
+              } })
+            }
+          })
 
-          role === 1 &&  dispatch(fetchAnnouncementsId(response.data.id,token,1))
-          role === 0 && dispatch(fetchAnnouncements(token,1, city_id ? city_id : response.data.city_id))
+          role === 1 &&  dispatch(fetchAnnouncementsId(response.data.id, token, 1))
+          role === 0 && dispatch(fetchAnnouncements(token, 1, city_id ? city_id : response.data.city_id))
           role ===0 && 
-          firebase.messaging().subscribeToTopic(`gruzz${response.data.city_id}`).then((res)=>{
+          firebase.messaging().subscribeToTopic(`gruzz${response.data.city_id}`)
+          .then((res)=>{
             console.log('Уведомление включено')
-          }).catch((error)=>{
+          })
+          .catch((error)=>{
             console.log('./././././././././././././././././././././././././././')
             console.log('error')
             console.log(error)

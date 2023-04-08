@@ -27,6 +27,7 @@ import { language } from '../../../const/const'
 
 import Modal from 'react-native-modal';
 import AutoHeightWebView from 'react-native-autoheight-webview'
+import firebase from 'react-native-firebase'
 
 const {height, width} = Dimensions.get('screen');
 
@@ -64,6 +65,7 @@ const Login = ({onperss,text,txt}) => {
     </TouchableOpacity>
   );
 };
+
 class Register extends React.Component {
   state = {
     login: '',
@@ -80,10 +82,12 @@ class Register extends React.Component {
     visibleModal: false,
     page: 1
   };
+
   componentDidMount() {
     this.getAllCities()
     this.props.dispatch(fetchCity());
   }
+
   getTerm=()=>{
     this.setState({
       termModal: true,
@@ -93,7 +97,7 @@ class Register extends React.Component {
 
     var config = {
       method: 'get',
-      url: 'http://gruz.sport-market.kz/api/terms',
+      url: 'http://gruz.viker.kz/api/terms',
       headers: { }
     };
 
@@ -113,7 +117,7 @@ class Register extends React.Component {
     var axios = require('axios');
     var config = {
       method: 'get',
-      url: 'http://gruz.sport-market.kz/api/cities/',
+      url: 'http://gruz.viker.kz/api/cities/',
     };
 
     axios(config)
@@ -151,6 +155,7 @@ class Register extends React.Component {
       cityValue: false,
     });
   };
+
   createDriver = () => {
     const {
       login,
@@ -191,7 +196,21 @@ class Register extends React.Component {
 
     try {
       this.props.dispatch(
-        postRegister(formData, () => this.props.navigation.replace('CodeInputDriver')),
+        postRegister(formData, () => {
+          if(Platform.OS === 'ios'){
+            firebase.analytics().logEvent('registerDriverIOS',{
+              phone: phone,
+              name: login
+            })
+          } else {
+            firebase.analytics().logEvent('registerDriver',{
+              phone: phone,
+              name: login
+            })
+          }
+          
+          this.props.navigation.replace('CodeInputDriver')
+        }),
       );
       //this.props.navigation.navigate('CodeInput');
     } catch (error) {
@@ -318,13 +337,13 @@ class Register extends React.Component {
                   backgroundColor: '#fff',
                   height: height,
                   alignItems: 'center',
-                  paddingTop: 50,
+                  paddingTop: 20,
                 }}>
                 <Text
                   style={{
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: 'bold',
-                    paddingBottom: 10
+                    paddingBottom: 8
                     //fontFamily: Gilroy_Bold,
                   }}>
                   {language[this.props.langId].register.city}
@@ -344,7 +363,7 @@ class Register extends React.Component {
                         }}
                         style={{
                           paddingHorizontal: 20,
-                          paddingVertical: 7,
+                          paddingVertical: 6,
                           borderTopWidth: 0.6,
                         }}>
                         <Text style={{lineHeight:20}}> {i.name}</Text>

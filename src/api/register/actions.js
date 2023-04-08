@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import {Alert} from 'react-native';
-const api = 'http://gruz.sport-market.kz/api/sanctum/register';
+const api = 'http://gruz.viker.kz/api/sanctum/register';
 
 export const POST_BEGIN_REGISTER = 'POST_BEGIN_REGISTER';
 export const POST_SUCCESS_REGISTER = 'POST_SUCCESS_REGISTER';

@@ -73,7 +73,7 @@ class Support extends React.Component {
 
     var config = {
       method: 'post',
-      url: 'http://gruz.sport-market.kz/api/supportMessages',
+      url: 'http://gruz.viker.kz/api/supportMessages',
       headers: { 
         'Authorization': `Bearer ${login.token}`,
         'Accept': 'application/json',

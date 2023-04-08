@@ -19,13 +19,9 @@
 		360DA822B0E84E49946A0ABB /* Gilroy-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E8F9FE7940D43C9B321BB3B /* Gilroy-Thin.ttf */; };
 		5F1E1A3C380A46D2AED53B40 /* Gilroy-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26BBE90488264F9BBFFF6928 /* Gilroy-Light.ttf */; };
 		773C6CA13A294303BECCDFA4 /* Gilroy-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FA5A00AEDA24ADA9C4C06D2 /* Gilroy-Bold.ttf */; };
-		9281B4F0AFE496EAAFF377B8 /* libPods-freightapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B786643587165421BFA640AD /* libPods-freightapp.a */; };
 		940CE92CF2C64F9D90F48A23 /* Gilroy-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 81169BD1BE814DFFA9E7CEFB /* Gilroy-Regular.ttf */; };
 		AFC4CAC3250846CC84A22A1F /* Gilroy-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26075EA7033D406BAED37F31 /* Gilroy-Medium.ttf */; };
 		C91B32EA24A474260071BED4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C91B32E924A474250071BED4 /* GoogleService-Info.plist */; };
-		CA4868A58AF21CA8800DE05C /* libPods-freightapp-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B31210F481EA34D53F613D /* libPods-freightapp-tvOS.a */; };
-		DB8FD98FC930843E2B384990 /* libPods-freightapp-freightappTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B71D7DAD8050F08372329B60 /* libPods-freightapp-freightappTests.a */; };
-		E713BAABDBAAE1705B8E8515 /* libPods-freightapp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0A6EE738A72642892CB1F5D /* libPods-freightapp-tvOSTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +46,6 @@
 		00E356EE1AD99517003FC87E /* freightappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = freightappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* freightappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = freightappTests.m; sourceTree = "<group>"; };
-		037E211732D4201E7F987FA9 /* Pods-freightapp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-freightapp-tvOSTests/Pods-freightapp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* freightapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = freightapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = freightapp/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = freightapp/AppDelegate.m; sourceTree = "<group>"; };
@@ -62,22 +57,11 @@
 		26BBE90488264F9BBFFF6928 /* Gilroy-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy-Light.ttf"; path = "../assets/fonts/Gilroy-Light.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* freightapp-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "freightapp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* freightapp-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "freightapp-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DDBC5562EB2379B5744326A /* Pods-freightapp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-freightapp-tvOS/Pods-freightapp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		417AEC3CDF6040D8FF6A6D5D /* Pods-freightapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp.debug.xcconfig"; path = "Target Support Files/Pods-freightapp/Pods-freightapp.debug.xcconfig"; sourceTree = "<group>"; };
-		46B31210F481EA34D53F613D /* libPods-freightapp-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-freightapp-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4DBB5A5641CA7B32B67D15A2 /* Pods-freightapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp.release.xcconfig"; path = "Target Support Files/Pods-freightapp/Pods-freightapp.release.xcconfig"; sourceTree = "<group>"; };
 		4FA5A00AEDA24ADA9C4C06D2 /* Gilroy-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy-Bold.ttf"; path = "../assets/fonts/Gilroy-Bold.ttf"; sourceTree = "<group>"; };
-		62646104F4DCCE6F8858284D /* Pods-freightapp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-freightapp-tvOSTests/Pods-freightapp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81169BD1BE814DFFA9E7CEFB /* Gilroy-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy-Regular.ttf"; path = "../assets/fonts/Gilroy-Regular.ttf"; sourceTree = "<group>"; };
-		821D0907DECB00C80353F44D /* Pods-freightapp-freightappTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-freightappTests.debug.xcconfig"; path = "Target Support Files/Pods-freightapp-freightappTests/Pods-freightapp-freightappTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8E8F9FE7940D43C9B321BB3B /* Gilroy-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Gilroy-Thin.ttf"; path = "../assets/fonts/Gilroy-Thin.ttf"; sourceTree = "<group>"; };
-		A251B7604762EF7C92F61995 /* Pods-freightapp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-freightapp-tvOS/Pods-freightapp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		B71D7DAD8050F08372329B60 /* libPods-freightapp-freightappTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-freightapp-freightappTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B786643587165421BFA640AD /* libPods-freightapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-freightapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C91B32E924A474250071BED4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C9D840602508919C003F48BD /* freightapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = freightapp.entitlements; path = freightapp/freightapp.entitlements; sourceTree = "<group>"; };
-		D0A6EE738A72642892CB1F5D /* libPods-freightapp-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-freightapp-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EA57827928EE2178E56DA7D1 /* Pods-freightapp-freightappTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freightapp-freightappTests.release.xcconfig"; path = "Target Support Files/Pods-freightapp-freightappTests/Pods-freightapp-freightappTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -87,7 +71,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8FD98FC930843E2B384990 /* libPods-freightapp-freightappTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +78,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9281B4F0AFE496EAAFF377B8 /* libPods-freightapp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,7 +85,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA4868A58AF21CA8800DE05C /* libPods-freightapp-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,7 +92,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E713BAABDBAAE1705B8E8515 /* libPods-freightapp-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,10 +136,6 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				B786643587165421BFA640AD /* libPods-freightapp.a */,
-				B71D7DAD8050F08372329B60 /* libPods-freightapp-freightappTests.a */,
-				46B31210F481EA34D53F613D /* libPods-freightapp-tvOS.a */,
-				D0A6EE738A72642892CB1F5D /* libPods-freightapp-tvOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -201,14 +177,6 @@
 		AA5A3956EEE8541245B939E0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				417AEC3CDF6040D8FF6A6D5D /* Pods-freightapp.debug.xcconfig */,
-				4DBB5A5641CA7B32B67D15A2 /* Pods-freightapp.release.xcconfig */,
-				821D0907DECB00C80353F44D /* Pods-freightapp-freightappTests.debug.xcconfig */,
-				EA57827928EE2178E56DA7D1 /* Pods-freightapp-freightappTests.release.xcconfig */,
-				A251B7604762EF7C92F61995 /* Pods-freightapp-tvOS.debug.xcconfig */,
-				2DDBC5562EB2379B5744326A /* Pods-freightapp-tvOS.release.xcconfig */,
-				62646104F4DCCE6F8858284D /* Pods-freightapp-tvOSTests.debug.xcconfig */,
-				037E211732D4201E7F987FA9 /* Pods-freightapp-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -232,7 +200,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "freightappTests" */;
 			buildPhases = (
-				42DC6E5CA58F900B9D3944C2 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
@@ -251,7 +218,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "freightapp" */;
 			buildPhases = (
-				2537702FC834DBDD04AD2656 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
@@ -271,7 +237,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "freightapp-tvOS" */;
 			buildPhases = (
-				847FFE2D7712FB8C44D5D085 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
@@ -291,7 +256,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "freightapp-tvOSTests" */;
 			buildPhases = (
-				415BD26510D4EC792736EF59 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -409,28 +373,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		2537702FC834DBDD04AD2656 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-freightapp-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -444,72 +386,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
-		};
-		415BD26510D4EC792736EF59 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-freightapp-tvOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		42DC6E5CA58F900B9D3944C2 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-freightapp-freightappTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		847FFE2D7712FB8C44D5D085 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-freightapp-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -616,7 +492,6 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 821D0907DECB00C80353F44D /* Pods-freightapp-freightappTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -639,7 +514,6 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EA57827928EE2178E56DA7D1 /* Pods-freightapp-freightappTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -659,12 +533,11 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 417AEC3CDF6040D8FF6A6D5D /* Pods-freightapp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = freightapp/freightapp.entitlements;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = C528TZZJ6N;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -673,7 +546,7 @@
 				);
 				INFOPLIST_FILE = freightapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.4.8;
+				MARKETING_VERSION = 1.6.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -689,16 +562,15 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4DBB5A5641CA7B32B67D15A2 /* Pods-freightapp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = freightapp/freightapp.entitlements;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = C528TZZJ6N;
 				INFOPLIST_FILE = freightapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.4.8;
+				MARKETING_VERSION = 1.6.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -713,7 +585,6 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A251B7604762EF7C92F61995 /* Pods-freightapp-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -741,7 +612,6 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2DDBC5562EB2379B5744326A /* Pods-freightapp-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -769,7 +639,6 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 62646104F4DCCE6F8858284D /* Pods-freightapp-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -796,7 +665,6 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 037E211732D4201E7F987FA9 /* Pods-freightapp-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;

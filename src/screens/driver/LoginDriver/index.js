@@ -10,11 +10,11 @@ import Txt from '../../../components/Text';
 import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import {fetchLogin} from '../../../api/login/actions';
-import firebase from 'react-native-firebase'
 import {NavigationActions, StackActions} from 'react-navigation';
 
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import { language } from '../../../const/const'
+import firebase from 'react-native-firebase';
 
 const InputView = ({data}) => {
   return (
@@ -82,6 +82,15 @@ class Login extends React.Component {
     //   console.log(error)
     //   console.log('./././././././././././././././././././././././././././')
     // }) 
+    if(Platform.OS === 'ios'){
+      firebase.analytics().logEvent('loginDriverIOS',{
+        phone: this.state.phone_number
+      })
+    } else {
+      firebase.analytics().logEvent('loginDriver',{
+        phone: this.state.phone_number
+      })
+    }
     
     const resetAction = StackActions.reset({
       index: 0,

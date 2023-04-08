@@ -9,7 +9,7 @@ import {
   Platform,
   Dimensions,
   Keyboard,
-  AppState
+  AppState,
 } from 'react-native';
 import styles from './styles';
 import Header from '../../components/Header';
@@ -23,8 +23,9 @@ import Toast from 'react-native-simple-toast';
 import {postAnnouncements} from '../../api/Announcements/actions';
 import {connect} from 'react-redux';
 import {language} from '../../const/const';
+import firebase from 'react-native-firebase';
 
-const {height, width} = Dimensions.get('screen')
+const {height, width} = Dimensions.get('screen');
 class Main extends React.Component {
   state = {
     phone_number: '',
@@ -37,17 +38,18 @@ class Main extends React.Component {
     desc_err: null,
     appState: AppState.currentState,
   };
+
   renderItem = () => {
     const {phone_err, address_from_err, address_to_err, desc_err} = this.state;
     return (
-      <View 
+      <View
         style={{
           backgroundColor: '#fff',
           marginHorizontal: 16,
           marginTop: 16,
           borderRadius: 10,
           //paddingBottom: 20,
-          shadowColor: "#000",
+          shadowColor: '#000',
           shadowOffset: {
             width: 0,
             height: 2,
@@ -55,7 +57,7 @@ class Main extends React.Component {
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
           elevation: 5,
-          paddingVertical: 8
+          paddingVertical: 8,
         }}>
         <Input
           text={language[this.props.langId].add_new_order.phone}
@@ -90,30 +92,34 @@ class Main extends React.Component {
           top
           radius={14}
           text={language[this.props.langId].add_new_order.description}
-          placeholder={language[this.props.langId].add_new_order.description_placeholder}
+          placeholder={
+            language[this.props.langId].add_new_order.description_placeholder
+          }
           onchange={text => this.setState({desc: text})}
         />
         {desc_err ? <Text style={styles.errorText}>{desc_err}</Text> : null}
-        
       </View>
     );
   };
   footer = () => {
     return (
-        <Button
-          text={language[this.props.langId].add_new_order.btn}
-          active
-          onpress={() => this.addNewOrders()}
-        />
+      <Button
+        text={language[this.props.langId].add_new_order.btn}
+        active
+        onpress={() => this.addNewOrders()}
+      />
     );
   };
+
   validatePhone = number => {
     let val = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
     return val.test(String(number));
   };
+
   addNewOrders = () => {
-    Keyboard.dismiss()
+    Keyboard.dismiss();
     const {phone_number, address_from, address_to, desc} = this.state;
+    const { user } = this.props;
     let formdata = new FormData();
 
     if (this.validatePhone(phone_number)) {
@@ -147,26 +153,44 @@ class Main extends React.Component {
 
       try {
         formdata.append('body', desc);
-        formdata.append('user_id', this.props.user.id);
+        formdata.append('user_id', user.id);
         formdata.append('phone', phone);
         formdata.append('from', address_from);
         formdata.append('to', address_to);
         formdata.append('status', 0);
         try {
-          this.props.postAnnouncements(formdata,this.props.login.token);
+          if(Platform.OS === 'ios'){
+            firebase.analytics().logEvent('createOrderIOS',{
+              phone: phone,
+              user_id: user.id,
+              from: address_from,
+              to: address_to
+            })
+          } else {
+            firebase.analytics().logEvent('createOrder',{
+              phone: phone,
+              user_id: user.id,
+              from: address_from,
+              to: address_to
+            })
+          }
+          
+          this.props.postAnnouncements(formdata, this.props.login.token);
           this.props.navigation.navigate('Cabinet');
-          Toast.show( language[this.props.langId].add_new_order.success, Toast.LONG);
+          Toast.show(
+            language[this.props.langId].add_new_order.success,
+            Toast.LONG,
+          );
         } catch (error) {}
-
       } catch (error) {}
     }
   };
   postOrder = () => {
     //TO DO
   };
-  componentDidMount=()=>{
-    AppState.addEventListener("change", this._handleAppStateChange);
-    console.log(this.props.cities.data)
+  componentDidMount = () => {
+    AppState.addEventListener('change', this._handleAppStateChange);
+    console.log(this.props.cities.data);
     // this.props.cities && this.props.cities.data.map(item=>{
     //   if(item.id === this.props.user.city_id){
     //     this.setState({
@@ -175,50 +199,43 @@ class Main extends React.Component {
     //   }
     // })
     this.setState({
-      phone_number: this.props.user.phone
-    })
-  }
+      phone_number: this.props.user.phone,
+    });
+  };
   componentWillUnmount() {
-    Keyboard.dismiss()
-    AppState.removeEventListener("change", this._handleAppStateChange);
+    Keyboard.dismiss();
+    AppState.removeEventListener('change', this._handleAppStateChange);
   }
   _handleAppStateChange = nextAppState => {
     if (
       this.state.appState.match(/inactive|background/) &&
-      nextAppState === "active"
+      nextAppState === 'active'
     ) {
-      Keyboard.dismiss()
+      Keyboard.dismiss();
     }
-    this.setState({ appState: nextAppState });
+    this.setState({appState: nextAppState});
   };
   render() {
     return (
-      <>
-        <StatusBar barStyle='dark-content'/>
-        <KeyboardAvoidingView behavior='height' style={styles.container}>
-        <SafeAreaView style={{flex:1}}>
-        
-          <ScrollView  keyboardShouldPersistTaps='handled'>
-        <ImageBackground
-            style={{width: '100%', height: height-70-90}}
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+        <StatusBar barStyle="dark-content" />
+        <KeyboardAvoidingView
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+          style={styles.container}>
+          <ScrollView keyboardShouldPersistTaps="handled">
+          <ImageBackground
+            style={{width: '100%', height: height}}
             source={img_bg}>
-          <Header
-            text={language[this.props.langId].add_new_order.title}
-            onpress={() => this.props.navigation.goBack()}
-          />
-          {/* <KeyboardAvoidingView behavior='padding' style={{height: '100%'}}> */}
-          <ScrollView keyboardShouldPersistTaps='handled' style={{flexGrow: 0}}>
-              <this.renderItem />
+              <Header
+                text={language[this.props.langId].add_new_order.title}
+                onpress={() => this.props.navigation.goBack()}
+              />
+              {this.renderItem()}
               {this.footer()}
-            </ScrollView>
-            {/* </KeyboardAvoidingView> */}
-        </ImageBackground>
-        </ScrollView>
-       
-        </SafeAreaView>
+          </ImageBackground>
+          </ScrollView>
         </KeyboardAvoidingView>
-        
-      </>
+      </SafeAreaView>
     );
   }
 }

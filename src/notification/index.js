@@ -1,5 +1,5 @@
 import firebase from 'react-native-firebase';
-import {Platform} from 'react-native';
+import { Platform } from 'react-native';
 import store from '../api/store';
 import {fetchAnnouncementsId} from '../api/Announcements/actions'
 
@@ -28,6 +28,7 @@ register = (onRegister, onNotification, onOpenNotification) => {
         console.log('[FCMService] Permission Rejected', error);
       });
   };
+
   getToken = onRegister => {
     firebase
       .messaging()
@@ -55,6 +56,7 @@ register = (onRegister, onNotification, onOpenNotification) => {
         console.log('[FCMService] Request Permissions rejected ', error);
       });
   };
+
   deleteToken = () => {
     console.log('[FCMService] deleteToken');
     firebase.messaging.deleteToken().catch(error => {
@@ -78,7 +80,6 @@ register = (onRegister, onNotification, onOpenNotification) => {
       .notifications()
       .onNotificationOpened(async notificationOpen => {
         //onOpenNotification(notificationOpen);
-
         if (notificationOpen) {
           console.log('notificationOpenedListener',notificationOpen)
           const notification = notificationOpen.notification;
@@ -103,13 +104,16 @@ register = (onRegister, onNotification, onOpenNotification) => {
     
       this.notificationDisplayedListener = firebase
       .notifications()
-      .onNotificationDisplayed((notificationOpen) => {
-        if (notificationOpen) {
-          const notification = notificationOpen.notification;
-          console.log('onNotificationDisplayed ', notification);
+      .onNotificationDisplayed((notification) => {
+        console.log('onNotificationDisplayed ', notification);
           onOpenNotification(notification);
           this.removeDeliveredNotification(notification);
-        }
+        // if (notificationOpen) {
+        //   const notification = notificationOpen.notification;
+        //   console.log('onNotificationDisplayed ', notification);
+        //   onOpenNotification(notification);
+        //   this.removeDeliveredNotification(notification);
+        // }
         // Process your notification as required
         // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
       });
@@ -141,7 +145,6 @@ register = (onRegister, onNotification, onOpenNotification) => {
       obj.channelName,
       firebase.notifications.Android.Importance.High,
     ).setDescription(obj.channelDes)
-    //.setSound(obj.sound);
     firebase.notifications().android.createChannel(channel);
     return channel;
   };
@@ -156,7 +159,7 @@ register = (onRegister, onNotification, onOpenNotification) => {
     
     firebase.notifications().android.createChannel(obj.channel);
     return new firebase.notifications.Notification()
-     // .setSound(obj.sound)
+      .setSound(obj.sound)
       .setNotificationId(obj.dataId)
       .setTitle(obj.title)
       .setBody(obj.content)

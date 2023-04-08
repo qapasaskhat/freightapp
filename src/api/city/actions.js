@@ -1,4 +1,4 @@
-const api = 'http://gruz.sport-market.kz/api/cities';
+const api = 'http://gruz.viker.kz/api/cities';
 
 import AXS from 'axios';
 const axios = AXS.create();

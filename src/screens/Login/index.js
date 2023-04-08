@@ -1,5 +1,7 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
+import {
+  SafeAreaView, View, Text, StatusBar, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform
+} from 'react-native';
 import styles from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -8,11 +10,11 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Gilroy_Medium} from '../../const/fonts';
 import Txt from '../../components/Text';
 import {fetchLogin} from '../../api/login/actions';
-import AsyncStorage from '@react-native-community/async-storage';
 import {connect} from 'react-redux';
 import {getBrand, getDeviceId} from 'react-native-device-info';
 import {NavigationActions, StackActions} from 'react-navigation';
 import { language } from '../../const/const'
+import firebase from 'react-native-firebase';
 
 const InputView = ({data}) => {
   return (
@@ -35,6 +37,7 @@ const InputView = ({data}) => {
 };
 
 class Login extends React.Component {
+  
   state = {
     phone_number: '', //'+7',
     password: '',
@@ -45,37 +48,60 @@ class Login extends React.Component {
       Alert.alert(language[this.props.langId].login.alert_phone);
       return;
     }
-    if (password.length < 8) {
-      Alert.alert(language[this.props.langId].login.alert_password);
-      return;
-    }
+    
     let phone = phone_number.replace(/^\D+/g, '');
+    var axios = require('axios');
     let formData = new FormData();
+
     formData.append('phone', phone);
-    formData.append('password', password);
+    formData.append('password', '12345678');
     formData.append('device_name', `${getBrand()} ${getDeviceId()}`);
-    try {
-      this.props.dispatch(fetchLogin(formData,1));
-      setTimeout(() => {
-        this.props.loginError ? null :
-        this.navigateApp()
-        //this.props.navigation.navigate('Cabinet');
-      }, 1000);
-    } catch (error) {}
+
+    var config = {
+      method: 'post',
+      url: 'http://gruz.viker.kz/api/sanctum/token',
+      headers: { 'Accept': 'application/json' },
+      data : formData
+    };
+    
+    axios(config)
+    .then( (response) => this.navigateApp(response.data))
+    .catch( () => Alert.alert('Ошибка авторизации'));
+
+
+
+    // try {
+    //   this.props.dispatch(fetchLogin(formData,1));
+    //   setTimeout(() => {
+    //     this.props.loginError ? null : this.props.navigation.replace('CodeInputLogin')
+    //     // this.navigateApp()
+    //     //this.props.navigation.navigate('Cabinet');
+    //   }, 1000);
+    // } catch (error) {}
   };
-  navigateApp=()=>{
-    const resetAction = StackActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({routeName: 'Screen'})],
-    });
-    this.props.navigation.dispatch(resetAction);
+
+  navigateApp=(data)=>{
+    Alert.alert('На ваш номер отправлен код!')
+    if(Platform.OS === 'ios'){
+      firebase.analytics().logEvent('loginClientIOS',{ phone: this.state.phone_number })
+    } else { 
+      firebase.analytics().logEvent('loginClient',{ phone: this.state.phone_number})
+    }  
+    this.props.navigation.replace('CodeInputLogin', { data: data} )
+    
+    // const resetAction = StackActions.reset({
+    //   index: 0,
+    //   actions: [NavigationActions.navigate({routeName: 'Screen'})],
+    // });
+    // this.props.navigation.dispatch(resetAction);
   }
+  
   render() {
     const {phone_number, password, error_message} = this.state;
-    const {loginError,loginLoad} = this.props
+    const { loginError,loginLoad, langId } = this.props
     this.list = [
       {
-        text: language[this.props.langId].login.phone,
+        text: language[langId].login.phone,
         placeholder: '+ 7',
         change: text => {
           this.setState({phone_number: text});
@@ -83,15 +109,15 @@ class Login extends React.Component {
         password: false,
         value: phone_number,
       },
-      {
-        text: language[this.props.langId].login.password,
-        placeholder: '•  •  •  •  •  •  •  • ',
-        change: text => {
-          this.setState({password: text});
-        },
-        password: true,
-        value: password,
-      },
+      // {
+      //   text: language[langId].login.password,
+      //   placeholder: '•  •  •  •  •  •  •  • ',
+      //   change: text => {
+      //     this.setState({password: text});
+      //   },
+      //   password: true,
+      //   value: password,
+      // },
     ];
     return (
       <>
@@ -136,22 +162,7 @@ class Login extends React.Component {
             }}>
             {error_message}
           </Text>
-          {/* <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('ResetPassword')}>
-            <Text
-              style={{
-                color: '#007BED',
-                fontFamily: Gilroy_Medium,
-                //marginTop: 12,
-                textAlign: 'right',
-                marginRight: 32,
-              }}>
-              {language[this.props.langId].login.forgot}
-            </Text>
-          </TouchableOpacity> */}
           { 
-          // loginLoad?
-          // <ActivityIndicator color=''/>:
             <Button
               active
               text={language[this.props.langId].login.bnt}

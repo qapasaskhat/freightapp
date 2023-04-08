@@ -9,7 +9,8 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   AppState,
-  Keyboard
+  Keyboard,
+  Platform
 } from 'react-native';
 import styles from './styles';
 import Header from '../../components/Header';
@@ -78,24 +79,22 @@ class CodeInputClass extends React.Component {
     return (
       <>
         <StatusBar barStyle='dark-content' />
-        <KeyboardAvoidingView  behavior='height' style={styles.container} >
-        <SafeAreaView style={styles.container}>
-          <ScrollView  keyboardShouldPersistTaps='handled'>
+        <KeyboardAvoidingView  
+          behavior={Platform.OS == "ios" ? "padding" : "height"} 
+          style={styles.container} >
+          <ScrollView keyboardShouldPersistTaps='handled'>
+          <ImageBackground
+              style={{width: '100%', height: height}}
+              source={img_bg}>
           <Header
             text={language[this.props.langId].view_orders.edit_btn}
-            onpress={() => this.props.navigation.goBack()}
-          />
-          <ScrollView keyboardShouldPersistTaps='handled' style={{flexGrow: 0}}>
-            <ImageBackground
-              style={{width: '100%', height: height-70-90}}
-              source={img_bg}>
+            onpress={() => this.props.navigation.goBack()}/>
               <View
                 style={{
                   backgroundColor: '#fff',
-                  marginVertical: 26,
-                  marginHorizontal: 26,
+                  marginHorizontal: 16,
+                  marginTop: 16,
                   borderRadius: 10,
-                  paddingBottom: 50,
                   shadowColor: "#000",
                   shadowOffset: {
                     width: 0,
@@ -104,6 +103,7 @@ class CodeInputClass extends React.Component {
                   shadowOpacity: 0.25,
                   shadowRadius: 3.84,
                   elevation: 5,
+                  paddingVertical: 8
                 }}>
                 <Input
                   text={language[this.props.langId].add_new_order.phone}
@@ -141,8 +141,6 @@ class CodeInputClass extends React.Component {
             />
             </ImageBackground>
           </ScrollView>
-          </ScrollView>
-        </SafeAreaView>
         </KeyboardAvoidingView>
       </>
     );

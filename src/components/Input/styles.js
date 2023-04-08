@@ -1,5 +1,4 @@
 import {StyleSheet, Dimensions} from 'react-native';
-import {Gilroy_Medium} from '../../const/fonts';
 const {width, height} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
@@ -14,15 +13,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     borderRadius: 60,
     marginHorizontal: 32,
-    //width: 340,
     marginVertical: 10,
-    
   },
   textInput: {
     fontSize: 14,
     marginBottom: 5,
     paddingLeft: 16,
-    //fontFamily: Gilroy_Medium,
   },
   input: {
     fontSize: 14,
@@ -30,9 +26,7 @@ const styles = StyleSheet.create({
     padding: 5,
     width: '100%',
     backgroundColor: '#ececec',
-    //padding:20,
     borderRadius: 30,
-    //opacity: 0.3,
     height: height * 0.06,
   },
 });
